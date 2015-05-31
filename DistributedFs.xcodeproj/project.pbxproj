@@ -149,8 +149,6 @@
 		30BE77501B1B14F000960748 = {
 			isa = PBXGroup;
 			children = (
-				30BE77D41B1B762400960748 /* libboost_filesystem.a */,
-				30BE77D51B1B762400960748 /* libboost_system.a */,
 				30BE775B1B1B14F100960748 /* DistributedFs */,
 				30BE77691B1B4EE900960748 /* FsBrowser */,
 				30BE777D1B1B4EEA00960748 /* FsBrowserTests */,
@@ -247,6 +245,8 @@
 			children = (
 				30BE77C71B1B61AA00960748 /* libgtest_main.a */,
 				30BE77C81B1B61AA00960748 /* libgtest.a */,
+				30BE77D41B1B762400960748 /* libboost_filesystem.a */,
+				30BE77D51B1B762400960748 /* libboost_system.a */,
 			);
 			name = 3rdParty;
 			sourceTree = "<group>";

@@ -58,6 +58,20 @@ FsError addChildNode(InMemoryFsTreeNode* parentNode, const Path& name, FileType 
     
     return FsError::kSuccess;
 }
+    
+FsError removeChildNode(InMemoryFsTreeNode* parentNode, const Path& name)
+{
+    for (int i = 0; i < parentNode->childLinks.size(); ++i)
+    {
+        if (parentNode->childLinks[i].name == name)
+        {
+            parentNode->childLinks.erase(parentNode->childLinks.begin() + i);
+            return FsError::kSuccess;
+        }
+    }
+    
+    return FsError::kFileNotFound;
+}
 
 }
 }

@@ -66,7 +66,21 @@ dfs::FsError dfs::InMemoryFs::rename(const Path& oldPath, const Path& newPath)
 { return FsError::kNotImplemented; }
 
 dfs::FsError dfs::InMemoryFs::remove(const Path& path)
-{ return FsError::kNotImplemented; }
+{
+    if (path == "/")
+    {
+        return FsError::kPermissionDenied;
+    }
+    
+    details::InMemoryFsTreeNode* parentNode;
+    FsError error = details::getNode(path.parent_path(), m_superRoot.get(), &parentNode);
+    if (error != FsError::kSuccess)
+    {
+        return error;
+    }
+    
+    return details::removeChildNode(parentNode, path.filename());
+}
 
 dfs::FsError dfs::InMemoryFs::getFileInfo(const Path& path, FileInfo* info)
 { return FsError::kNotImplemented; }
