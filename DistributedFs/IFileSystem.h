@@ -9,40 +9,48 @@
 #pragma once
 
 #include <memory>
-#include <stdint>
+#include <vector>
+#include <string>
+#include <cstdint>
 #include <ctime>
+
+#include <boost/filesystem/path.hpp>
 
 namespace dfs
 {
-    enum FsError
+    enum class FsError
     {
+        kSuccess,
         kFileNotFound,
         kPermissionDenied,
-        kNotImplemented
+        kNotImplemented,
+        kFileExists,
+        kUnknownError
     };
-    
-    enum FileType
+ 
+    enum class FileType
     {
         kFile,
         kFolder,
         kSymLink
     };
     
-    enum Permissions
+    enum class Permissions
     {
         kRead = 1,
         kWrite = 2,
-        kExecute = 4
+        kExecute = 4,
+        kAll = kRead | kWrite | kExecute
     };
     
-    enum FileOpenMode
+    enum class FileOpenMode
     {
         kRead = 1,
         kWrite = 2,
         kTruncate = 4
     };
     
-    typedef Path std::string;
+    typedef boost::filesystem::path Path;
 
     class IFolder;
     class IFile;
@@ -103,7 +111,7 @@ namespace dfs
         virtual size_t read(char* buffer, const size_t bufferSize) = 0;
         virtual size_t write(const char* buffer, const size_t bufferSize) = 0;
         
-        virtual seek(uint64_t offset, const SeekPosition position) = 0;
+        virtual void seek(uint64_t offset, const SeekPosition position) = 0;
         virtual void flush() = 0;
     };
     
@@ -124,5 +132,9 @@ namespace dfs
         time_t creationTime;
         time_t modificationTime;
     };
-
+    
+    typedef std::unique_ptr<IFileSystem> IFileSystemUPtr;
+    typedef std::unique_ptr<IFolder> IFolderUPtr;
+    typedef std::unique_ptr<IFile> IFileUPtr;
+    
 } //dfs

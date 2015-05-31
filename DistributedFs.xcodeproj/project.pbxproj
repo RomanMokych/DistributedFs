@@ -8,10 +8,53 @@
 
 /* Begin PBXBuildFile section */
 		30BE775D1B1B14F100960748 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30BE775C1B1B14F100960748 /* main.cpp */; };
+		30BE776E1B1B4EE900960748 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 30BE776D1B1B4EE900960748 /* AppDelegate.m */; };
+		30BE77701B1B4EE900960748 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 30BE776F1B1B4EE900960748 /* main.m */; };
+		30BE77721B1B4EE900960748 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 30BE77711B1B4EE900960748 /* Images.xcassets */; };
+		30BE77751B1B4EE900960748 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 30BE77731B1B4EE900960748 /* MainMenu.xib */; };
+		30BE77811B1B4EEA00960748 /* FsBrowserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 30BE77801B1B4EEA00960748 /* FsBrowserTests.m */; };
+		30BE77BA1B1B5FD500960748 /* InMemoryFs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30BE77B81B1B5FD500960748 /* InMemoryFs.cpp */; };
+		30BE77BB1B1B5FD500960748 /* InMemoryFs.h in Headers */ = {isa = PBXBuildFile; fileRef = 30BE77B91B1B5FD500960748 /* InMemoryFs.h */; };
+		30BE77C41B1B608800960748 /* libBaseFileSystems.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30BE77AD1B1B5FB200960748 /* libBaseFileSystems.a */; };
+		30BE77C61B1B612E00960748 /* FileSystemTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30BE77C51B1B612E00960748 /* FileSystemTests.cpp */; };
+		30BE77C91B1B61AA00960748 /* libgtest_main.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30BE77C71B1B61AA00960748 /* libgtest_main.a */; };
+		30BE77CA1B1B61AA00960748 /* libgtest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30BE77C81B1B61AA00960748 /* libgtest.a */; };
+		30BE77CE1B1B66B500960748 /* InMemoryFolder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30BE77CC1B1B66B500960748 /* InMemoryFolder.cpp */; };
+		30BE77CF1B1B66B500960748 /* InMemoryFolder.h in Headers */ = {isa = PBXBuildFile; fileRef = 30BE77CD1B1B66B500960748 /* InMemoryFolder.h */; };
+		30BE77D21B1B6C9A00960748 /* InMemoryFsTreeNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30BE77D01B1B6C9A00960748 /* InMemoryFsTreeNode.cpp */; };
+		30BE77D31B1B6C9A00960748 /* InMemoryFsTreeNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 30BE77D11B1B6C9A00960748 /* InMemoryFsTreeNode.h */; };
+		30BE77D61B1B762400960748 /* libboost_filesystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30BE77D41B1B762400960748 /* libboost_filesystem.a */; };
+		30BE77D71B1B762400960748 /* libboost_system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30BE77D51B1B762400960748 /* libboost_system.a */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		30BE777B1B1B4EEA00960748 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 30BE77511B1B14F000960748 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 30BE77671B1B4EE900960748;
+			remoteInfo = FsBrowser;
+		};
+		30BE77C21B1B608400960748 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 30BE77511B1B14F000960748 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 30BE77AC1B1B5FB200960748;
+			remoteInfo = BaseFileSystems;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		30BE77571B1B14F000960748 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		30BE779D1B1B5E2900960748 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -26,10 +69,74 @@
 		30BE77591B1B14F100960748 /* DistributedFs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DistributedFs; sourceTree = BUILT_PRODUCTS_DIR; };
 		30BE775C1B1B14F100960748 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		30BE77631B1B1FDC00960748 /* IFileSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IFileSystem.h; sourceTree = "<group>"; };
+		30BE77681B1B4EE900960748 /* FsBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FsBrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		30BE776B1B1B4EE900960748 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		30BE776C1B1B4EE900960748 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		30BE776D1B1B4EE900960748 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		30BE776F1B1B4EE900960748 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		30BE77711B1B4EE900960748 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		30BE77741B1B4EE900960748 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		30BE777A1B1B4EE900960748 /* FsBrowserTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FsBrowserTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		30BE777F1B1B4EEA00960748 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		30BE77801B1B4EEA00960748 /* FsBrowserTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FsBrowserTests.m; sourceTree = "<group>"; };
+		30BE778C1B1B5CF000960748 /* libbaseFileSystems.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libbaseFileSystems.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		30BE779F1B1B5E2900960748 /* FileSystemAutoTests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = FileSystemAutoTests; sourceTree = BUILT_PRODUCTS_DIR; };
+		30BE77AD1B1B5FB200960748 /* libBaseFileSystems.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libBaseFileSystems.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		30BE77B81B1B5FD500960748 /* InMemoryFs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InMemoryFs.cpp; sourceTree = "<group>"; };
+		30BE77B91B1B5FD500960748 /* InMemoryFs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InMemoryFs.h; sourceTree = "<group>"; };
+		30BE77C51B1B612E00960748 /* FileSystemTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileSystemTests.cpp; sourceTree = "<group>"; };
+		30BE77C71B1B61AA00960748 /* libgtest_main.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgtest_main.a; path = "../../../Libs/gtest-1.7.0/libs/libgtest_main.a"; sourceTree = "<group>"; };
+		30BE77C81B1B61AA00960748 /* libgtest.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgtest.a; path = "../../../Libs/gtest-1.7.0/libs/libgtest.a"; sourceTree = "<group>"; };
+		30BE77CC1B1B66B500960748 /* InMemoryFolder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InMemoryFolder.cpp; sourceTree = "<group>"; };
+		30BE77CD1B1B66B500960748 /* InMemoryFolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InMemoryFolder.h; sourceTree = "<group>"; };
+		30BE77D01B1B6C9A00960748 /* InMemoryFsTreeNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InMemoryFsTreeNode.cpp; sourceTree = "<group>"; };
+		30BE77D11B1B6C9A00960748 /* InMemoryFsTreeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InMemoryFsTreeNode.h; sourceTree = "<group>"; };
+		30BE77D41B1B762400960748 /* libboost_filesystem.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_filesystem.a; path = ../../../Libs/boost_1_57_0/stage/static_lib/libboost_filesystem.a; sourceTree = "<group>"; };
+		30BE77D51B1B762400960748 /* libboost_system.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_system.a; path = ../../../Libs/boost_1_57_0/stage/static_lib/libboost_system.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		30BE77561B1B14F000960748 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		30BE77651B1B4EE900960748 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		30BE77771B1B4EE900960748 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		30BE77891B1B5CF000960748 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		30BE779C1B1B5E2900960748 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				30BE77D61B1B762400960748 /* libboost_filesystem.a in Frameworks */,
+				30BE77D71B1B762400960748 /* libboost_system.a in Frameworks */,
+				30BE77C41B1B608800960748 /* libBaseFileSystems.a in Frameworks */,
+				30BE77C91B1B61AA00960748 /* libgtest_main.a in Frameworks */,
+				30BE77CA1B1B61AA00960748 /* libgtest.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		30BE77AA1B1B5FB200960748 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -42,8 +149,15 @@
 		30BE77501B1B14F000960748 = {
 			isa = PBXGroup;
 			children = (
+				30BE77D41B1B762400960748 /* libboost_filesystem.a */,
+				30BE77D51B1B762400960748 /* libboost_system.a */,
 				30BE775B1B1B14F100960748 /* DistributedFs */,
+				30BE77691B1B4EE900960748 /* FsBrowser */,
+				30BE777D1B1B4EEA00960748 /* FsBrowserTests */,
+				30BE77A01B1B5E2900960748 /* FileSystemAutoTests */,
+				30BE77AE1B1B5FB200960748 /* BaseFileSystems */,
 				30BE775A1B1B14F100960748 /* Products */,
+				30BE77CB1B1B61BA00960748 /* 3rdParty */,
 			);
 			sourceTree = "<group>";
 		};
@@ -51,6 +165,11 @@
 			isa = PBXGroup;
 			children = (
 				30BE77591B1B14F100960748 /* DistributedFs */,
+				30BE77681B1B4EE900960748 /* FsBrowser.app */,
+				30BE777A1B1B4EE900960748 /* FsBrowserTests.xctest */,
+				30BE778C1B1B5CF000960748 /* libbaseFileSystems.a */,
+				30BE779F1B1B5E2900960748 /* FileSystemAutoTests */,
+				30BE77AD1B1B5FB200960748 /* libBaseFileSystems.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -64,7 +183,95 @@
 			path = DistributedFs;
 			sourceTree = "<group>";
 		};
+		30BE77691B1B4EE900960748 /* FsBrowser */ = {
+			isa = PBXGroup;
+			children = (
+				30BE776C1B1B4EE900960748 /* AppDelegate.h */,
+				30BE776D1B1B4EE900960748 /* AppDelegate.m */,
+				30BE77711B1B4EE900960748 /* Images.xcassets */,
+				30BE77731B1B4EE900960748 /* MainMenu.xib */,
+				30BE776A1B1B4EE900960748 /* Supporting Files */,
+			);
+			path = FsBrowser;
+			sourceTree = "<group>";
+		};
+		30BE776A1B1B4EE900960748 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				30BE776B1B1B4EE900960748 /* Info.plist */,
+				30BE776F1B1B4EE900960748 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		30BE777D1B1B4EEA00960748 /* FsBrowserTests */ = {
+			isa = PBXGroup;
+			children = (
+				30BE77801B1B4EEA00960748 /* FsBrowserTests.m */,
+				30BE777E1B1B4EEA00960748 /* Supporting Files */,
+			);
+			path = FsBrowserTests;
+			sourceTree = "<group>";
+		};
+		30BE777E1B1B4EEA00960748 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				30BE777F1B1B4EEA00960748 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		30BE77A01B1B5E2900960748 /* FileSystemAutoTests */ = {
+			isa = PBXGroup;
+			children = (
+				30BE77C51B1B612E00960748 /* FileSystemTests.cpp */,
+			);
+			path = FileSystemAutoTests;
+			sourceTree = "<group>";
+		};
+		30BE77AE1B1B5FB200960748 /* BaseFileSystems */ = {
+			isa = PBXGroup;
+			children = (
+				30BE77B91B1B5FD500960748 /* InMemoryFs.h */,
+				30BE77B81B1B5FD500960748 /* InMemoryFs.cpp */,
+				30BE77CD1B1B66B500960748 /* InMemoryFolder.h */,
+				30BE77CC1B1B66B500960748 /* InMemoryFolder.cpp */,
+				30BE77D11B1B6C9A00960748 /* InMemoryFsTreeNode.h */,
+				30BE77D01B1B6C9A00960748 /* InMemoryFsTreeNode.cpp */,
+			);
+			path = BaseFileSystems;
+			sourceTree = "<group>";
+		};
+		30BE77CB1B1B61BA00960748 /* 3rdParty */ = {
+			isa = PBXGroup;
+			children = (
+				30BE77C71B1B61AA00960748 /* libgtest_main.a */,
+				30BE77C81B1B61AA00960748 /* libgtest.a */,
+			);
+			name = 3rdParty;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		30BE778A1B1B5CF000960748 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		30BE77AB1B1B5FB200960748 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				30BE77CF1B1B66B500960748 /* InMemoryFolder.h in Headers */,
+				30BE77BB1B1B5FD500960748 /* InMemoryFs.h in Headers */,
+				30BE77D31B1B6C9A00960748 /* InMemoryFsTreeNode.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
 		30BE77581B1B14F000960748 /* DistributedFs */ = {
@@ -84,6 +291,93 @@
 			productReference = 30BE77591B1B14F100960748 /* DistributedFs */;
 			productType = "com.apple.product-type.tool";
 		};
+		30BE77671B1B4EE900960748 /* FsBrowser */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 30BE77861B1B4EEA00960748 /* Build configuration list for PBXNativeTarget "FsBrowser" */;
+			buildPhases = (
+				30BE77641B1B4EE900960748 /* Sources */,
+				30BE77651B1B4EE900960748 /* Frameworks */,
+				30BE77661B1B4EE900960748 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FsBrowser;
+			productName = FsBrowser;
+			productReference = 30BE77681B1B4EE900960748 /* FsBrowser.app */;
+			productType = "com.apple.product-type.application";
+		};
+		30BE77791B1B4EE900960748 /* FsBrowserTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 30BE77871B1B4EEA00960748 /* Build configuration list for PBXNativeTarget "FsBrowserTests" */;
+			buildPhases = (
+				30BE77761B1B4EE900960748 /* Sources */,
+				30BE77771B1B4EE900960748 /* Frameworks */,
+				30BE77781B1B4EE900960748 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				30BE777C1B1B4EEA00960748 /* PBXTargetDependency */,
+			);
+			name = FsBrowserTests;
+			productName = FsBrowserTests;
+			productReference = 30BE777A1B1B4EE900960748 /* FsBrowserTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		30BE778B1B1B5CF000960748 /* baseFileSystems */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 30BE77941B1B5CF000960748 /* Build configuration list for PBXNativeTarget "baseFileSystems" */;
+			buildPhases = (
+				30BE77881B1B5CF000960748 /* Sources */,
+				30BE77891B1B5CF000960748 /* Frameworks */,
+				30BE778A1B1B5CF000960748 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = baseFileSystems;
+			productName = baseFileSystems;
+			productReference = 30BE778C1B1B5CF000960748 /* libbaseFileSystems.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		30BE779E1B1B5E2900960748 /* FileSystemAutoTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 30BE77A31B1B5E2900960748 /* Build configuration list for PBXNativeTarget "FileSystemAutoTests" */;
+			buildPhases = (
+				30BE779B1B1B5E2900960748 /* Sources */,
+				30BE779C1B1B5E2900960748 /* Frameworks */,
+				30BE779D1B1B5E2900960748 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				30BE77C31B1B608400960748 /* PBXTargetDependency */,
+			);
+			name = FileSystemAutoTests;
+			productName = FileSystemAutoTests;
+			productReference = 30BE779F1B1B5E2900960748 /* FileSystemAutoTests */;
+			productType = "com.apple.product-type.tool";
+		};
+		30BE77AC1B1B5FB200960748 /* BaseFileSystems */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 30BE77B51B1B5FB200960748 /* Build configuration list for PBXNativeTarget "BaseFileSystems" */;
+			buildPhases = (
+				30BE77A91B1B5FB200960748 /* Sources */,
+				30BE77AA1B1B5FB200960748 /* Frameworks */,
+				30BE77AB1B1B5FB200960748 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BaseFileSystems;
+			productName = BaseFileSystems;
+			productReference = 30BE77AD1B1B5FB200960748 /* libBaseFileSystems.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -96,6 +390,22 @@
 					30BE77581B1B14F000960748 = {
 						CreatedOnToolsVersion = 6.1.1;
 					};
+					30BE77671B1B4EE900960748 = {
+						CreatedOnToolsVersion = 6.1.1;
+					};
+					30BE77791B1B4EE900960748 = {
+						CreatedOnToolsVersion = 6.1.1;
+						TestTargetID = 30BE77671B1B4EE900960748;
+					};
+					30BE778B1B1B5CF000960748 = {
+						CreatedOnToolsVersion = 6.1.1;
+					};
+					30BE779E1B1B5E2900960748 = {
+						CreatedOnToolsVersion = 6.1.1;
+					};
+					30BE77AC1B1B5FB200960748 = {
+						CreatedOnToolsVersion = 6.1.1;
+					};
 				};
 			};
 			buildConfigurationList = 30BE77541B1B14F000960748 /* Build configuration list for PBXProject "DistributedFs" */;
@@ -104,6 +414,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 30BE77501B1B14F000960748;
 			productRefGroup = 30BE775A1B1B14F100960748 /* Products */;
@@ -111,9 +422,33 @@
 			projectRoot = "";
 			targets = (
 				30BE77581B1B14F000960748 /* DistributedFs */,
+				30BE77671B1B4EE900960748 /* FsBrowser */,
+				30BE77791B1B4EE900960748 /* FsBrowserTests */,
+				30BE778B1B1B5CF000960748 /* baseFileSystems */,
+				30BE779E1B1B5E2900960748 /* FileSystemAutoTests */,
+				30BE77AC1B1B5FB200960748 /* BaseFileSystems */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		30BE77661B1B4EE900960748 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				30BE77721B1B4EE900960748 /* Images.xcassets in Resources */,
+				30BE77751B1B4EE900960748 /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		30BE77781B1B4EE900960748 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		30BE77551B1B14F000960748 /* Sources */ = {
@@ -124,7 +459,73 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		30BE77641B1B4EE900960748 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				30BE77701B1B4EE900960748 /* main.m in Sources */,
+				30BE776E1B1B4EE900960748 /* AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		30BE77761B1B4EE900960748 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				30BE77811B1B4EEA00960748 /* FsBrowserTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		30BE77881B1B5CF000960748 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		30BE779B1B1B5E2900960748 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				30BE77C61B1B612E00960748 /* FileSystemTests.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		30BE77A91B1B5FB200960748 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				30BE77BA1B1B5FD500960748 /* InMemoryFs.cpp in Sources */,
+				30BE77CE1B1B66B500960748 /* InMemoryFolder.cpp in Sources */,
+				30BE77D21B1B6C9A00960748 /* InMemoryFsTreeNode.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		30BE777C1B1B4EEA00960748 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 30BE77671B1B4EE900960748 /* FsBrowser */;
+			targetProxy = 30BE777B1B1B4EEA00960748 /* PBXContainerItemProxy */;
+		};
+		30BE77C31B1B608400960748 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 30BE77AC1B1B5FB200960748 /* BaseFileSystems */;
+			targetProxy = 30BE77C21B1B608400960748 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		30BE77731B1B4EE900960748 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				30BE77741B1B4EE900960748 /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		30BE775E1B1B14F100960748 /* Debug */ = {
@@ -160,6 +561,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(BOOST_ROOT)",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -195,6 +601,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(BOOST_ROOT)",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
@@ -211,6 +622,158 @@
 		30BE77621B1B14F100960748 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		30BE77821B1B4EEA00960748 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = FsBrowser/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		30BE77831B1B4EEA00960748 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = FsBrowser/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		30BE77841B1B4EEA00960748 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = FsBrowserTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FsBrowser.app/Contents/MacOS/FsBrowser";
+			};
+			name = Debug;
+		};
+		30BE77851B1B4EEA00960748 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = FsBrowserTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FsBrowser.app/Contents/MacOS/FsBrowser";
+			};
+			name = Release;
+		};
+		30BE77951B1B5CF000960748 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		30BE77961B1B5CF000960748 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		30BE77A41B1B5E2900960748 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(GTEST_ROOT)/include",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(GTEST_ROOT)/libs",
+					"$(BOOST_ROOT)/stage/static_lib",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		30BE77A51B1B5E2900960748 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(GTEST_ROOT)/include",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(GTEST_ROOT)/libs",
+					"$(BOOST_ROOT)/stage/static_lib",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		30BE77B61B1B5FB200960748 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		30BE77B71B1B5FB200960748 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -232,6 +795,47 @@
 			buildConfigurations = (
 				30BE77611B1B14F100960748 /* Debug */,
 				30BE77621B1B14F100960748 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		30BE77861B1B4EEA00960748 /* Build configuration list for PBXNativeTarget "FsBrowser" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				30BE77821B1B4EEA00960748 /* Debug */,
+				30BE77831B1B4EEA00960748 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		30BE77871B1B4EEA00960748 /* Build configuration list for PBXNativeTarget "FsBrowserTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				30BE77841B1B4EEA00960748 /* Debug */,
+				30BE77851B1B4EEA00960748 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		30BE77941B1B5CF000960748 /* Build configuration list for PBXNativeTarget "baseFileSystems" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				30BE77951B1B5CF000960748 /* Debug */,
+				30BE77961B1B5CF000960748 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		30BE77A31B1B5E2900960748 /* Build configuration list for PBXNativeTarget "FileSystemAutoTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				30BE77A41B1B5E2900960748 /* Debug */,
+				30BE77A51B1B5E2900960748 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		30BE77B51B1B5FB200960748 /* Build configuration list for PBXNativeTarget "BaseFileSystems" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				30BE77B61B1B5FB200960748 /* Debug */,
+				30BE77B71B1B5FB200960748 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};
