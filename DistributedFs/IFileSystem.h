@@ -41,6 +41,8 @@ namespace dfs
         kWrite = 2,
         kTruncate = 4
     };
+    
+    typedef Path std::string;
 
     class IFolder;
     class IFile;
@@ -53,37 +55,37 @@ namespace dfs
         virtual ~IFileSystem(){}
         
         //folders
-        virtual FsError createFolder(const char* folderPath, const Permissions permissions) = 0;
-        virtual FsError openFolder(const char* folderPath, std::unique_ptr<IFolder>& outFolder) = 0;
+        virtual FsError createFolder(const Path& folderPath, const Permissions permissions) = 0;
+        virtual FsError openFolder(const Path& folderPath, std::unique_ptr<IFolder>& outFolder) = 0;
         
         //files
-        virtual FsError openFile(const char* filePath, const FileOpenMode access, std::unique_ptr<IFile>& outFile) = 0;
-        virtual FsError truncateFile(const char* filePath, const uint64_t newSize) = 0;
+        virtual FsError openFile(const Path& filePath, const FileOpenMode access, std::unique_ptr<IFile>& outFile) = 0;
+        virtual FsError truncateFile(const Path& filePath, const uint64_t newSize) = 0;
         
         //links
-        virtual FsError createSymLink(const char* linkPath, const char* targetPath) = 0;
-        virtual FsError readSymLink(const char* linkPath, std::string* symLinkValue) = 0;
+        virtual FsError createSymLink(const Path& linkPath, const Path& targetPath) = 0;
+        virtual FsError readSymLink(const Path& linkPath, Path* symLinkValue) = 0;
         
-        virtual FsError createHardLink(const char* linkPath, const char* targetPath) = 0;
+        virtual FsError createHardLink(const Path& linkPath, const Path& targetPath) = 0;
         
         //general
-        virtual FsError rename(const char* oldPath, const char* newPath) = 0;
-        virtual FsError remove(const char* path) = 0;
+        virtual FsError rename(const Path& oldPath, const Path& newPath) = 0;
+        virtual FsError remove(const Path& path) = 0;
         
-        virtual FsError getFileInfo(const char* path, FileInfo* info) = 0;
+        virtual FsError getFileInfo(const Path& path, FileInfo* info) = 0;
         
-        virtual FsError setPermissions(const char* path, const Permissions permissions) = 0;
-        virtual FsError getPermissions(const char* path, Permissions* permissions) = 0;
+        virtual FsError setPermissions(const Path& path, const Permissions permissions) = 0;
+        virtual FsError getPermissions(const Path& path, Permissions* permissions) = 0;
         
-        virtual FsError setCreationTime(const char* path, const std::time_t time) = 0;
-        virtual FsError getCreationTime(const char* path, std::time_t* time) = 0;
+        virtual FsError setCreationTime(const Path& path, const std::time_t time) = 0;
+        virtual FsError getCreationTime(const Path& path, std::time_t* time) = 0;
         
-        virtual FsError setModificationTime(const char* path, const std::time_t time) = 0;
-        virtual FsError getModificationTime(const char* path, std::time_t* time) = 0;
+        virtual FsError setModificationTime(const Path& path, const std::time_t time) = 0;
+        virtual FsError getModificationTime(const Path& path, std::time_t* time) = 0;
         
-        virtual FsError setExtendedAttribute(const char* path, const char* attributeKey, const char* attributeValue, const size_t attributeValueSize) = 0;
-        virtual FsError getExtendedAttribute(const char* path, const char* attributeKey, std::vector<char>* attributeValue) = 0;
-        virtual FsError getAllExtendedAttributes(const char* path, std::vector<std::string>* attributesNames) = 0;
+        virtual FsError setExtendedAttribute(const Path& path, const char* attributeKey, const char* attributeValue, const size_t attributeValueSize) = 0;
+        virtual FsError getExtendedAttribute(const Path& path, const char* attributeKey, std::vector<char>* attributeValue) = 0;
+        virtual FsError getAllExtendedAttributes(const Path& path, std::vector<std::string>* attributesNames) = 0;
     };
     
     enum SeekPosition
@@ -115,7 +117,7 @@ namespace dfs
     
     struct FileInfo
     {
-        std::string name;
+        Path name;
         FileType type;
         Permissions permissions;
         
