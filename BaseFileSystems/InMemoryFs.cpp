@@ -92,7 +92,17 @@ dfs::FsError dfs::InMemoryFs::getPermissions(const Path& path, Permissions* perm
 { return FsError::kNotImplemented; }
 
 dfs::FsError dfs::InMemoryFs::setCreationTime(const Path& path, const std::time_t time)
-{ return FsError::kNotImplemented; }
+{
+    details::InMemoryFsTreeNode* node = nullptr;
+    FsError error = details::getNode(path, m_superRoot.get(), &node);
+    if (error != FsError::kSuccess)
+    {
+        return error;
+    }
+    
+    node->creationTime = time;
+    return FsError::kSuccess;
+}
 
 dfs::FsError dfs::InMemoryFs::getCreationTime(const Path& path, std::time_t* time)
 {

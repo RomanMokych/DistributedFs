@@ -256,3 +256,64 @@ TEST(FileSystemTest, SetModificationTime)
     EXPECT_EQ(1, modificationTime);
 }
 
+TEST(FileSystemTest, GetCreationTimeFailure)
+{
+    auto fs = createFileSystem();
+    
+    std::time_t time;
+    dfs::FsError error = fs->getCreationTime("/test", &time);
+    EXPECT_EQ(dfs::FsError::kFileNotFound, error);
+}
+
+TEST(FileSystemTest, GetCreationTimeAfterCreation)
+{
+    std::time_t timeBeforeCreation = std::time(nullptr);
+    auto fs = createFileSystem();
+    
+    std::time_t modificationTime;
+    dfs::FsError error = fs->getCreationTime("/", &modificationTime);
+    ASSERT_EQ(error, dfs::FsError::kSuccess);
+    
+    EXPECT_LE(timeBeforeCreation, modificationTime);
+    EXPECT_GE(modificationTime, std::time(nullptr));
+    
+    timeBeforeCreation = std::time(nullptr);
+    
+    fs->createFolder("/test", dfs::Permissions::kAll);
+    error = fs->getCreationTime("/test", &modificationTime);
+    ASSERT_EQ(error, dfs::FsError::kSuccess);
+    
+    EXPECT_LE(timeBeforeCreation, modificationTime);
+    EXPECT_GE(modificationTime, std::time(nullptr));
+}
+
+TEST(FileSystemTest, SetCreationTimeFailure)
+{
+    auto fs = createFileSystem();
+    
+    dfs::FsError error = fs->setCreationTime("/test", 1);
+    EXPECT_EQ(dfs::FsError::kFileNotFound, error);
+}
+
+TEST(FileSystemTest, SetCreationTime)
+{
+    auto fs = createFileSystem();
+    
+    dfs::FsError error = fs->setCreationTime("/", 1);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    std::time_t modificationTime;
+    error = fs->getCreationTime("/", &modificationTime);
+    
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    EXPECT_EQ(1, modificationTime);
+    
+    fs->createFolder("/test", dfs::Permissions::kAll);
+    error = fs->setCreationTime("/test", 1);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    error = fs->getCreationTime("/test", &modificationTime);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    EXPECT_EQ(1, modificationTime);
+}
