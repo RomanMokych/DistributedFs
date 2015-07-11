@@ -53,8 +53,9 @@ FsError addChildNode(InMemoryFsTreeNode* parentNode, const Path& name, FileType 
         }
     }
     
-    InMemoryFsLink newLink{name, std::make_shared<InMemoryFsTreeNode>(type, permissions)};
+    InMemoryFsLink newLink{name, std::make_shared<InMemoryFsTreeNode>(type, permissions)};    
     parentNode->childLinks.push_back(newLink);
+    parentNode->modificationTime = std::time(nullptr);
     
     return FsError::kSuccess;
 }

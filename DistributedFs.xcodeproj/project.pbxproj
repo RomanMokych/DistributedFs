@@ -93,6 +93,7 @@
 		30BE77D11B1B6C9A00960748 /* InMemoryFsTreeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InMemoryFsTreeNode.h; sourceTree = "<group>"; };
 		30BE77D41B1B762400960748 /* libboost_filesystem.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_filesystem.a; path = ../../../Libs/boost_1_57_0/stage/static_lib/libboost_filesystem.a; sourceTree = "<group>"; };
 		30BE77D51B1B762400960748 /* libboost_system.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_system.a; path = ../../../Libs/boost_1_57_0/stage/static_lib/libboost_system.a; sourceTree = "<group>"; };
+		30E62EED1B51A05B0003FE54 /* TODO */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = TODO; path = Docs/TODO; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -149,6 +150,7 @@
 		30BE77501B1B14F000960748 = {
 			isa = PBXGroup;
 			children = (
+				30E62EEC1B51A0390003FE54 /* Docs */,
 				30BE775B1B1B14F100960748 /* DistributedFs */,
 				30BE77691B1B4EE900960748 /* FsBrowser */,
 				30BE777D1B1B4EEA00960748 /* FsBrowserTests */,
@@ -249,6 +251,14 @@
 				30BE77D51B1B762400960748 /* libboost_system.a */,
 			);
 			name = 3rdParty;
+			sourceTree = "<group>";
+		};
+		30E62EEC1B51A0390003FE54 /* Docs */ = {
+			isa = PBXGroup;
+			children = (
+				30E62EED1B51A05B0003FE54 /* TODO */,
+			);
+			name = Docs;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -806,6 +816,7 @@
 				30BE77831B1B4EEA00960748 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		30BE77871B1B4EEA00960748 /* Build configuration list for PBXNativeTarget "FsBrowserTests" */ = {
 			isa = XCConfigurationList;
@@ -814,6 +825,7 @@
 				30BE77851B1B4EEA00960748 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		30BE77941B1B5CF000960748 /* Build configuration list for PBXNativeTarget "baseFileSystems" */ = {
 			isa = XCConfigurationList;
@@ -822,6 +834,7 @@
 				30BE77961B1B5CF000960748 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		30BE77A31B1B5E2900960748 /* Build configuration list for PBXNativeTarget "FileSystemAutoTests" */ = {
 			isa = XCConfigurationList;
@@ -830,6 +843,7 @@
 				30BE77A51B1B5E2900960748 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		30BE77B51B1B5FB200960748 /* Build configuration list for PBXNativeTarget "BaseFileSystems" */ = {
 			isa = XCConfigurationList;
@@ -838,6 +852,7 @@
 				30BE77B71B1B5FB200960748 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

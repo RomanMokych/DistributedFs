@@ -95,13 +95,43 @@ dfs::FsError dfs::InMemoryFs::setCreationTime(const Path& path, const std::time_
 { return FsError::kNotImplemented; }
 
 dfs::FsError dfs::InMemoryFs::getCreationTime(const Path& path, std::time_t* time)
-{ return FsError::kNotImplemented; }
+{
+    details::InMemoryFsTreeNode* node = nullptr;
+    FsError error = details::getNode(path, m_superRoot.get(), &node);
+    if (error != FsError::kSuccess)
+    {
+        return error;
+    }
+    
+    *time = node->creationTime;
+    return FsError::kSuccess;
+}
 
 dfs::FsError dfs::InMemoryFs::setModificationTime(const Path& path, const std::time_t time)
-{ return FsError::kNotImplemented; }
+{
+    details::InMemoryFsTreeNode* node = nullptr;
+    FsError error = details::getNode(path, m_superRoot.get(), &node);
+    if (error != FsError::kSuccess)
+    {
+        return error;
+    }
+    
+    node->modificationTime = time;
+    return FsError::kSuccess;
+}
 
 dfs::FsError dfs::InMemoryFs::getModificationTime(const Path& path, std::time_t* time)
-{ return FsError::kNotImplemented; }
+{
+    details::InMemoryFsTreeNode* node = nullptr;
+    FsError error = details::getNode(path, m_superRoot.get(), &node);
+    if (error != FsError::kSuccess)
+    {
+        return error;
+    }
+    
+    *time = node->modificationTime;
+    return FsError::kSuccess;
+}
 
 dfs::FsError dfs::InMemoryFs::setExtendedAttribute(const Path& path, const char* attributeKey, const char* attributeValue, const size_t attributeValueSize)
 { return FsError::kNotImplemented; }

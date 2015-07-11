@@ -175,5 +175,84 @@ TEST(FileSystemTest, RemoveManyFoldersTest)
     
     std::vector<dfs::FileInfo> fileInfos;
     folder->readNextFileInfos(&fileInfos);
-    ASSERT_TRUE(fileInfos.empty());
+    EXPECT_TRUE(fileInfos.empty());
 }
+
+TEST(FileSystemTest, GetModificationTimeFailure)
+{
+    auto fs = createFileSystem();
+
+    std::time_t time;
+    dfs::FsError error = fs->getModificationTime("/test", &time);
+    EXPECT_EQ(dfs::FsError::kFileNotFound, error);
+}
+
+TEST(FileSystemTest, GetModificationTimeAfterCreation)
+{
+    std::time_t timeBeforeCreation = std::time(nullptr);
+    auto fs = createFileSystem();
+    
+    std::time_t modificationTime;
+    dfs::FsError error = fs->getModificationTime("/", &modificationTime);
+    ASSERT_EQ(error, dfs::FsError::kSuccess);
+    
+    EXPECT_LE(timeBeforeCreation, modificationTime);
+    EXPECT_GE(modificationTime, std::time(nullptr));
+    
+    timeBeforeCreation = std::time(nullptr);
+    
+    fs->createFolder("/test", dfs::Permissions::kAll);
+    error = fs->getModificationTime("/test", &modificationTime);
+    ASSERT_EQ(error, dfs::FsError::kSuccess);
+    
+    EXPECT_LE(timeBeforeCreation, modificationTime);
+    EXPECT_GE(modificationTime, std::time(nullptr));
+}
+
+TEST(FileSystemTest, GetFolderModificationTimeAfterNodeAdding)
+{
+    auto fs = createFileSystem();
+    
+    std::time_t timeBeforeModification = std::time(nullptr);
+    
+    fs->createFolder("/test", dfs::Permissions::kAll);
+    
+    std::time_t modificationTime;
+    dfs::FsError error = fs->getModificationTime("/", &modificationTime);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    EXPECT_LE(timeBeforeModification, modificationTime);
+    EXPECT_GE(modificationTime, std::time(nullptr));
+}
+
+TEST(FileSystemTest, SetModificationTimeFailure)
+{
+    auto fs = createFileSystem();
+    
+    dfs::FsError error = fs->setModificationTime("/test", 1);
+    EXPECT_EQ(dfs::FsError::kFileNotFound, error);
+}
+
+TEST(FileSystemTest, SetModificationTime)
+{
+    auto fs = createFileSystem();
+    
+    dfs::FsError error = fs->setModificationTime("/", 1);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    std::time_t modificationTime;
+    error = fs->getModificationTime("/", &modificationTime);
+    
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    EXPECT_EQ(1, modificationTime);
+    
+    fs->createFolder("/test", dfs::Permissions::kAll);
+    error = fs->setModificationTime("/test", 1);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    error = fs->getModificationTime("/test", &modificationTime);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    EXPECT_EQ(1, modificationTime);
+}
+

@@ -29,12 +29,20 @@ namespace dfs
         struct InMemoryFsTreeNode
         {
             InMemoryFsTreeNode(dfs::FileType aType, dfs::Permissions aPermissions)
-                : type(aType)
-                , permissions(aPermissions)
-            {}
+            : type(aType)
+            , permissions(aPermissions)
+            {
+                std::time_t theCreationTime = std::time(nullptr);
+                
+                modificationTime = theCreationTime;
+                creationTime = theCreationTime;
+            }
             
             dfs::FileType type;
             dfs::Permissions permissions;
+            
+            std::time_t modificationTime;
+            std::time_t creationTime;
             
             std::vector<char> fileContent;
             std::vector<InMemoryFsLink> childLinks;
