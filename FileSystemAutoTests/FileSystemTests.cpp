@@ -317,3 +317,123 @@ TEST(FileSystemTest, SetCreationTime)
     
     EXPECT_EQ(1, modificationTime);
 }
+
+TEST(FileSystemTest, GetExtendedAttributeFail)
+{
+    auto fs = createFileSystem();
+    
+    dfs::FsError error = fs->getExtendedAttribute("/test", "attribute", nullptr);
+    EXPECT_EQ(dfs::FsError::kFileNotFound, error);
+}
+
+TEST(FileSystemTest, GetNotExistedExtendedAttribute)
+{
+    auto fs = createFileSystem();
+    
+    dfs::FsError error = fs->getExtendedAttribute("/", "attribute", nullptr);
+    EXPECT_EQ(dfs::FsError::kAttributeNotFound, error);
+}
+
+TEST(FileSystemTest, SetExtendedAttributeFail)
+{
+    auto fs = createFileSystem();
+    
+    std::string attribute = "attribute_value";
+    std::vector<char> expectedAttribute(attribute.begin(), attribute.end());
+    dfs::FsError error = fs->setExtendedAttribute("/test", "attribute", expectedAttribute.data(), expectedAttribute.size());
+    EXPECT_EQ(dfs::FsError::kFileNotFound, error);
+}
+
+TEST(FileSystemTest, SetExtendedAttribute)
+{
+    auto fs = createFileSystem();
+    
+    std::string attribute = "attribute_value";
+    std::vector<char> expectedAttribute(attribute.begin(), attribute.end());
+    dfs::FsError error = fs->setExtendedAttribute("/", "attribute", expectedAttribute.data(), expectedAttribute.size());
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    std::vector<char> actualAttribute;
+    error = fs->getExtendedAttribute("/", "attribute", &actualAttribute);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    EXPECT_EQ(expectedAttribute, actualAttribute);
+}
+
+TEST(FileSystemTest, DeleteExtendedAttributeFail)
+{
+    auto fs = createFileSystem();
+    
+    dfs::FsError error = fs->deleteExtendedAttribute("/test", "attribute");
+    EXPECT_EQ(dfs::FsError::kFileNotFound, error);
+}
+
+TEST(FileSystemTest, DeleteNotEsistedExtendedAttribute)
+{
+    auto fs = createFileSystem();
+    
+    dfs::FsError error = fs->deleteExtendedAttribute("/", "attribute");
+    EXPECT_EQ(dfs::FsError::kSuccess, error);
+}
+
+TEST(FileSystemTest, DeleteExtendedAttribute)
+{
+    auto fs = createFileSystem();
+    
+    std::string attribute = "attribute_value";
+    std::vector<char> expectedAttribute(attribute.begin(), attribute.end());
+    dfs::FsError error = fs->setExtendedAttribute("/", "attribute", expectedAttribute.data(), expectedAttribute.size());
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    error = fs->deleteExtendedAttribute("/", "attribute");
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    std::vector<char> actualAttribute;
+    error = fs->getExtendedAttribute("/", "attribute", &actualAttribute);
+    EXPECT_EQ(dfs::FsError::kAttributeNotFound, error);
+}
+
+TEST(FileSystemTest, GetAllExtendedAttributesFail)
+{
+    auto fs = createFileSystem();
+    
+    dfs::FsError error = fs->getAllExtendedAttributes("/test", nullptr);
+    EXPECT_EQ(dfs::FsError::kFileNotFound, error);
+}
+
+TEST(FileSystemTest, GetAllExtendedAttributesOfEmptyRoot)
+{
+    auto fs = createFileSystem();
+    
+    std::vector<std::string> attributeNames;
+    dfs::FsError error = fs->getAllExtendedAttributes("/", &attributeNames);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+
+    EXPECT_TRUE(attributeNames.empty());
+}
+
+TEST(FileSystemTest, GetAllExtendedAttributes)
+{
+    auto fs = createFileSystem();
+    
+    std::vector<std::string> attributeNames;
+    dfs::FsError error = fs->getAllExtendedAttributes("/", &attributeNames);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    EXPECT_TRUE(attributeNames.empty());
+    
+    std::string attribute = "attribute_value";
+    std::vector<char> expectedAttribute(attribute.begin(), attribute.end());
+    
+    fs->setExtendedAttribute("/", "attribute1", expectedAttribute.data(), expectedAttribute.size());
+    fs->setExtendedAttribute("/", "attribute2", expectedAttribute.data(), expectedAttribute.size());
+    fs->setExtendedAttribute("/", "attribute3", expectedAttribute.data(), expectedAttribute.size());
+    
+    error = fs->getAllExtendedAttributes("/", &attributeNames);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    ASSERT_EQ(3, attributeNames.size());
+    EXPECT_EQ("attribute1", attributeNames[0]);
+    EXPECT_EQ("attribute2", attributeNames[1]);
+    EXPECT_EQ("attribute3", attributeNames[2]);
+}

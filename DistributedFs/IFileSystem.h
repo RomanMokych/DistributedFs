@@ -25,6 +25,7 @@ namespace dfs
         kPermissionDenied,
         kNotImplemented,
         kFileExists,
+        kAttributeNotFound,
         kUnknownError
     };
  
@@ -93,6 +94,7 @@ namespace dfs
         
         virtual FsError setExtendedAttribute(const Path& path, const char* attributeKey, const char* attributeValue, const size_t attributeValueSize) = 0;
         virtual FsError getExtendedAttribute(const Path& path, const char* attributeKey, std::vector<char>* attributeValue) = 0;
+        virtual FsError deleteExtendedAttribute(const Path& path, const char* attributeKey) = 0;
         virtual FsError getAllExtendedAttributes(const Path& path, std::vector<std::string>* attributesNames) = 0;
     };
     

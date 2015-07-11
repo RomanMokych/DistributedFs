@@ -49,6 +49,7 @@ namespace dfs
         virtual FsError getModificationTime(const Path& path, std::time_t* time);
         
         virtual FsError setExtendedAttribute(const Path& path, const char* attributeKey, const char* attributeValue, const size_t attributeValueSize);
+        virtual FsError deleteExtendedAttribute(const Path& path, const char* attributeKey);
         virtual FsError getExtendedAttribute(const Path& path, const char* attributeKey, std::vector<char>* attributeValue);
         virtual FsError getAllExtendedAttributes(const Path& path, std::vector<std::string>* attributesNames);
                 

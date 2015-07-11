@@ -13,6 +13,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <map>
 
 namespace dfs
 {
@@ -47,6 +48,8 @@ namespace dfs
             std::vector<char> fileContent;
             std::vector<InMemoryFsLink> childLinks;
             std::string symLinkValue;
+            
+            std::map< std::string, std::vector<char> > exAttributes;
         };
         
         FsError getNode(const Path& filePath, InMemoryFsTreeNode* root, InMemoryFsTreeNode** resultNode);

@@ -144,10 +144,68 @@ dfs::FsError dfs::InMemoryFs::getModificationTime(const Path& path, std::time_t*
 }
 
 dfs::FsError dfs::InMemoryFs::setExtendedAttribute(const Path& path, const char* attributeKey, const char* attributeValue, const size_t attributeValueSize)
-{ return FsError::kNotImplemented; }
+{
+    details::InMemoryFsTreeNode* node = nullptr;
+    FsError error = details::getNode(path, m_superRoot.get(), &node);
+    if (error != FsError::kSuccess)
+    {
+        return error;
+    }
+    
+    node->exAttributes[attributeKey] = std::vector<char>(attributeValue, attributeValue + attributeValueSize);
+    
+    return FsError::kSuccess;
+}
 
 dfs::FsError dfs::InMemoryFs::getExtendedAttribute(const Path& path, const char* attributeKey, std::vector<char>* attributeValue)
-{ return FsError::kNotImplemented; }
+{
+    details::InMemoryFsTreeNode* node = nullptr;
+    FsError error = details::getNode(path, m_superRoot.get(), &node);
+    if (error != FsError::kSuccess)
+    {
+        return error;
+    }
+    
+    auto attributeIt = node->exAttributes.find(attributeKey);
+    if (attributeIt == node->exAttributes.end())
+    {
+        return FsError::kAttributeNotFound;
+    }
+    
+    *attributeValue = attributeIt->second;
+    
+    return FsError::kSuccess;
+}
+
+dfs::FsError dfs::InMemoryFs::deleteExtendedAttribute(const Path& path, const char* attributeKey)
+{
+    details::InMemoryFsTreeNode* node = nullptr;
+    FsError error = details::getNode(path, m_superRoot.get(), &node);
+    if (error != FsError::kSuccess)
+    {
+        return error;
+    }
+    
+    node->exAttributes.erase(attributeKey);
+    
+    return FsError::kSuccess;
+}
 
 dfs::FsError dfs::InMemoryFs::getAllExtendedAttributes(const Path& path, std::vector<std::string>* attributesNames)
-{ return FsError::kNotImplemented; }
+{
+    details::InMemoryFsTreeNode* node = nullptr;
+    FsError error = details::getNode(path, m_superRoot.get(), &node);
+    if (error != FsError::kSuccess)
+    {
+        return error;
+    }
+    
+    attributesNames->clear();
+    
+    for (auto& pair : node->exAttributes)
+    {
+        attributesNames->push_back(pair.first);
+    }
+    
+    return FsError::kSuccess;
+}

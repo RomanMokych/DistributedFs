@@ -4,7 +4,6 @@
 - implement file io
 - implement file modification time
 - implement permissions change
-- implement time change
 - implement symlinks
 - implement hardlinks
 - implement extended attributes
