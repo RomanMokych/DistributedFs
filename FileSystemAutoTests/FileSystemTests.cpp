@@ -437,3 +437,143 @@ TEST(FileSystemTest, GetAllExtendedAttributes)
     EXPECT_EQ("attribute2", attributeNames[1]);
     EXPECT_EQ("attribute3", attributeNames[2]);
 }
+
+TEST(FileSystemTest, OpenFileFail)
+{
+    auto fs = createFileSystem();
+    
+    std::unique_ptr<dfs::IFile> file;
+    dfs::FsError error = fs->openFile("/", dfs::FileOpenMode::kRead, file);
+    EXPECT_EQ(dfs::FsError::kFileHasWrongType, error);
+
+    error = fs->openFile("/test", dfs::FileOpenMode::kRead, file);
+    EXPECT_EQ(dfs::FsError::kFileNotFound, error);
+}
+
+TEST(FileSystemTest, CreateFile)
+{
+    auto fs = createFileSystem();
+    
+    std::unique_ptr<dfs::IFile> file;
+    dfs::FsError error = fs->openFile("/test", dfs::FileOpenMode::kWrite | dfs::FileOpenMode::kCreate, file);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    EXPECT_NE(nullptr, file.get());
+    
+    fs->createFolder("/test1", dfs::Permissions::kAll);
+    
+    file.reset();
+    error = fs->openFile("/test1/test", dfs::FileOpenMode::kWrite | dfs::FileOpenMode::kCreate, file);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    EXPECT_NE(nullptr, file.get());
+}
+
+TEST(FileSystemTest, ReadEmptyFileTest)
+{
+    auto fs = createFileSystem();
+    
+    std::unique_ptr<dfs::IFile> file;
+    dfs::FsError error = fs->openFile("/test", dfs::FileOpenMode::kWrite | dfs::FileOpenMode::kCreate, file);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    file.reset();
+    
+    error = fs->openFile("/test", dfs::FileOpenMode::kRead, file);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    char dummy[10] = {};
+    size_t read = file->read(dummy, 10);
+    EXPECT_EQ(0, read);
+}
+
+TEST(FileSystemTest, ReadWriteFileTest)
+{
+    auto fs = createFileSystem();
+    
+    std::unique_ptr<dfs::IFile> file;
+    dfs::FsError error = fs->openFile("/test", dfs::FileOpenMode::kWrite | dfs::FileOpenMode::kCreate, file);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    char testString1[] = "test string";
+    size_t written = file->write(testString1, sizeof(testString1));
+    ASSERT_EQ(sizeof(testString1), written);
+    
+    file.reset();
+    
+    error = fs->openFile("/test", dfs::FileOpenMode::kRead, file);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    char testString2[100] = {};
+    size_t read = file->read(testString2, sizeof(testString2));
+    EXPECT_EQ(sizeof(testString1), read);
+    
+    EXPECT_STREQ("test string", testString2);
+}
+
+TEST(FileSystemTest, ReadChunksFileTest)
+{
+    auto fs = createFileSystem();
+    
+    std::unique_ptr<dfs::IFile> file;
+    dfs::FsError error = fs->openFile("/test", dfs::FileOpenMode::kWrite | dfs::FileOpenMode::kCreate, file);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    char testString1[] = "123456789";
+    size_t written = file->write(testString1, 9);
+    ASSERT_EQ(9, written);
+    
+    file.reset();
+    
+    error = fs->openFile("/test", dfs::FileOpenMode::kRead, file);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    char testString2[2] = {};
+    size_t read = file->read(testString2, 2);
+    ASSERT_EQ(read, 2);
+    EXPECT_EQ('1', testString2[0]);
+    EXPECT_EQ('2', testString2[1]);
+    
+    read = file->read(testString2, 2);
+    ASSERT_EQ(read, 2);
+    EXPECT_EQ('3', testString2[0]);
+    EXPECT_EQ('4', testString2[1]);
+    
+    read = file->read(testString2, 2);
+    ASSERT_EQ(read, 2);
+    EXPECT_EQ('5', testString2[0]);
+    EXPECT_EQ('6', testString2[1]);
+    
+    read = file->read(testString2, 2);
+    ASSERT_EQ(read, 2);
+    EXPECT_EQ('7', testString2[0]);
+    EXPECT_EQ('8', testString2[1]);
+    
+    read = file->read(testString2, 2);
+    ASSERT_EQ(read, 1);
+    EXPECT_EQ('9', testString2[0]);
+}
+
+TEST(FileSystemTest, WriteChunksFileTest)
+{
+    auto fs = createFileSystem();
+    
+    std::unique_ptr<dfs::IFile> file;
+    dfs::FsError error = fs->openFile("/test", dfs::FileOpenMode::kWrite | dfs::FileOpenMode::kCreate, file);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    char testString1[] = "123456789";
+    file->write(testString1, 2);
+    file->write(testString1 + 2, 2);
+    file->write(testString1 + 4, 2);
+    file->write(testString1 + 6, 2);
+    file->write(testString1 + 8, 2);
+    
+    file.reset();
+    
+    error = fs->openFile("/test", dfs::FileOpenMode::kRead, file);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    char testString2[10] = {};
+    file->read(testString2, 10);
+    EXPECT_STREQ("123456789", testString2);
+}
+

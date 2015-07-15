@@ -1,9 +1,8 @@
 
-- implement file creation
+
 - implement file removing
-- implement file io
+- implement file seek
 - implement file modification time
 - implement permissions change
 - implement symlinks
 - implement hardlinks
-- implement extended attributes

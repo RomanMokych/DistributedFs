@@ -26,6 +26,7 @@ namespace dfs
         kNotImplemented,
         kFileExists,
         kAttributeNotFound,
+        kFileHasWrongType,
         kUnknownError
     };
  
@@ -44,11 +45,17 @@ namespace dfs
         kAll = kRead | kWrite | kExecute
     };
     
-    enum class FileOpenMode
+    class FileOpenMode
     {
-        kRead = 1,
-        kWrite = 2,
-        kTruncate = 4
+    public:
+        enum
+        {
+            kRead = 1,
+            kWrite = 2,
+            kTruncate = 4,
+            kCreate = 8,
+            kAppend = 16
+        };
     };
     
     typedef boost::filesystem::path Path;
@@ -68,7 +75,7 @@ namespace dfs
         virtual FsError openFolder(const Path& folderPath, std::unique_ptr<IFolder>& outFolder) = 0;
         
         //files
-        virtual FsError openFile(const Path& filePath, const FileOpenMode access, std::unique_ptr<IFile>& outFile) = 0;
+        virtual FsError openFile(const Path& filePath, const int fileOpenMode, std::unique_ptr<IFile>& outFile) = 0;
         virtual FsError truncateFile(const Path& filePath, const uint64_t newSize) = 0;
         
         //links

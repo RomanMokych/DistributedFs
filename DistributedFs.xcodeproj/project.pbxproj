@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		300373CF1B56F8DE0032931A /* InMemoryFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 300373CD1B56F8DE0032931A /* InMemoryFile.cpp */; };
+		300373D01B56F8DE0032931A /* InMemoryFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 300373CE1B56F8DE0032931A /* InMemoryFile.h */; };
 		30BE775D1B1B14F100960748 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30BE775C1B1B14F100960748 /* main.cpp */; };
 		30BE776E1B1B4EE900960748 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 30BE776D1B1B4EE900960748 /* AppDelegate.m */; };
 		30BE77701B1B4EE900960748 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 30BE776F1B1B4EE900960748 /* main.m */; };
@@ -66,6 +68,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		300373CD1B56F8DE0032931A /* InMemoryFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InMemoryFile.cpp; sourceTree = "<group>"; };
+		300373CE1B56F8DE0032931A /* InMemoryFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InMemoryFile.h; sourceTree = "<group>"; };
 		30BE77591B1B14F100960748 /* DistributedFs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DistributedFs; sourceTree = BUILT_PRODUCTS_DIR; };
 		30BE775C1B1B14F100960748 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		30BE77631B1B1FDC00960748 /* IFileSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IFileSystem.h; sourceTree = "<group>"; };
@@ -234,6 +238,8 @@
 			children = (
 				30BE77B91B1B5FD500960748 /* InMemoryFs.h */,
 				30BE77B81B1B5FD500960748 /* InMemoryFs.cpp */,
+				300373CE1B56F8DE0032931A /* InMemoryFile.h */,
+				300373CD1B56F8DE0032931A /* InMemoryFile.cpp */,
 				30BE77CD1B1B66B500960748 /* InMemoryFolder.h */,
 				30BE77CC1B1B66B500960748 /* InMemoryFolder.cpp */,
 				30BE77D11B1B6C9A00960748 /* InMemoryFsTreeNode.h */,
@@ -275,6 +281,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				300373D01B56F8DE0032931A /* InMemoryFile.h in Headers */,
 				30BE77CF1B1B66B500960748 /* InMemoryFolder.h in Headers */,
 				30BE77BB1B1B5FD500960748 /* InMemoryFs.h in Headers */,
 				30BE77D31B1B6C9A00960748 /* InMemoryFsTreeNode.h in Headers */,
@@ -506,6 +513,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				30BE77BA1B1B5FD500960748 /* InMemoryFs.cpp in Sources */,
+				300373CF1B56F8DE0032931A /* InMemoryFile.cpp in Sources */,
 				30BE77CE1B1B66B500960748 /* InMemoryFolder.cpp in Sources */,
 				30BE77D21B1B6C9A00960748 /* InMemoryFsTreeNode.cpp in Sources */,
 			);

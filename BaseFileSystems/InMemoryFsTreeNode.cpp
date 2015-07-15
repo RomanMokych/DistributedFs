@@ -73,6 +73,24 @@ FsError removeChildNode(InMemoryFsTreeNode* parentNode, const Path& name)
     
     return FsError::kFileNotFound;
 }
+    
+FsError createFile(const Path& filePath, InMemoryFsTreeNode* root, InMemoryFsTreeNode** resultNode)
+{
+    InMemoryFsTreeNode* parentNode = nullptr;
+    FsError error = getNode(filePath.parent_path(), root, &parentNode);
+    if (error != FsError::kSuccess)
+    {
+        return error;
+    }
+    
+    error = addChildNode(parentNode, filePath.leaf(), dfs::FileType::kFile, dfs::Permissions::kAll);
+    if (error != FsError::kSuccess)
+    {
+        return error;
+    }
+    
+    return getNode(filePath, root, resultNode);
+}
 
 }
 }

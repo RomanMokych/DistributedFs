@@ -24,7 +24,7 @@ namespace dfs
         virtual FsError openFolder(const Path& folderPath, std::unique_ptr<IFolder>& outFolder);
         
         //files
-        virtual FsError openFile(const Path& filePath, const FileOpenMode access, std::unique_ptr<IFile>& outFile);
+        virtual FsError openFile(const Path& filePath, const int fileOpenMode, std::unique_ptr<IFile>& outFile);
         virtual FsError truncateFile(const Path& filePath, const uint64_t newSize);
         
         //links

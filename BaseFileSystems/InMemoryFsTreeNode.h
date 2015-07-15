@@ -55,5 +55,7 @@ namespace dfs
         FsError getNode(const Path& filePath, InMemoryFsTreeNode* root, InMemoryFsTreeNode** resultNode);
         FsError addChildNode(InMemoryFsTreeNode* parentNode, const Path& name, FileType type, Permissions permissions);
         FsError removeChildNode(InMemoryFsTreeNode* parentNode, const Path& name);
+        
+        FsError createFile(const Path& filePath, InMemoryFsTreeNode* root, InMemoryFsTreeNode** resultNode);
     }
 }

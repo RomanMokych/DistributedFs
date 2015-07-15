@@ -8,6 +8,7 @@
 
 #include "InMemoryFs.h"
 
+#include "InMemoryFile.h"
 #include "InMemoryFolder.h"
 #include "InMemoryFsTreeNode.h"
 
@@ -45,8 +46,33 @@ dfs::FsError dfs::InMemoryFs::openFolder(const Path& folderPath, std::unique_ptr
 }
 
 //files
-dfs::FsError dfs::InMemoryFs::openFile(const Path& filePath, const FileOpenMode access, std::unique_ptr<IFile>& outFile)
-{ return FsError::kNotImplemented; }
+dfs::FsError dfs::InMemoryFs::openFile(const Path& filePath, const int fileOpenMode, std::unique_ptr<IFile>& outFile)
+{
+    details::InMemoryFsTreeNode* node = nullptr;
+    FsError error = details::getNode(filePath, m_superRoot.get(), &node);
+    if (error != FsError::kSuccess && !(fileOpenMode & dfs::FileOpenMode::kCreate))
+    {
+        return error;
+    }
+    
+    if (!node)
+    {
+        error = details::createFile(filePath, m_superRoot.get(), &node);
+        if (error != FsError::kSuccess)
+        {
+            return error;
+        }
+    }
+    
+    if (node->type != dfs::FileType::kFile)
+    {
+        return FsError::kFileHasWrongType;
+    }
+    
+    outFile.reset(new InMemoryFile(node));
+    
+    return FsError::kSuccess;
+}
 
 dfs::FsError dfs::InMemoryFs::truncateFile(const Path& filePath, const uint64_t newSize)
 { return FsError::kNotImplemented; }
