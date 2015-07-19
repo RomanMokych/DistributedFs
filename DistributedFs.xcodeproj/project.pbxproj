@@ -18,7 +18,7 @@
 		30BE77BA1B1B5FD500960748 /* InMemoryFs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30BE77B81B1B5FD500960748 /* InMemoryFs.cpp */; };
 		30BE77BB1B1B5FD500960748 /* InMemoryFs.h in Headers */ = {isa = PBXBuildFile; fileRef = 30BE77B91B1B5FD500960748 /* InMemoryFs.h */; };
 		30BE77C41B1B608800960748 /* libBaseFileSystems.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30BE77AD1B1B5FB200960748 /* libBaseFileSystems.a */; };
-		30BE77C61B1B612E00960748 /* FileSystemTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30BE77C51B1B612E00960748 /* FileSystemTests.cpp */; };
+		30BE77C61B1B612E00960748 /* GeneralFsTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30BE77C51B1B612E00960748 /* GeneralFsTests.cpp */; };
 		30BE77C91B1B61AA00960748 /* libgtest_main.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30BE77C71B1B61AA00960748 /* libgtest_main.a */; };
 		30BE77CA1B1B61AA00960748 /* libgtest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30BE77C81B1B61AA00960748 /* libgtest.a */; };
 		30BE77CE1B1B66B500960748 /* InMemoryFolder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30BE77CC1B1B66B500960748 /* InMemoryFolder.cpp */; };
@@ -27,6 +27,8 @@
 		30BE77D31B1B6C9A00960748 /* InMemoryFsTreeNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 30BE77D11B1B6C9A00960748 /* InMemoryFsTreeNode.h */; };
 		30BE77D61B1B762400960748 /* libboost_filesystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30BE77D41B1B762400960748 /* libboost_filesystem.a */; };
 		30BE77D71B1B762400960748 /* libboost_system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30BE77D51B1B762400960748 /* libboost_system.a */; };
+		30FFFB5F1B5BE9BA006AD482 /* FileIoTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30FFFB5E1B5BE9BA006AD482 /* FileIoTests.cpp */; };
+		30FFFB611B5BEAD0006AD482 /* FolderTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30FFFB601B5BEAD0006AD482 /* FolderTests.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -88,7 +90,7 @@
 		30BE77AD1B1B5FB200960748 /* libBaseFileSystems.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libBaseFileSystems.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		30BE77B81B1B5FD500960748 /* InMemoryFs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InMemoryFs.cpp; sourceTree = "<group>"; };
 		30BE77B91B1B5FD500960748 /* InMemoryFs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InMemoryFs.h; sourceTree = "<group>"; };
-		30BE77C51B1B612E00960748 /* FileSystemTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileSystemTests.cpp; sourceTree = "<group>"; };
+		30BE77C51B1B612E00960748 /* GeneralFsTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeneralFsTests.cpp; sourceTree = "<group>"; };
 		30BE77C71B1B61AA00960748 /* libgtest_main.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgtest_main.a; path = "../../../Libs/gtest-1.7.0/libs/libgtest_main.a"; sourceTree = "<group>"; };
 		30BE77C81B1B61AA00960748 /* libgtest.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgtest.a; path = "../../../Libs/gtest-1.7.0/libs/libgtest.a"; sourceTree = "<group>"; };
 		30BE77CC1B1B66B500960748 /* InMemoryFolder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InMemoryFolder.cpp; sourceTree = "<group>"; };
@@ -98,6 +100,8 @@
 		30BE77D41B1B762400960748 /* libboost_filesystem.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_filesystem.a; path = ../../../Libs/boost_1_57_0/stage/static_lib/libboost_filesystem.a; sourceTree = "<group>"; };
 		30BE77D51B1B762400960748 /* libboost_system.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_system.a; path = ../../../Libs/boost_1_57_0/stage/static_lib/libboost_system.a; sourceTree = "<group>"; };
 		30E62EED1B51A05B0003FE54 /* TODO */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = TODO; path = Docs/TODO; sourceTree = "<group>"; };
+		30FFFB5E1B5BE9BA006AD482 /* FileIoTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileIoTests.cpp; sourceTree = "<group>"; };
+		30FFFB601B5BEAD0006AD482 /* FolderTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FolderTests.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -228,7 +232,9 @@
 		30BE77A01B1B5E2900960748 /* FileSystemAutoTests */ = {
 			isa = PBXGroup;
 			children = (
-				30BE77C51B1B612E00960748 /* FileSystemTests.cpp */,
+				30BE77C51B1B612E00960748 /* GeneralFsTests.cpp */,
+				30FFFB5E1B5BE9BA006AD482 /* FileIoTests.cpp */,
+				30FFFB601B5BEAD0006AD482 /* FolderTests.cpp */,
 			);
 			path = FileSystemAutoTests;
 			sourceTree = "<group>";
@@ -505,7 +511,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				30BE77C61B1B612E00960748 /* FileSystemTests.cpp in Sources */,
+				30BE77C61B1B612E00960748 /* GeneralFsTests.cpp in Sources */,
+				30FFFB611B5BEAD0006AD482 /* FolderTests.cpp in Sources */,
+				30FFFB5F1B5BE9BA006AD482 /* FileIoTests.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
