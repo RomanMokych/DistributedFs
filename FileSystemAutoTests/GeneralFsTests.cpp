@@ -1,39 +1,32 @@
 //
-//  GeneralFsTestss.cpp
+//  GeneralFsTests.cpp
 //  DistributedFs
 //
 //  Created by Роман on 5/31/15.
 //  Copyright (c) 2015 Роман. All rights reserved.
 //
 
+#include "InMemoryFs.h"
+#include "FsTestFixtures.h"
+
 #include <gtest/gtest.h>
 
 #include <vector>
 #include <memory>
 
-#include "InMemoryFs.h"
-
-std::unique_ptr<dfs::IFileSystem> createFileSystem()
+TYPED_TEST(GeneralFsTest, GetModificationTimeFailure)
 {
-    return std::unique_ptr<dfs::IFileSystem>(new dfs::InMemoryFs);
-}
-
-TEST(GeneralFsTests, GetModificationTimeFailure)
-{
-    auto fs = createFileSystem();
-
     std::time_t time;
-    dfs::FsError error = fs->getModificationTime("/test", &time);
+    
+    dfs::FsError error = this->getFs().getModificationTime("/test", &time);
     EXPECT_EQ(dfs::FsError::kFileNotFound, error);
 }
 
-TEST(GeneralFsTests, GetModificationTimeAfterCreation)
+TYPED_TEST(GeneralFsTest, GetModificationTimeAfterCreation)
 {
     std::time_t timeBeforeCreation = std::time(nullptr);
-    auto fs = createFileSystem();
-    
     std::time_t modificationTime;
-    dfs::FsError error = fs->getModificationTime("/", &modificationTime);
+    dfs::FsError error = this->getFs().getModificationTime("/", &modificationTime);
     ASSERT_EQ(error, dfs::FsError::kSuccess);
     
     EXPECT_LE(timeBeforeCreation, modificationTime);
@@ -41,77 +34,67 @@ TEST(GeneralFsTests, GetModificationTimeAfterCreation)
     
     timeBeforeCreation = std::time(nullptr);
     
-    fs->createFolder("/test", dfs::Permissions::kAll);
-    error = fs->getModificationTime("/test", &modificationTime);
+    this->getFs().createFolder("/test", dfs::Permissions::kAll);
+    error = this->getFs().getModificationTime("/test", &modificationTime);
     ASSERT_EQ(error, dfs::FsError::kSuccess);
     
     EXPECT_LE(timeBeforeCreation, modificationTime);
     EXPECT_GE(modificationTime, std::time(nullptr));
 }
 
-TEST(GeneralFsTests, GetFolderModificationTimeAfterNodeAdding)
+TYPED_TEST(GeneralFsTest, GetFolderModificationTimeAfterNodeAdding)
 {
-    auto fs = createFileSystem();
-    
     std::time_t timeBeforeModification = std::time(nullptr);
     
-    fs->createFolder("/test", dfs::Permissions::kAll);
+    this->getFs().createFolder("/test", dfs::Permissions::kAll);
     
     std::time_t modificationTime;
-    dfs::FsError error = fs->getModificationTime("/", &modificationTime);
+    dfs::FsError error = this->getFs().getModificationTime("/", &modificationTime);
     ASSERT_EQ(dfs::FsError::kSuccess, error);
     
     EXPECT_LE(timeBeforeModification, modificationTime);
     EXPECT_GE(modificationTime, std::time(nullptr));
 }
 
-TEST(GeneralFsTests, SetModificationTimeFailure)
+TYPED_TEST(GeneralFsTest, SetModificationTimeFailure)
 {
-    auto fs = createFileSystem();
-    
-    dfs::FsError error = fs->setModificationTime("/test", 1);
+    dfs::FsError error = this->getFs().setModificationTime("/test", 1);
     EXPECT_EQ(dfs::FsError::kFileNotFound, error);
 }
 
-TEST(GeneralFsTests, SetModificationTime)
+TYPED_TEST(GeneralFsTest, SetModificationTime)
 {
-    auto fs = createFileSystem();
-    
-    dfs::FsError error = fs->setModificationTime("/", 1);
+    dfs::FsError error = this->getFs().setModificationTime("/", 1);
     ASSERT_EQ(dfs::FsError::kSuccess, error);
     
     std::time_t modificationTime;
-    error = fs->getModificationTime("/", &modificationTime);
+    error = this->getFs().getModificationTime("/", &modificationTime);
     
     ASSERT_EQ(dfs::FsError::kSuccess, error);
     EXPECT_EQ(1, modificationTime);
     
-    fs->createFolder("/test", dfs::Permissions::kAll);
-    error = fs->setModificationTime("/test", 1);
+    this->getFs().createFolder("/test", dfs::Permissions::kAll);
+    error = this->getFs().setModificationTime("/test", 1);
     ASSERT_EQ(dfs::FsError::kSuccess, error);
     
-    error = fs->getModificationTime("/test", &modificationTime);
+    error = this->getFs().getModificationTime("/test", &modificationTime);
     ASSERT_EQ(dfs::FsError::kSuccess, error);
     
     EXPECT_EQ(1, modificationTime);
 }
 
-TEST(GeneralFsTests, GetCreationTimeFailure)
+TYPED_TEST(GeneralFsTest, GetCreationTimeFailure)
 {
-    auto fs = createFileSystem();
-    
     std::time_t time;
-    dfs::FsError error = fs->getCreationTime("/test", &time);
+    dfs::FsError error = this->getFs().getCreationTime("/test", &time);
     EXPECT_EQ(dfs::FsError::kFileNotFound, error);
 }
 
-TEST(GeneralFsTests, GetCreationTimeAfterCreation)
+TYPED_TEST(GeneralFsTest, GetCreationTimeAfterCreation)
 {
     std::time_t timeBeforeCreation = std::time(nullptr);
-    auto fs = createFileSystem();
-    
     std::time_t modificationTime;
-    dfs::FsError error = fs->getCreationTime("/", &modificationTime);
+    dfs::FsError error = this->getFs().getCreationTime("/", &modificationTime);
     ASSERT_EQ(error, dfs::FsError::kSuccess);
     
     EXPECT_LE(timeBeforeCreation, modificationTime);
@@ -119,145 +102,121 @@ TEST(GeneralFsTests, GetCreationTimeAfterCreation)
     
     timeBeforeCreation = std::time(nullptr);
     
-    fs->createFolder("/test", dfs::Permissions::kAll);
-    error = fs->getCreationTime("/test", &modificationTime);
+    this->getFs().createFolder("/test", dfs::Permissions::kAll);
+    error = this->getFs().getCreationTime("/test", &modificationTime);
     ASSERT_EQ(error, dfs::FsError::kSuccess);
     
     EXPECT_LE(timeBeforeCreation, modificationTime);
     EXPECT_GE(modificationTime, std::time(nullptr));
 }
 
-TEST(GeneralFsTests, SetCreationTimeFailure)
+TYPED_TEST(GeneralFsTest, SetCreationTimeFailure)
 {
-    auto fs = createFileSystem();
-    
-    dfs::FsError error = fs->setCreationTime("/test", 1);
+    dfs::FsError error = this->getFs().setCreationTime("/test", 1);
     EXPECT_EQ(dfs::FsError::kFileNotFound, error);
 }
 
-TEST(GeneralFsTests, SetCreationTime)
+TYPED_TEST(GeneralFsTest, SetCreationTime)
 {
-    auto fs = createFileSystem();
-    
-    dfs::FsError error = fs->setCreationTime("/", 1);
+    dfs::FsError error = this->getFs().setCreationTime("/", 1);
     ASSERT_EQ(dfs::FsError::kSuccess, error);
     
     std::time_t modificationTime;
-    error = fs->getCreationTime("/", &modificationTime);
+    error = this->getFs().getCreationTime("/", &modificationTime);
     
     ASSERT_EQ(dfs::FsError::kSuccess, error);
     EXPECT_EQ(1, modificationTime);
     
-    fs->createFolder("/test", dfs::Permissions::kAll);
-    error = fs->setCreationTime("/test", 1);
+    this->getFs().createFolder("/test", dfs::Permissions::kAll);
+    error = this->getFs().setCreationTime("/test", 1);
     ASSERT_EQ(dfs::FsError::kSuccess, error);
     
-    error = fs->getCreationTime("/test", &modificationTime);
+    error = this->getFs().getCreationTime("/test", &modificationTime);
     ASSERT_EQ(dfs::FsError::kSuccess, error);
     
     EXPECT_EQ(1, modificationTime);
 }
 
-TEST(GeneralFsTests, GetExtendedAttributeFail)
+TYPED_TEST(GeneralFsTest, GetExtendedAttributeFail)
 {
-    auto fs = createFileSystem();
-    
-    dfs::FsError error = fs->getExtendedAttribute("/test", "attribute", nullptr);
+    dfs::FsError error = this->getFs().getExtendedAttribute("/test", "attribute", nullptr);
     EXPECT_EQ(dfs::FsError::kFileNotFound, error);
 }
 
-TEST(GeneralFsTests, GetNotExistedExtendedAttribute)
+TYPED_TEST(GeneralFsTest, GetNotExistedExtendedAttribute)
 {
-    auto fs = createFileSystem();
-    
-    dfs::FsError error = fs->getExtendedAttribute("/", "attribute", nullptr);
+    dfs::FsError error = this->getFs().getExtendedAttribute("/", "attribute", nullptr);
     EXPECT_EQ(dfs::FsError::kAttributeNotFound, error);
 }
 
-TEST(GeneralFsTests, SetExtendedAttributeFail)
+TYPED_TEST(GeneralFsTest, SetExtendedAttributeFail)
 {
-    auto fs = createFileSystem();
-    
     std::string attribute = "attribute_value";
     std::vector<char> expectedAttribute(attribute.begin(), attribute.end());
-    dfs::FsError error = fs->setExtendedAttribute("/test", "attribute", expectedAttribute.data(), expectedAttribute.size());
+    dfs::FsError error = this->getFs().setExtendedAttribute("/test", "attribute", expectedAttribute.data(), expectedAttribute.size());
     EXPECT_EQ(dfs::FsError::kFileNotFound, error);
 }
 
-TEST(GeneralFsTests, SetExtendedAttribute)
+TYPED_TEST(GeneralFsTest, SetExtendedAttribute)
 {
-    auto fs = createFileSystem();
-    
     std::string attribute = "attribute_value";
     std::vector<char> expectedAttribute(attribute.begin(), attribute.end());
-    dfs::FsError error = fs->setExtendedAttribute("/", "attribute", expectedAttribute.data(), expectedAttribute.size());
+    dfs::FsError error = this->getFs().setExtendedAttribute("/", "attribute", expectedAttribute.data(), expectedAttribute.size());
     ASSERT_EQ(dfs::FsError::kSuccess, error);
     
     std::vector<char> actualAttribute;
-    error = fs->getExtendedAttribute("/", "attribute", &actualAttribute);
+    error = this->getFs().getExtendedAttribute("/", "attribute", &actualAttribute);
     ASSERT_EQ(dfs::FsError::kSuccess, error);
     
     EXPECT_EQ(expectedAttribute, actualAttribute);
 }
 
-TEST(GeneralFsTests, DeleteExtendedAttributeFail)
+TYPED_TEST(GeneralFsTest, DeleteExtendedAttributeFail)
 {
-    auto fs = createFileSystem();
-    
-    dfs::FsError error = fs->deleteExtendedAttribute("/test", "attribute");
+    dfs::FsError error = this->getFs().deleteExtendedAttribute("/test", "attribute");
     EXPECT_EQ(dfs::FsError::kFileNotFound, error);
 }
 
-TEST(GeneralFsTests, DeleteNotEsistedExtendedAttribute)
+TYPED_TEST(GeneralFsTest, DeleteNotEsistedExtendedAttribute)
 {
-    auto fs = createFileSystem();
-    
-    dfs::FsError error = fs->deleteExtendedAttribute("/", "attribute");
+    dfs::FsError error = this->getFs().deleteExtendedAttribute("/", "attribute");
     EXPECT_EQ(dfs::FsError::kSuccess, error);
 }
 
-TEST(GeneralFsTests, DeleteExtendedAttribute)
+TYPED_TEST(GeneralFsTest, DeleteExtendedAttribute)
 {
-    auto fs = createFileSystem();
-    
     std::string attribute = "attribute_value";
     std::vector<char> expectedAttribute(attribute.begin(), attribute.end());
-    dfs::FsError error = fs->setExtendedAttribute("/", "attribute", expectedAttribute.data(), expectedAttribute.size());
+    dfs::FsError error = this->getFs().setExtendedAttribute("/", "attribute", expectedAttribute.data(), expectedAttribute.size());
     ASSERT_EQ(dfs::FsError::kSuccess, error);
     
-    error = fs->deleteExtendedAttribute("/", "attribute");
+    error = this->getFs().deleteExtendedAttribute("/", "attribute");
     ASSERT_EQ(dfs::FsError::kSuccess, error);
     
     std::vector<char> actualAttribute;
-    error = fs->getExtendedAttribute("/", "attribute", &actualAttribute);
+    error = this->getFs().getExtendedAttribute("/", "attribute", &actualAttribute);
     EXPECT_EQ(dfs::FsError::kAttributeNotFound, error);
 }
 
-TEST(GeneralFsTests, GetAllExtendedAttributesFail)
+TYPED_TEST(GeneralFsTest, GetAllExtendedAttributesFail)
 {
-    auto fs = createFileSystem();
-    
-    dfs::FsError error = fs->getAllExtendedAttributes("/test", nullptr);
+    dfs::FsError error = this->getFs().getAllExtendedAttributes("/test", nullptr);
     EXPECT_EQ(dfs::FsError::kFileNotFound, error);
 }
 
-TEST(GeneralFsTests, GetAllExtendedAttributesOfEmptyRoot)
+TYPED_TEST(GeneralFsTest, GetAllExtendedAttributesOfEmptyRoot)
 {
-    auto fs = createFileSystem();
-    
     std::vector<std::string> attributeNames;
-    dfs::FsError error = fs->getAllExtendedAttributes("/", &attributeNames);
+    dfs::FsError error = this->getFs().getAllExtendedAttributes("/", &attributeNames);
     ASSERT_EQ(dfs::FsError::kSuccess, error);
 
     EXPECT_TRUE(attributeNames.empty());
 }
 
-TEST(GeneralFsTests, GetAllExtendedAttributes)
+TYPED_TEST(GeneralFsTest, GetAllExtendedAttributes)
 {
-    auto fs = createFileSystem();
-    
     std::vector<std::string> attributeNames;
-    dfs::FsError error = fs->getAllExtendedAttributes("/", &attributeNames);
+    dfs::FsError error = this->getFs().getAllExtendedAttributes("/", &attributeNames);
     ASSERT_EQ(dfs::FsError::kSuccess, error);
     
     EXPECT_TRUE(attributeNames.empty());
@@ -265,11 +224,11 @@ TEST(GeneralFsTests, GetAllExtendedAttributes)
     std::string attribute = "attribute_value";
     std::vector<char> expectedAttribute(attribute.begin(), attribute.end());
     
-    fs->setExtendedAttribute("/", "attribute1", expectedAttribute.data(), expectedAttribute.size());
-    fs->setExtendedAttribute("/", "attribute2", expectedAttribute.data(), expectedAttribute.size());
-    fs->setExtendedAttribute("/", "attribute3", expectedAttribute.data(), expectedAttribute.size());
+    this->getFs().setExtendedAttribute("/", "attribute1", expectedAttribute.data(), expectedAttribute.size());
+    this->getFs().setExtendedAttribute("/", "attribute2", expectedAttribute.data(), expectedAttribute.size());
+    this->getFs().setExtendedAttribute("/", "attribute3", expectedAttribute.data(), expectedAttribute.size());
     
-    error = fs->getAllExtendedAttributes("/", &attributeNames);
+    error = this->getFs().getAllExtendedAttributes("/", &attributeNames);
     ASSERT_EQ(dfs::FsError::kSuccess, error);
     
     ASSERT_EQ(3, attributeNames.size());
@@ -278,29 +237,25 @@ TEST(GeneralFsTests, GetAllExtendedAttributes)
     EXPECT_EQ("attribute3", attributeNames[2]);
 }
 
-TEST(GeneralFsTests, CreateHardLinkFail)
+TYPED_TEST(GeneralFsTest, CreateHardLinkFail)
 {
-    auto fs = createFileSystem();
-    
-    dfs::FsError error = fs->createHardLink("/test", "/test1");
+    dfs::FsError error = this->getFs().createHardLink("/test", "/test1");
     EXPECT_EQ(dfs::FsError::kFileNotFound, error);
     
-    error = fs->createHardLink("/test/test", "/");
+    error = this->getFs().createHardLink("/test/test", "/");
     EXPECT_EQ(dfs::FsError::kFileNotFound, error);
     
-    error = fs->createHardLink("/", "/");
+    error = this->getFs().createHardLink("/", "/");
     EXPECT_EQ(dfs::FsError::kFileExists, error);
 }
 
-TEST(GeneralFsTests, CreateHardLinkForRoot)
+TYPED_TEST(GeneralFsTest, CreateHardLinkForRoot)
 {
-    auto fs = createFileSystem();
-    
-    dfs::FsError error = fs->createHardLink("/test", "/");
+    dfs::FsError error = this->getFs().createHardLink("/test", "/");
     EXPECT_EQ(dfs::FsError::kSuccess, error);
     
     dfs::IFolderUPtr folder;
-    fs->openFolder("/", folder);
+    this->getFs().openFolder("/", folder);
     
     std::vector<dfs::FileInfo> filesInfos;
     folder->readNextFileInfos(&filesInfos);
@@ -312,33 +267,31 @@ TEST(GeneralFsTests, CreateHardLinkForRoot)
     
     folder.reset();
 
-    fs->openFolder("/test", folder);
+    this->getFs().openFolder("/test", folder);
     folder->readNextFileInfos(&filesInfos);
     ASSERT_EQ(1, filesInfos.size());
     EXPECT_EQ("test", filesInfos[0].name);
     EXPECT_EQ(dfs::FileType::kFolder, filesInfos[0].type);
 }
 
-TEST(GeneralFsTests, CreateHardLinkForFolder)
+TYPED_TEST(GeneralFsTest, CreateHardLinkForFolder)
 {
-    auto fs = createFileSystem();
+    this->getFs().createFolder("/test",        dfs::Permissions::kAll);
+    this->getFs().createFolder("/test/test",   dfs::Permissions::kAll); 
+    this->getFs().createFolder("/test/test/a", dfs::Permissions::kAll);
+    this->getFs().createFolder("/test/test/b", dfs::Permissions::kAll);
     
-    fs->createFolder("/test",        dfs::Permissions::kAll);
-    fs->createFolder("/test/test",   dfs::Permissions::kAll); 
-    fs->createFolder("/test/test/a", dfs::Permissions::kAll);
-    fs->createFolder("/test/test/b", dfs::Permissions::kAll);
-    
-    dfs::FsError error = fs->createHardLink("/test/test_link", "/test/test");
+    dfs::FsError error = this->getFs().createHardLink("/test/test_link", "/test/test");
     EXPECT_EQ(dfs::FsError::kSuccess, error);
     
     dfs::IFolderUPtr originalFolder;
-    fs->openFolder("/test/test", originalFolder);
+    this->getFs().openFolder("/test/test", originalFolder);
 
     std::vector<dfs::FileInfo> originalFilesInfos;
     originalFolder->readNextFileInfos(&originalFilesInfos);
     
     dfs::IFolderUPtr linkedFolder;
-    fs->openFolder("/test/test_link", linkedFolder);
+    this->getFs().openFolder("/test/test_link", linkedFolder);
 
     std::vector<dfs::FileInfo> linkedFolderFilesInfos;
     linkedFolder->readNextFileInfos(&linkedFolderFilesInfos);

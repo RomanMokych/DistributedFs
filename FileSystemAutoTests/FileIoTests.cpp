@@ -10,51 +10,42 @@
 
 #include "InMemoryFs.h"
 
-static std::unique_ptr<dfs::IFileSystem> createFileSystem()
-{
-    return std::unique_ptr<dfs::IFileSystem>(new dfs::InMemoryFs);
-}
+#include "FsTestFixtures.h"
 
-TEST(FileIoTests, OpenFileFail)
+TYPED_TEST(FileIoTest, OpenFileFail)
 {
-    auto fs = createFileSystem();
-    
     std::unique_ptr<dfs::IFile> file;
-    dfs::FsError error = fs->openFile("/", dfs::FileOpenMode::kRead, file);
+    dfs::FsError error = this->getFs().openFile("/", dfs::FileOpenMode::kRead, file);
     EXPECT_EQ(dfs::FsError::kFileHasWrongType, error);
     
-    error = fs->openFile("/test", dfs::FileOpenMode::kRead, file);
+    error = this->getFs().openFile("/test", dfs::FileOpenMode::kRead, file);
     EXPECT_EQ(dfs::FsError::kFileNotFound, error);
 }
 
-TEST(FileIoTests, CreateFile)
+TYPED_TEST(FileIoTest, CreateFile)
 {
-    auto fs = createFileSystem();
-    
     std::unique_ptr<dfs::IFile> file;
-    dfs::FsError error = fs->openFile("/test", dfs::FileOpenMode::kWrite | dfs::FileOpenMode::kCreate, file);
+    dfs::FsError error = this->getFs().openFile("/test", dfs::FileOpenMode::kWrite | dfs::FileOpenMode::kCreate, file);
     ASSERT_EQ(dfs::FsError::kSuccess, error);
     EXPECT_NE(nullptr, file.get());
     
-    fs->createFolder("/test1", dfs::Permissions::kAll);
+    this->getFs().createFolder("/test1", dfs::Permissions::kAll);
     
     file.reset();
-    error = fs->openFile("/test1/test", dfs::FileOpenMode::kWrite | dfs::FileOpenMode::kCreate, file);
+    error = this->getFs().openFile("/test1/test", dfs::FileOpenMode::kWrite | dfs::FileOpenMode::kCreate, file);
     ASSERT_EQ(dfs::FsError::kSuccess, error);
     EXPECT_NE(nullptr, file.get());
 }
 
-TEST(FileIoTests, ReadEmptyFileTest)
+TYPED_TEST(FileIoTest, ReadEmptyFileTest)
 {
-    auto fs = createFileSystem();
-    
     std::unique_ptr<dfs::IFile> file;
-    dfs::FsError error = fs->openFile("/test", dfs::FileOpenMode::kWrite | dfs::FileOpenMode::kCreate, file);
+    dfs::FsError error = this->getFs().openFile("/test", dfs::FileOpenMode::kWrite | dfs::FileOpenMode::kCreate, file);
     ASSERT_EQ(dfs::FsError::kSuccess, error);
     
     file.reset();
     
-    error = fs->openFile("/test", dfs::FileOpenMode::kRead, file);
+    error = this->getFs().openFile("/test", dfs::FileOpenMode::kRead, file);
     ASSERT_EQ(dfs::FsError::kSuccess, error);
     
     char dummy[10] = {};
@@ -62,12 +53,10 @@ TEST(FileIoTests, ReadEmptyFileTest)
     EXPECT_EQ(0, read);
 }
 
-TEST(FileIoTests, ReadWriteFileTest)
+TYPED_TEST(FileIoTest, ReadWriteFileTest)
 {
-    auto fs = createFileSystem();
-    
     std::unique_ptr<dfs::IFile> file;
-    dfs::FsError error = fs->openFile("/test", dfs::FileOpenMode::kWrite | dfs::FileOpenMode::kCreate, file);
+    dfs::FsError error = this->getFs().openFile("/test", dfs::FileOpenMode::kWrite | dfs::FileOpenMode::kCreate, file);
     ASSERT_EQ(dfs::FsError::kSuccess, error);
     
     char testString1[] = "test string";
@@ -76,7 +65,7 @@ TEST(FileIoTests, ReadWriteFileTest)
     
     file.reset();
     
-    error = fs->openFile("/test", dfs::FileOpenMode::kRead, file);
+    error = this->getFs().openFile("/test", dfs::FileOpenMode::kRead, file);
     ASSERT_EQ(dfs::FsError::kSuccess, error);
     
     char testString2[100] = {};
@@ -86,12 +75,10 @@ TEST(FileIoTests, ReadWriteFileTest)
     EXPECT_STREQ("test string", testString2);
 }
 
-TEST(FileIoTests, ReadNotAllBytes)
+TYPED_TEST(FileIoTest, ReadNotAllBytes)
 {
-    auto fs = createFileSystem();
-    
     std::unique_ptr<dfs::IFile> file;
-    dfs::FsError error = fs->openFile("/test", dfs::FileOpenMode::kWrite | dfs::FileOpenMode::kCreate, file);
+    dfs::FsError error = this->getFs().openFile("/test", dfs::FileOpenMode::kWrite | dfs::FileOpenMode::kCreate, file);
     ASSERT_EQ(dfs::FsError::kSuccess, error);
     
     char originalBuffer[] = "1234567890";
@@ -99,7 +86,7 @@ TEST(FileIoTests, ReadNotAllBytes)
     
     file.reset();
     
-    error = fs->openFile("/test", dfs::FileOpenMode::kRead, file);
+    error = this->getFs().openFile("/test", dfs::FileOpenMode::kRead, file);
     ASSERT_EQ(dfs::FsError::kSuccess, error);
     
     char resultBuffer[20] = {0};
@@ -109,12 +96,10 @@ TEST(FileIoTests, ReadNotAllBytes)
     EXPECT_STREQ("1234567890", resultBuffer);
 }
 
-TEST(FileIoTests, ReadChunksFileTest)
+TYPED_TEST(FileIoTest, ReadChunksFileTest)
 {
-    auto fs = createFileSystem();
-    
     std::unique_ptr<dfs::IFile> file;
-    dfs::FsError error = fs->openFile("/test", dfs::FileOpenMode::kWrite | dfs::FileOpenMode::kCreate, file);
+    dfs::FsError error = this->getFs().openFile("/test", dfs::FileOpenMode::kWrite | dfs::FileOpenMode::kCreate, file);
     ASSERT_EQ(dfs::FsError::kSuccess, error);
     
     char testString1[] = "123456789";
@@ -123,7 +108,7 @@ TEST(FileIoTests, ReadChunksFileTest)
     
     file.reset();
     
-    error = fs->openFile("/test", dfs::FileOpenMode::kRead, file);
+    error = this->getFs().openFile("/test", dfs::FileOpenMode::kRead, file);
     ASSERT_EQ(dfs::FsError::kSuccess, error);
     
     char testString2[2] = {};
@@ -152,12 +137,10 @@ TEST(FileIoTests, ReadChunksFileTest)
     EXPECT_EQ('9', testString2[0]);
 }
 
-TEST(FileIoTests, WriteChunksFileTest)
+TYPED_TEST(FileIoTest, WriteChunksFileTest)
 {
-    auto fs = createFileSystem();
-    
     std::unique_ptr<dfs::IFile> file;
-    dfs::FsError error = fs->openFile("/test", dfs::FileOpenMode::kWrite | dfs::FileOpenMode::kCreate, file);
+    dfs::FsError error = this->getFs().openFile("/test", dfs::FileOpenMode::kWrite | dfs::FileOpenMode::kCreate, file);
     ASSERT_EQ(dfs::FsError::kSuccess, error);
     
     char testString1[] = "123456789";
@@ -169,7 +152,7 @@ TEST(FileIoTests, WriteChunksFileTest)
     
     file.reset();
     
-    error = fs->openFile("/test", dfs::FileOpenMode::kRead, file);
+    error = this->getFs().openFile("/test", dfs::FileOpenMode::kRead, file);
     ASSERT_EQ(dfs::FsError::kSuccess, error);
     
     char testString2[10] = {};
@@ -177,19 +160,17 @@ TEST(FileIoTests, WriteChunksFileTest)
     EXPECT_STREQ("123456789", testString2);
 }
 
-TEST(FileIoTests, ReadSeekFromBeginTest)
+TYPED_TEST(FileIoTest, ReadSeekFromBeginTest)
 {
-    auto fs = createFileSystem();
-    
     std::unique_ptr<dfs::IFile> file;
-    dfs::FsError error = fs->openFile("/test", dfs::FileOpenMode::kWrite | dfs::FileOpenMode::kCreate, file);
+    dfs::FsError error = this->getFs().openFile("/test", dfs::FileOpenMode::kWrite | dfs::FileOpenMode::kCreate, file);
     ASSERT_EQ(dfs::FsError::kSuccess, error);
     
     char originalBuffer[] = "1234567890";
     file->write(originalBuffer, 10);
     file.reset();
     
-    error = fs->openFile("/test", dfs::FileOpenMode::kRead, file);
+    error = this->getFs().openFile("/test", dfs::FileOpenMode::kRead, file);
     ASSERT_EQ(dfs::FsError::kSuccess, error);
     
     char resultBuffer[10] = {0};
@@ -207,19 +188,17 @@ TEST(FileIoTests, ReadSeekFromBeginTest)
     EXPECT_EQ(0, readBytes);
 }
 
-TEST(FileIoTests, ReadSeekFromEndTest)
+TYPED_TEST(FileIoTest, ReadSeekFromEndTest)
 {
-    auto fs = createFileSystem();
-    
     std::unique_ptr<dfs::IFile> file;
-    dfs::FsError error = fs->openFile("/test", dfs::FileOpenMode::kWrite | dfs::FileOpenMode::kCreate, file);
+    dfs::FsError error = this->getFs().openFile("/test", dfs::FileOpenMode::kWrite | dfs::FileOpenMode::kCreate, file);
     ASSERT_EQ(dfs::FsError::kSuccess, error);
     
     char originalBuffer[] = "1234567890";
     file->write(originalBuffer, 10);
     file.reset();
     
-    error = fs->openFile("/test", dfs::FileOpenMode::kRead, file);
+    error = this->getFs().openFile("/test", dfs::FileOpenMode::kRead, file);
     ASSERT_EQ(dfs::FsError::kSuccess, error);
     
     file->seek(0, dfs::SeekPosition::kEnd);
@@ -241,19 +220,17 @@ TEST(FileIoTests, ReadSeekFromEndTest)
     EXPECT_STREQ("12", resultBuffer);
 }
 
-TEST(FileIoTests, ReadSeekFromCurrentTest)
+TYPED_TEST(FileIoTest, ReadSeekFromCurrentTest)
 {
-    auto fs = createFileSystem();
-    
     std::unique_ptr<dfs::IFile> file;
-    dfs::FsError error = fs->openFile("/test", dfs::FileOpenMode::kWrite | dfs::FileOpenMode::kCreate, file);
+    dfs::FsError error = this->getFs().openFile("/test", dfs::FileOpenMode::kWrite | dfs::FileOpenMode::kCreate, file);
     ASSERT_EQ(dfs::FsError::kSuccess, error);
     
     char originalBuffer[] = "1234567890";
     file->write(originalBuffer, 10);
     file.reset();
     
-    error = fs->openFile("/test", dfs::FileOpenMode::kRead, file);
+    error = this->getFs().openFile("/test", dfs::FileOpenMode::kRead, file);
     ASSERT_EQ(dfs::FsError::kSuccess, error);
     
     char resultBuffer[10] = {};

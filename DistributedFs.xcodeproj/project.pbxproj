@@ -102,6 +102,7 @@
 		30E62EED1B51A05B0003FE54 /* TODO */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = TODO; path = Docs/TODO; sourceTree = "<group>"; };
 		30FFFB5E1B5BE9BA006AD482 /* FileIoTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileIoTests.cpp; sourceTree = "<group>"; };
 		30FFFB601B5BEAD0006AD482 /* FolderTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FolderTests.cpp; sourceTree = "<group>"; };
+		30FFFB631B5BED54006AD482 /* FsTestFixtures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FsTestFixtures.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -235,6 +236,7 @@
 				30BE77C51B1B612E00960748 /* GeneralFsTests.cpp */,
 				30FFFB5E1B5BE9BA006AD482 /* FileIoTests.cpp */,
 				30FFFB601B5BEAD0006AD482 /* FolderTests.cpp */,
+				30FFFB631B5BED54006AD482 /* FsTestFixtures.h */,
 			);
 			path = FileSystemAutoTests;
 			sourceTree = "<group>";
