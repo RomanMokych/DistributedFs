@@ -509,6 +509,29 @@ TEST(FileSystemTest, ReadWriteFileTest)
     EXPECT_STREQ("test string", testString2);
 }
 
+TEST(FileSystemTest, ReadNotAllBytes)
+{
+    auto fs = createFileSystem();
+    
+    std::unique_ptr<dfs::IFile> file;
+    dfs::FsError error = fs->openFile("/test", dfs::FileOpenMode::kWrite | dfs::FileOpenMode::kCreate, file);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    char originalBuffer[] = "1234567890";
+    file->write(originalBuffer, 10);
+    
+    file.reset();
+    
+    error = fs->openFile("/test", dfs::FileOpenMode::kRead, file);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    char resultBuffer[20] = {0};
+    size_t readBytes = file->read(resultBuffer, 20);
+
+    EXPECT_EQ(10, readBytes);
+    EXPECT_STREQ("1234567890", resultBuffer);
+}
+
 TEST(FileSystemTest, ReadChunksFileTest)
 {
     auto fs = createFileSystem();
@@ -577,3 +600,92 @@ TEST(FileSystemTest, WriteChunksFileTest)
     EXPECT_STREQ("123456789", testString2);
 }
 
+TEST(FileSystemTest, ReadSeekFromBeginTest)
+{
+    auto fs = createFileSystem();
+    
+    std::unique_ptr<dfs::IFile> file;
+    dfs::FsError error = fs->openFile("/test", dfs::FileOpenMode::kWrite | dfs::FileOpenMode::kCreate, file);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    char originalBuffer[] = "1234567890";
+    file->write(originalBuffer, 10);
+    file.reset();
+    
+    error = fs->openFile("/test", dfs::FileOpenMode::kRead, file);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    char resultBuffer[10] = {0};
+    file->seek(0, dfs::SeekPosition::kBegin);
+    file->read(resultBuffer, 2);
+    EXPECT_STREQ("12", resultBuffer);
+    
+    file->seek(4, dfs::SeekPosition::kBegin);
+    file->read(resultBuffer, 2);
+    EXPECT_STREQ("56", resultBuffer);
+    
+    std::strcpy(resultBuffer, "");
+    file->seek(12, dfs::SeekPosition::kBegin);
+    size_t readBytes = file->read(resultBuffer, 2);
+    EXPECT_EQ(0, readBytes);
+}
+
+TEST(FileSystemTest, ReadSeekFromEndTest)
+{
+    auto fs = createFileSystem();
+    
+    std::unique_ptr<dfs::IFile> file;
+    dfs::FsError error = fs->openFile("/test", dfs::FileOpenMode::kWrite | dfs::FileOpenMode::kCreate, file);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    char originalBuffer[] = "1234567890";
+    file->write(originalBuffer, 10);
+    file.reset();
+    
+    error = fs->openFile("/test", dfs::FileOpenMode::kRead, file);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    file->seek(0, dfs::SeekPosition::kEnd);
+    size_t readBytes = file->read(nullptr, 2);
+    EXPECT_EQ(0, readBytes);
+    
+    char resultBuffer[10] = {0};
+    
+    file->seek(2, dfs::SeekPosition::kEnd);
+    file->read(resultBuffer, 2);
+    EXPECT_STREQ("90", resultBuffer);
+    
+    file->seek(6, dfs::SeekPosition::kEnd);
+    file->read(resultBuffer, 2);
+    EXPECT_STREQ("56", resultBuffer);
+    
+    file->seek(20, dfs::SeekPosition::kEnd);
+    file->read(resultBuffer, 2);
+    EXPECT_STREQ("12", resultBuffer);
+}
+
+TEST(FileSystemTest, ReadSeekFromCurrentTest)
+{
+    auto fs = createFileSystem();
+    
+    std::unique_ptr<dfs::IFile> file;
+    dfs::FsError error = fs->openFile("/test", dfs::FileOpenMode::kWrite | dfs::FileOpenMode::kCreate, file);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    char originalBuffer[] = "1234567890";
+    file->write(originalBuffer, 10);
+    file.reset();
+    
+    error = fs->openFile("/test", dfs::FileOpenMode::kRead, file);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    char resultBuffer[10] = {};
+    file->read(resultBuffer, 2);
+    file->seek(2, dfs::SeekPosition::kCurrent);
+    file->read(resultBuffer, 2);
+    EXPECT_STREQ("56", resultBuffer);
+    
+    file->seek(20, dfs::SeekPosition::kCurrent);
+    size_t readBytes = file->read(resultBuffer, 2);
+    EXPECT_EQ(0, readBytes);
+}
