@@ -159,7 +159,7 @@
 				30BE77691B1B4EE900960748 /* FsBrowser */,
 				30BE777D1B1B4EEA00960748 /* FsBrowserTests */,
 				30BE77A01B1B5E2900960748 /* FileSystemAutoTests */,
-				30BE77AE1B1B5FB200960748 /* BaseFileSystems */,
+				30BE77AE1B1B5FB200960748 /* InMemoryFs */,
 				30BE775A1B1B14F100960748 /* Products */,
 				30BE77CB1B1B61BA00960748 /* 3rdParty */,
 			);
@@ -233,7 +233,7 @@
 			path = FileSystemAutoTests;
 			sourceTree = "<group>";
 		};
-		30BE77AE1B1B5FB200960748 /* BaseFileSystems */ = {
+		30BE77AE1B1B5FB200960748 /* InMemoryFs */ = {
 			isa = PBXGroup;
 			children = (
 				30BE77B91B1B5FD500960748 /* InMemoryFs.h */,
@@ -245,6 +245,7 @@
 				30BE77D11B1B6C9A00960748 /* InMemoryFsTreeNode.h */,
 				30BE77D01B1B6C9A00960748 /* InMemoryFsTreeNode.cpp */,
 			);
+			name = InMemoryFs;
 			path = BaseFileSystems;
 			sourceTree = "<group>";
 		};

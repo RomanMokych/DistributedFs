@@ -689,3 +689,78 @@ TEST(FileSystemTest, ReadSeekFromCurrentTest)
     size_t readBytes = file->read(resultBuffer, 2);
     EXPECT_EQ(0, readBytes);
 }
+
+TEST(FileSystemTest, CreateHardLinkFail)
+{
+    auto fs = createFileSystem();
+    
+    dfs::FsError error = fs->createHardLink("/test", "/test1");
+    EXPECT_EQ(dfs::FsError::kFileNotFound, error);
+    
+    error = fs->createHardLink("/test/test", "/");
+    EXPECT_EQ(dfs::FsError::kFileNotFound, error);
+    
+    error = fs->createHardLink("/", "/");
+    EXPECT_EQ(dfs::FsError::kFileExists, error);
+}
+
+TEST(FileSystemTest, CreateHardLinkForRoot)
+{
+    auto fs = createFileSystem();
+    
+    dfs::FsError error = fs->createHardLink("/test", "/");
+    EXPECT_EQ(dfs::FsError::kSuccess, error);
+    
+    dfs::IFolderUPtr folder;
+    fs->openFolder("/", folder);
+    
+    std::vector<dfs::FileInfo> filesInfos;
+    folder->readNextFileInfos(&filesInfos);
+    
+    ASSERT_EQ(1, filesInfos.size());
+    EXPECT_EQ("test", filesInfos[0].name);
+    EXPECT_EQ(dfs::FileType::kFolder, filesInfos[0].type);
+
+    
+    folder.reset();
+
+    fs->openFolder("/test", folder);
+    folder->readNextFileInfos(&filesInfos);
+    ASSERT_EQ(1, filesInfos.size());
+    EXPECT_EQ("test", filesInfos[0].name);
+    EXPECT_EQ(dfs::FileType::kFolder, filesInfos[0].type);
+}
+
+TEST(FileSystemTest, CreateHardLinkForFolder)
+{
+    auto fs = createFileSystem();
+    
+    fs->createFolder("/test",        dfs::Permissions::kAll);
+    fs->createFolder("/test/test",   dfs::Permissions::kAll); 
+    fs->createFolder("/test/test/a", dfs::Permissions::kAll);
+    fs->createFolder("/test/test/b", dfs::Permissions::kAll);
+    
+    dfs::FsError error = fs->createHardLink("/test/test_link", "/test/test");
+    EXPECT_EQ(dfs::FsError::kSuccess, error);
+    
+    dfs::IFolderUPtr originalFolder;
+    fs->openFolder("/test/test", originalFolder);
+
+    std::vector<dfs::FileInfo> originalFilesInfos;
+    originalFolder->readNextFileInfos(&originalFilesInfos);
+    
+    dfs::IFolderUPtr linkedFolder;
+    fs->openFolder("/test/test_link", linkedFolder);
+
+    std::vector<dfs::FileInfo> linkedFolderFilesInfos;
+    linkedFolder->readNextFileInfos(&linkedFolderFilesInfos);
+    
+    ASSERT_EQ(2, linkedFolderFilesInfos.size());
+    ASSERT_EQ(2, originalFilesInfos.size());
+    
+    for (int i = 0; i < 2; ++i)
+    {
+        EXPECT_EQ(linkedFolderFilesInfos[i].name, originalFilesInfos[i].name);
+        EXPECT_EQ(linkedFolderFilesInfos[i].type, originalFilesInfos[i].type);
+    }
+}

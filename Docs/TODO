@@ -1,7 +1,6 @@
 
 
 - implement file removing
-- implement file seek
 - implement file modification time
 - implement permissions change
 - implement symlinks

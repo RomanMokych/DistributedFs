@@ -53,7 +53,10 @@ namespace dfs
         };
         
         FsError getNode(const Path& filePath, InMemoryFsTreeNode* root, InMemoryFsTreeNode** resultNode);
+        FsError getNodeSPtr(const Path& filePath, std::shared_ptr<InMemoryFsTreeNode> root, std::shared_ptr<InMemoryFsTreeNode>& resultNode);
+        
         FsError addChildNode(InMemoryFsTreeNode* parentNode, const Path& name, FileType type, Permissions permissions);
+        FsError addChildLink(InMemoryFsTreeNode* parentNode, const InMemoryFsLink& childLink);
         FsError removeChildNode(InMemoryFsTreeNode* parentNode, const Path& name);
         
         FsError createFile(const Path& filePath, InMemoryFsTreeNode* root, InMemoryFsTreeNode** resultNode);

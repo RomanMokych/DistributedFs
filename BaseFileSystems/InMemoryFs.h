@@ -54,6 +54,6 @@ namespace dfs
         virtual FsError getAllExtendedAttributes(const Path& path, std::vector<std::string>* attributesNames);
                 
     private:
-        std::unique_ptr<details::InMemoryFsTreeNode> m_superRoot;
+        std::shared_ptr<details::InMemoryFsTreeNode> m_superRoot;
     };
 }

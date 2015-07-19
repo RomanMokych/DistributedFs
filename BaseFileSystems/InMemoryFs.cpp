@@ -85,7 +85,24 @@ dfs::FsError dfs::InMemoryFs::readSymLink(const Path& linkPath, Path* symLinkVal
 { return FsError::kNotImplemented; }
 
 dfs::FsError dfs::InMemoryFs::createHardLink(const Path& linkPath, const Path& targetPath)
-{ return FsError::kNotImplemented; }
+{
+    std::shared_ptr<details::InMemoryFsTreeNode> targetNode;
+    FsError error = details::getNodeSPtr(targetPath, m_superRoot, targetNode);
+    if (error != FsError::kSuccess)
+    {
+        return error;
+    }
+    
+    std::shared_ptr<details::InMemoryFsTreeNode> parentNode;
+    error = details::getNodeSPtr(linkPath.parent_path(), m_superRoot, parentNode);
+    if (error != FsError::kSuccess)
+    {
+        return error;
+    }
+    
+    details::InMemoryFsLink newLink{linkPath.leaf(), targetNode};
+    return details::addChildLink(parentNode.get(), newLink);
+}
 
 //general
 dfs::FsError dfs::InMemoryFs::rename(const Path& oldPath, const Path& newPath)
