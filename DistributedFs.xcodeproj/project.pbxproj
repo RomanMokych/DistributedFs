@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		300373CF1B56F8DE0032931A /* InMemoryFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 300373CD1B56F8DE0032931A /* InMemoryFile.cpp */; };
 		300373D01B56F8DE0032931A /* InMemoryFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 300373CE1B56F8DE0032931A /* InMemoryFile.h */; };
-		30BE775D1B1B14F100960748 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30BE775C1B1B14F100960748 /* main.cpp */; };
 		30BE776E1B1B4EE900960748 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 30BE776D1B1B4EE900960748 /* AppDelegate.m */; };
 		30BE77701B1B4EE900960748 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 30BE776F1B1B4EE900960748 /* main.m */; };
 		30BE77721B1B4EE900960748 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 30BE77711B1B4EE900960748 /* Images.xcassets */; };
@@ -17,7 +16,7 @@
 		30BE77811B1B4EEA00960748 /* FsBrowserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 30BE77801B1B4EEA00960748 /* FsBrowserTests.m */; };
 		30BE77BA1B1B5FD500960748 /* InMemoryFs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30BE77B81B1B5FD500960748 /* InMemoryFs.cpp */; };
 		30BE77BB1B1B5FD500960748 /* InMemoryFs.h in Headers */ = {isa = PBXBuildFile; fileRef = 30BE77B91B1B5FD500960748 /* InMemoryFs.h */; };
-		30BE77C41B1B608800960748 /* libBaseFileSystems.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30BE77AD1B1B5FB200960748 /* libBaseFileSystems.a */; };
+		30BE77C41B1B608800960748 /* libInMemoryFs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30BE77AD1B1B5FB200960748 /* libInMemoryFs.a */; };
 		30BE77C61B1B612E00960748 /* GeneralFsTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30BE77C51B1B612E00960748 /* GeneralFsTests.cpp */; };
 		30BE77C91B1B61AA00960748 /* libgtest_main.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30BE77C71B1B61AA00960748 /* libgtest_main.a */; };
 		30BE77CA1B1B61AA00960748 /* libgtest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30BE77C81B1B61AA00960748 /* libgtest.a */; };
@@ -38,13 +37,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 30BE77671B1B4EE900960748;
 			remoteInfo = FsBrowser;
-		};
-		30BE77C21B1B608400960748 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 30BE77511B1B14F000960748 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 30BE77AC1B1B5FB200960748;
-			remoteInfo = BaseFileSystems;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -73,7 +65,6 @@
 		300373CD1B56F8DE0032931A /* InMemoryFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InMemoryFile.cpp; sourceTree = "<group>"; };
 		300373CE1B56F8DE0032931A /* InMemoryFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InMemoryFile.h; sourceTree = "<group>"; };
 		30BE77591B1B14F100960748 /* DistributedFs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DistributedFs; sourceTree = BUILT_PRODUCTS_DIR; };
-		30BE775C1B1B14F100960748 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		30BE77631B1B1FDC00960748 /* IFileSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IFileSystem.h; sourceTree = "<group>"; };
 		30BE77681B1B4EE900960748 /* FsBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FsBrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		30BE776B1B1B4EE900960748 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -87,7 +78,7 @@
 		30BE77801B1B4EEA00960748 /* FsBrowserTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FsBrowserTests.m; sourceTree = "<group>"; };
 		30BE778C1B1B5CF000960748 /* libbaseFileSystems.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libbaseFileSystems.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		30BE779F1B1B5E2900960748 /* FileSystemAutoTests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = FileSystemAutoTests; sourceTree = BUILT_PRODUCTS_DIR; };
-		30BE77AD1B1B5FB200960748 /* libBaseFileSystems.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libBaseFileSystems.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		30BE77AD1B1B5FB200960748 /* libInMemoryFs.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libInMemoryFs.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		30BE77B81B1B5FD500960748 /* InMemoryFs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InMemoryFs.cpp; sourceTree = "<group>"; };
 		30BE77B91B1B5FD500960748 /* InMemoryFs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InMemoryFs.h; sourceTree = "<group>"; };
 		30BE77C51B1B612E00960748 /* GeneralFsTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeneralFsTests.cpp; sourceTree = "<group>"; };
@@ -140,7 +131,7 @@
 			files = (
 				30BE77D61B1B762400960748 /* libboost_filesystem.a in Frameworks */,
 				30BE77D71B1B762400960748 /* libboost_system.a in Frameworks */,
-				30BE77C41B1B608800960748 /* libBaseFileSystems.a in Frameworks */,
+				30BE77C41B1B608800960748 /* libInMemoryFs.a in Frameworks */,
 				30BE77C91B1B61AA00960748 /* libgtest_main.a in Frameworks */,
 				30BE77CA1B1B61AA00960748 /* libgtest.a in Frameworks */,
 			);
@@ -178,7 +169,7 @@
 				30BE777A1B1B4EE900960748 /* FsBrowserTests.xctest */,
 				30BE778C1B1B5CF000960748 /* libbaseFileSystems.a */,
 				30BE779F1B1B5E2900960748 /* FileSystemAutoTests */,
-				30BE77AD1B1B5FB200960748 /* libBaseFileSystems.a */,
+				30BE77AD1B1B5FB200960748 /* libInMemoryFs.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -186,7 +177,6 @@
 		30BE775B1B1B14F100960748 /* DistributedFs */ = {
 			isa = PBXGroup;
 			children = (
-				30BE775C1B1B14F100960748 /* main.cpp */,
 				30BE77631B1B1FDC00960748 /* IFileSystem.h */,
 			);
 			path = DistributedFs;
@@ -254,7 +244,7 @@
 				30BE77D01B1B6C9A00960748 /* InMemoryFsTreeNode.cpp */,
 			);
 			name = InMemoryFs;
-			path = BaseFileSystems;
+			path = InMemoryFs;
 			sourceTree = "<group>";
 		};
 		30BE77CB1B1B61BA00960748 /* 3rdParty */ = {
@@ -380,16 +370,15 @@
 			buildRules = (
 			);
 			dependencies = (
-				30BE77C31B1B608400960748 /* PBXTargetDependency */,
 			);
 			name = FileSystemAutoTests;
 			productName = FileSystemAutoTests;
 			productReference = 30BE779F1B1B5E2900960748 /* FileSystemAutoTests */;
 			productType = "com.apple.product-type.tool";
 		};
-		30BE77AC1B1B5FB200960748 /* BaseFileSystems */ = {
+		30BE77AC1B1B5FB200960748 /* InMemoryFs */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 30BE77B51B1B5FB200960748 /* Build configuration list for PBXNativeTarget "BaseFileSystems" */;
+			buildConfigurationList = 30BE77B51B1B5FB200960748 /* Build configuration list for PBXNativeTarget "InMemoryFs" */;
 			buildPhases = (
 				30BE77A91B1B5FB200960748 /* Sources */,
 				30BE77AA1B1B5FB200960748 /* Frameworks */,
@@ -399,9 +388,9 @@
 			);
 			dependencies = (
 			);
-			name = BaseFileSystems;
-			productName = BaseFileSystems;
-			productReference = 30BE77AD1B1B5FB200960748 /* libBaseFileSystems.a */;
+			name = InMemoryFs;
+			productName = InMemoryFs;
+			productReference = 30BE77AD1B1B5FB200960748 /* libInMemoryFs.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -452,7 +441,7 @@
 				30BE77791B1B4EE900960748 /* FsBrowserTests */,
 				30BE778B1B1B5CF000960748 /* baseFileSystems */,
 				30BE779E1B1B5E2900960748 /* FileSystemAutoTests */,
-				30BE77AC1B1B5FB200960748 /* BaseFileSystems */,
+				30BE77AC1B1B5FB200960748 /* InMemoryFs */,
 			);
 		};
 /* End PBXProject section */
@@ -481,7 +470,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				30BE775D1B1B14F100960748 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -537,11 +525,6 @@
 			isa = PBXTargetDependency;
 			target = 30BE77671B1B4EE900960748 /* FsBrowser */;
 			targetProxy = 30BE777B1B1B4EEA00960748 /* PBXContainerItemProxy */;
-		};
-		30BE77C31B1B608400960748 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 30BE77AC1B1B5FB200960748 /* BaseFileSystems */;
-			targetProxy = 30BE77C21B1B608400960748 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -864,7 +847,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		30BE77B51B1B5FB200960748 /* Build configuration list for PBXNativeTarget "BaseFileSystems" */ = {
+		30BE77B51B1B5FB200960748 /* Build configuration list for PBXNativeTarget "InMemoryFs" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				30BE77B61B1B5FB200960748 /* Debug */,
