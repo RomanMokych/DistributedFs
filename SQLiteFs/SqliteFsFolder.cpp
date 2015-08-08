@@ -7,3 +7,20 @@
 //
 
 #include "SqliteFsFolder.h"
+
+namespace dfs
+{
+
+SqliteFsFolder::SqliteFsFolder(int folderId, SQLiteFsGateway* gateway)
+    : m_folderId(folderId)
+    , m_gateway(gateway)
+{}
+
+size_t SqliteFsFolder::readNextFileInfos(std::vector<FileInfo>* fileInfos)
+{
+    m_gateway->readFolderWithId(m_folderId, fileInfos);
+    
+    return 0;
+}
+    
+}

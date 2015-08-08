@@ -71,6 +71,7 @@ SQLiteFsGateway::SQLiteFsGateway(const Path& dbPath)
     PrepareSqliteStmt(m_sqlite, &m_selectLinkQueryWithParentIdAndName, "SELECT * FROM Links WHERE parentId = ? AND name = ?;");
     PrepareSqliteStmt(m_sqlite, &m_selectItemQueryWithId, "SELECT * FROM Items WHERE id = ?;");
     PrepareSqliteStmt(m_sqlite, &m_selectFolderQueryWithId, "SELECT * FROM Folders WHERE id = ?;");
+    PrepareSqliteStmt(m_sqlite, &m_selectLinksWithParentId, "SELECT Links.name, Items.type, Items.permissions FROM Links JOIN Items ON Links.itemId = Items.id WHERE parentId = ?;");
     
     PrepareSqliteStmt(m_sqlite, &m_insertFolderQuery, "INSERT INTO Folders (dummy) VALUES (0);");
     PrepareSqliteStmt(m_sqlite, &m_insertItemQuery, "INSERT INTO Items (type, concreteItemId, permissions) VALUES (?, ?, ?);");
@@ -107,7 +108,14 @@ SQLiteEntities::Item SQLiteFsGateway::getItemByPath(const Path& itemPath)
     while (pathIt != itemPath.end())
     {
         link = getLink(parentId, pathIt->leaf());
-        parentId = link.parentFolderId;
+       
+        SQLiteEntities::Item item = getItemById(link.itemId);
+        if (item.type != SQLiteEntities::ItemType::Folder)
+        {
+            throw SQLiteFsException(FsError::kFileHasWrongType, "File has wrong type");
+        }
+        
+        parentId = item.concreteItemId;
         pathIt++;
     }
     
@@ -221,6 +229,34 @@ void SQLiteFsGateway::createFolder(int parentFolderId, const Path& newFolderName
     {
         throw SQLiteFsException(FsError::kFileExists, "Such file exists");
     }
+}
+    
+void SQLiteFsGateway::readFolderWithId(int folderId, std::vector<FileInfo>* fileInfos)
+{
+    std::vector<FileInfo> actualFileInfos;
+    
+    SqliteStmtReseter reseter(m_selectLinksWithParentId);
+    
+    sqlite3_bind_int(m_selectLinksWithParentId, 1, folderId);
+    int error = sqlite3_step(m_selectLinksWithParentId);
+    while (error == SQLITE_ROW)
+    {
+        FileInfo info;
+        info.name = reinterpret_cast<const char*>(sqlite3_column_text(m_selectLinksWithParentId, 0));
+        info.type = static_cast<FileType>(sqlite3_column_int(m_selectLinksWithParentId, 1));
+        info.permissions = static_cast<Permissions>(sqlite3_column_int(m_selectLinksWithParentId, 2));
+        
+        actualFileInfos.push_back(info);
+        
+        error = sqlite3_step(m_selectLinksWithParentId);
+    }
+
+    if (error != SQLITE_DONE)
+    {
+        throw SQLiteFsException(FsError::kReadFolderError, "Such file exists");
+    }
+    
+    fileInfos->swap(actualFileInfos);
 }
 
 }

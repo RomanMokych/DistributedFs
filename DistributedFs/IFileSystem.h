@@ -27,6 +27,7 @@ namespace dfs
         kFileExists,
         kAttributeNotFound,
         kFileHasWrongType,
+        kReadFolderError,
         kUnknownError
     };
  

@@ -293,7 +293,8 @@ TYPED_TEST(GeneralFsTest, CreateHardLinkForFolder)
     originalFolder->readNextFileInfos(&originalFilesInfos);
     
     dfs::IFolderUPtr linkedFolder;
-    this->getFs().openFolder("/test/test_link", linkedFolder);
+    error = this->getFs().openFolder("/test/test_link", linkedFolder);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
 
     std::vector<dfs::FileInfo> linkedFolderFilesInfos;
     linkedFolder->readNextFileInfos(&linkedFolderFilesInfos);

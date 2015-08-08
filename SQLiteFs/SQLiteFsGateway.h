@@ -36,11 +36,14 @@ public:
     
     void createFolder(int parentFolderId, const Path& newFolderName, Permissions permissions);
     
+    void readFolderWithId(int folderId, std::vector<FileInfo>* fileInfo);
+    
 private:
     sqlite3* m_sqlite;
     sqlite3_stmt* m_selectLinkQueryWithParentIdAndName;
     sqlite3_stmt* m_selectItemQueryWithId;
     sqlite3_stmt* m_selectFolderQueryWithId;
+    sqlite3_stmt* m_selectLinksWithParentId;
     
     sqlite3_stmt* m_insertItemQuery;
     sqlite3_stmt* m_insertFolderQuery;

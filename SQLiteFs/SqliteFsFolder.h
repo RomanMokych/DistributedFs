@@ -6,9 +6,26 @@
 //  Copyright (c) 2015 Роман. All rights reserved.
 //
 
-#ifndef __DistributedFs__SqliteFsFolder__
-#define __DistributedFs__SqliteFsFolder__
+#pragma once
 
-#include <stdio.h>
+#include "IFileSystem.h"
 
-#endif /* defined(__DistributedFs__SqliteFsFolder__) */
+#include "SQLiteFsGateway.h"
+
+namespace dfs
+{
+
+class SqliteFsFolder : public IFolder
+{
+public:
+    SqliteFsFolder(int folderId, SQLiteFsGateway* gateway);
+    
+    virtual size_t readNextFileInfos(std::vector<FileInfo>* fileInfos);
+    
+private:
+    int m_folderId;
+    SQLiteFsGateway* m_gateway;
+};
+    
+}
+

@@ -24,8 +24,8 @@ namespace SQLiteEntities
     
     enum class ItemType
     {
-        Folder,
         File,
+        Folder,
         Symlink
     };
     
