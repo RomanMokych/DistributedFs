@@ -255,7 +255,8 @@ TYPED_TEST(GeneralFsTest, CreateHardLinkForRoot)
     EXPECT_EQ(dfs::FsError::kSuccess, error);
     
     dfs::IFolderUPtr folder;
-    this->getFs().openFolder("/", folder);
+    error = this->getFs().openFolder("/", folder);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
     
     std::vector<dfs::FileInfo> filesInfos;
     folder->readNextFileInfos(&filesInfos);
@@ -285,8 +286,9 @@ TYPED_TEST(GeneralFsTest, CreateHardLinkForFolder)
     EXPECT_EQ(dfs::FsError::kSuccess, error);
     
     dfs::IFolderUPtr originalFolder;
-    this->getFs().openFolder("/test/test", originalFolder);
-
+    error = this->getFs().openFolder("/test/test", originalFolder);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
     std::vector<dfs::FileInfo> originalFilesInfos;
     originalFolder->readNextFileInfos(&originalFilesInfos);
     

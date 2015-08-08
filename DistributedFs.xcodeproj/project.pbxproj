@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		300373CF1B56F8DE0032931A /* InMemoryFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 300373CD1B56F8DE0032931A /* InMemoryFile.cpp */; };
 		300373D01B56F8DE0032931A /* InMemoryFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 300373CE1B56F8DE0032931A /* InMemoryFile.h */; };
+		3034B68D1B5C003F002831FC /* SQLiteFs.h in Headers */ = {isa = PBXBuildFile; fileRef = 3034B68C1B5C003F002831FC /* SQLiteFs.h */; };
+		3034B6911B5C003F002831FC /* SQLiteFs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3034B6901B5C003F002831FC /* SQLiteFs.cpp */; };
+		3034B6951B5C0256002831FC /* libSQLiteFs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3034B68A1B5C003F002831FC /* libSQLiteFs.a */; };
 		30BE776E1B1B4EE900960748 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 30BE776D1B1B4EE900960748 /* AppDelegate.m */; };
 		30BE77701B1B4EE900960748 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 30BE776F1B1B4EE900960748 /* main.m */; };
 		30BE77721B1B4EE900960748 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 30BE77711B1B4EE900960748 /* Images.xcassets */; };
@@ -31,6 +34,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		3034B6961B5C0261002831FC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 30BE77511B1B14F000960748 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 30BE77AC1B1B5FB200960748;
+			remoteInfo = InMemoryFs;
+		};
+		3034B6981B5C0261002831FC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 30BE77511B1B14F000960748 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3034B6891B5C003F002831FC;
+			remoteInfo = SQLiteFs;
+		};
 		30BE777B1B1B4EEA00960748 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 30BE77511B1B14F000960748 /* Project object */;
@@ -64,6 +81,9 @@
 /* Begin PBXFileReference section */
 		300373CD1B56F8DE0032931A /* InMemoryFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InMemoryFile.cpp; sourceTree = "<group>"; };
 		300373CE1B56F8DE0032931A /* InMemoryFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InMemoryFile.h; sourceTree = "<group>"; };
+		3034B68A1B5C003F002831FC /* libSQLiteFs.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSQLiteFs.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		3034B68C1B5C003F002831FC /* SQLiteFs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SQLiteFs.h; sourceTree = "<group>"; };
+		3034B6901B5C003F002831FC /* SQLiteFs.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SQLiteFs.cpp; sourceTree = "<group>"; };
 		30BE77591B1B14F100960748 /* DistributedFs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DistributedFs; sourceTree = BUILT_PRODUCTS_DIR; };
 		30BE77631B1B1FDC00960748 /* IFileSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IFileSystem.h; sourceTree = "<group>"; };
 		30BE77681B1B4EE900960748 /* FsBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FsBrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -97,6 +117,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		3034B6871B5C003F002831FC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		30BE77561B1B14F000960748 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -129,6 +156,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3034B6951B5C0256002831FC /* libSQLiteFs.a in Frameworks */,
 				30BE77D61B1B762400960748 /* libboost_filesystem.a in Frameworks */,
 				30BE77D71B1B762400960748 /* libboost_system.a in Frameworks */,
 				30BE77C41B1B608800960748 /* libInMemoryFs.a in Frameworks */,
@@ -147,6 +175,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3034B68B1B5C003F002831FC /* SQLiteFs */ = {
+			isa = PBXGroup;
+			children = (
+				3034B68C1B5C003F002831FC /* SQLiteFs.h */,
+				3034B6901B5C003F002831FC /* SQLiteFs.cpp */,
+			);
+			path = SQLiteFs;
+			sourceTree = "<group>";
+		};
 		30BE77501B1B14F000960748 = {
 			isa = PBXGroup;
 			children = (
@@ -156,6 +193,7 @@
 				30BE777D1B1B4EEA00960748 /* FsBrowserTests */,
 				30BE77A01B1B5E2900960748 /* FileSystemAutoTests */,
 				30BE77AE1B1B5FB200960748 /* InMemoryFs */,
+				3034B68B1B5C003F002831FC /* SQLiteFs */,
 				30BE775A1B1B14F100960748 /* Products */,
 				30BE77CB1B1B61BA00960748 /* 3rdParty */,
 			);
@@ -170,6 +208,7 @@
 				30BE778C1B1B5CF000960748 /* libbaseFileSystems.a */,
 				30BE779F1B1B5E2900960748 /* FileSystemAutoTests */,
 				30BE77AD1B1B5FB200960748 /* libInMemoryFs.a */,
+				3034B68A1B5C003F002831FC /* libSQLiteFs.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -243,7 +282,6 @@
 				30BE77D11B1B6C9A00960748 /* InMemoryFsTreeNode.h */,
 				30BE77D01B1B6C9A00960748 /* InMemoryFsTreeNode.cpp */,
 			);
-			name = InMemoryFs;
 			path = InMemoryFs;
 			sourceTree = "<group>";
 		};
@@ -269,6 +307,14 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		3034B6881B5C003F002831FC /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3034B68D1B5C003F002831FC /* SQLiteFs.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		30BE778A1B1B5CF000960748 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -290,6 +336,23 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		3034B6891B5C003F002831FC /* SQLiteFs */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3034B6921B5C003F002831FC /* Build configuration list for PBXNativeTarget "SQLiteFs" */;
+			buildPhases = (
+				3034B6861B5C003F002831FC /* Sources */,
+				3034B6871B5C003F002831FC /* Frameworks */,
+				3034B6881B5C003F002831FC /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SQLiteFs;
+			productName = SQLiteFs;
+			productReference = 3034B68A1B5C003F002831FC /* libSQLiteFs.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		30BE77581B1B14F000960748 /* DistributedFs */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 30BE77601B1B14F100960748 /* Build configuration list for PBXNativeTarget "DistributedFs" */;
@@ -370,6 +433,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				3034B6971B5C0261002831FC /* PBXTargetDependency */,
+				3034B6991B5C0261002831FC /* PBXTargetDependency */,
 			);
 			name = FileSystemAutoTests;
 			productName = FileSystemAutoTests;
@@ -402,6 +467,9 @@
 				LastUpgradeCheck = 0610;
 				ORGANIZATIONNAME = "Роман";
 				TargetAttributes = {
+					3034B6891B5C003F002831FC = {
+						CreatedOnToolsVersion = 6.4;
+					};
 					30BE77581B1B14F000960748 = {
 						CreatedOnToolsVersion = 6.1.1;
 					};
@@ -442,6 +510,7 @@
 				30BE778B1B1B5CF000960748 /* baseFileSystems */,
 				30BE779E1B1B5E2900960748 /* FileSystemAutoTests */,
 				30BE77AC1B1B5FB200960748 /* InMemoryFs */,
+				3034B6891B5C003F002831FC /* SQLiteFs */,
 			);
 		};
 /* End PBXProject section */
@@ -466,6 +535,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		3034B6861B5C003F002831FC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3034B6911B5C003F002831FC /* SQLiteFs.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		30BE77551B1B14F000960748 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -521,6 +598,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		3034B6971B5C0261002831FC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 30BE77AC1B1B5FB200960748 /* InMemoryFs */;
+			targetProxy = 3034B6961B5C0261002831FC /* PBXContainerItemProxy */;
+		};
+		3034B6991B5C0261002831FC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3034B6891B5C003F002831FC /* SQLiteFs */;
+			targetProxy = 3034B6981B5C0261002831FC /* PBXContainerItemProxy */;
+		};
 		30BE777C1B1B4EEA00960748 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 30BE77671B1B4EE900960748 /* FsBrowser */;
@@ -540,6 +627,36 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		3034B6931B5C003F002831FC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				EXECUTABLE_PREFIX = lib;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		3034B6941B5C003F002831FC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				EXECUTABLE_PREFIX = lib;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		30BE775E1B1B14F100960748 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -793,6 +910,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		3034B6921B5C003F002831FC /* Build configuration list for PBXNativeTarget "SQLiteFs" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3034B6931B5C003F002831FC /* Debug */,
+				3034B6941B5C003F002831FC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		30BE77541B1B14F000960748 /* Build configuration list for PBXProject "DistributedFs" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

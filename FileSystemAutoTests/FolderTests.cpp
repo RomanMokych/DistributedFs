@@ -14,6 +14,21 @@
 #include <gtest/gtest.h>
 #include <memory>
 
+TYPED_TEST(FolderTest, CreateFolderFail)
+{
+    dfs::FsError error = this->getFs().createFolder("/", dfs::Permissions::kRead);
+    EXPECT_EQ(error, dfs::FsError::kFileExists);
+    
+    error = this->getFs().createFolder("/test/test", dfs::Permissions::kRead);
+    EXPECT_EQ(error, dfs::FsError::kFileNotFound);
+    
+    error = this->getFs().createFolder("/test", dfs::Permissions::kRead);
+    ASSERT_EQ(error, dfs::FsError::kSuccess);
+    
+    error = this->getFs().createFolder("/test", dfs::Permissions::kRead);
+    EXPECT_EQ(error, dfs::FsError::kFileExists);
+}
+
 TYPED_TEST(FolderTest, EmptyRootReadTest)
 {
     std::unique_ptr<dfs::IFolder> folder;
@@ -68,21 +83,6 @@ TYPED_TEST(FolderTest, CreateNestedFolderTest)
     EXPECT_EQ(fileInfos[0].permissions, dfs::Permissions::kRead);
     EXPECT_EQ(fileInfos[1].name, "test4");
     EXPECT_EQ(fileInfos[1].permissions, dfs::Permissions::kRead);
-}
-
-TYPED_TEST(FolderTest, CreateBadFolder)
-{
-    dfs::FsError error = this->getFs().createFolder("/", dfs::Permissions::kRead);
-    EXPECT_EQ(error, dfs::FsError::kFileExists);
-    
-    error = this->getFs().createFolder("/test/test", dfs::Permissions::kRead);
-    EXPECT_EQ(error, dfs::FsError::kFileNotFound);
-    
-    error = this->getFs().createFolder("/test", dfs::Permissions::kRead);
-    ASSERT_EQ(error, dfs::FsError::kSuccess);
-    
-    error = this->getFs().createFolder("/test", dfs::Permissions::kRead);
-    EXPECT_EQ(error, dfs::FsError::kFileExists);
 }
 
 TYPED_TEST(FolderTest, RemoveFolderFailureTest)
