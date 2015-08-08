@@ -1,14 +1,26 @@
 
 #include "SQLiteFs.h"
 
-dfs::SQLiteFs::SQLiteFs(const dfs::Path& fsDpPath)
-{
-
-}
+dfs::SQLiteFs::SQLiteFs(const dfs::Path& fsDbPath)
+: m_gateway(fsDbPath)
+{}
 
 dfs::FsError dfs::SQLiteFs::createFolder(const Path& folderPath, const Permissions permissions)
 {
-    return dfs::FsError::kNotImplemented;
+    try
+    {
+        if (folderPath == "/")
+            return FsError::kFileExists;
+        
+        SQLiteEntities::Folder folder = m_gateway.getFolderByPath(folderPath.parent_path());
+        m_gateway.createFolder(folder.id, folderPath.leaf(), permissions);
+    }
+    catch (const SQLiteFsException& e)
+    {
+        return e.getError();
+    }
+    
+    return dfs::FsError::kSuccess;
 }
 
 dfs::FsError dfs::SQLiteFs::openFolder(const Path& folderPath, std::unique_ptr<IFolder>& outFolder)

@@ -11,6 +11,8 @@
 
 #include "IFileSystem.h"
 
+#include "SQLiteFsGateway.h"
+
 namespace dfs
 {
 
@@ -53,6 +55,9 @@ public:
     virtual FsError getExtendedAttribute(const Path& path, const char* attributeKey, std::vector<char>* attributeValue);
     virtual FsError deleteExtendedAttribute(const Path& path, const char* attributeKey);
     virtual FsError getAllExtendedAttributes(const Path& path, std::vector<std::string>* attributesNames);
+    
+private:
+    SQLiteFsGateway m_gateway;
 };
 
 }

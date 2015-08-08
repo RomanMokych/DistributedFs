@@ -29,6 +29,18 @@ TYPED_TEST(FolderTest, CreateFolderFail)
     EXPECT_EQ(error, dfs::FsError::kFileExists);
 }
 
+TYPED_TEST(FolderTest, OpenFolderFail)
+{
+    dfs::IFileSystem& fs = this->getFs();
+    dfs::IFolderUPtr folder;
+    
+    dfs::FsError error = fs.openFolder("/test", folder);
+    EXPECT_EQ(dfs::FsError::kFileNotFound, error);
+    
+    error = fs.openFolder("/test/test", folder);
+    EXPECT_EQ(dfs::FsError::kFileNotFound, error);
+}
+
 TYPED_TEST(FolderTest, EmptyRootReadTest)
 {
     std::unique_ptr<dfs::IFolder> folder;
