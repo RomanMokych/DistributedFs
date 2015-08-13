@@ -97,7 +97,7 @@ private:
     std::unique_ptr<dfs::SQLiteFs> m_fs;
 };
 
-typedef ::testing::Types<InMemoryFsTest, SQLiteFsTest> FileSystems;
+typedef ::testing::Types</*InMemoryFsTest, */SQLiteFsTest> FileSystems;
 
 TYPED_TEST_CASE(GeneralFsTest, FileSystems);
 TYPED_TEST_CASE(FolderTest,    FileSystems);

@@ -67,15 +67,21 @@ SQLiteFsGateway::SQLiteFsGateway(const Path& dbPath)
     ExecuteSqliteQuery(m_sqlite, "CREATE TABLE Links (id INTEGER PRIMARY KEY ASC, parentId INT NOT NULL, itemId INT NOT NULL, name TEXT NOT NULL, UNIQUE (parentId, name));");
     ExecuteSqliteQuery(m_sqlite, "CREATE TABLE Items (id INTEGER PRIMARY KEY ASC, type INT NOT NULL, concreteItemId INT NOT NULL, permissions INT NOT NULL);");
     ExecuteSqliteQuery(m_sqlite, "CREATE TABLE Folders (id INTEGER PRIMARY KEY ASC, dummy INT);");
+    ExecuteSqliteQuery(m_sqlite, "CREATE TABLE ExtendedAttributes (id INTEGER PRIMARY KEY ASC, itemId INT NOT NULL, name TEXT NOT NULL, value BLOB NOT NULL, UNIQUE (itemId, name));");
     
     m_selectLinkQueryWithParentIdAndName.reset(new SqliteStatement("SELECT id, parentId, itemId, name FROM Links WHERE parentId = ? AND name = ?;", m_sqlite));
-    m_selectItemQueryWithId.reset             (new SqliteStatement("SELECT id, type, concreteItemId, permissions FROM Items WHERE id = ?;", m_sqlite));
-    m_selectFolderQueryWithId.reset           (new SqliteStatement("SELECT id, dummy  FROM Folders WHERE id = ?;", m_sqlite));
-    m_selectLinksWithParentId.reset           (new SqliteStatement("SELECT Links.name, Items.type, Items.permissions FROM Links JOIN Items ON Links.itemId = Items.id WHERE parentId = ?;", m_sqlite));
+    m_selectItemQueryWithId.reset(new SqliteStatement("SELECT id, type, concreteItemId, permissions FROM Items WHERE id = ?;", m_sqlite));
+    m_selectFolderQueryWithId.reset(new SqliteStatement("SELECT id, dummy  FROM Folders WHERE id = ?;", m_sqlite));
+    m_selectLinksWithParentId.reset(new SqliteStatement("SELECT Links.name, Items.type, Items.permissions FROM Links JOIN Items ON Links.itemId = Items.id WHERE parentId = ?;", m_sqlite));
     
     m_insertFolderQuery.reset(new SqliteStatement("INSERT INTO Folders (dummy) VALUES (0);", m_sqlite));
-    m_insertItemQuery.reset(new   SqliteStatement("INSERT INTO Items (type, concreteItemId, permissions) VALUES (?, ?, ?);", m_sqlite));
-    m_insertLinkQuery.reset(new   SqliteStatement("INSERT INTO Links (parentId, itemId, name) VALUES (?, ?, ?);", m_sqlite));
+    m_insertItemQuery.reset(new SqliteStatement("INSERT INTO Items (type, concreteItemId, permissions) VALUES (?, ?, ?);", m_sqlite));
+    m_insertLinkQuery.reset(new SqliteStatement("INSERT INTO Links (parentId, itemId, name) VALUES (?, ?, ?);", m_sqlite));
+    
+    m_insertExtendedAttributeQuery.reset(new SqliteStatement("INSERT INTO ExtendedAttributes (itemId, name, value) VALUES (?, ?, ?);", m_sqlite));
+    m_deleteExtendedAttributeByItemIdAndNameQuery.reset(new SqliteStatement("DELETE FROM ExtendedAttributes WHERE itemId = ? AND name = ?;", m_sqlite));
+    m_selectExtendedAttributesByItemIdQuery.reset(new SqliteStatement("SELECT id, itemId, name, value FROM ExtendedAttributes WHERE itemId = ?;", m_sqlite));
+    m_selectExtendedAttributeByItemIdAndNameQuery.reset(new SqliteStatement("SELECT id, itemId, name, value FROM ExtendedAttributes WHERE itemId = ? AND name = ?;", m_sqlite));
     
     ExecuteSqliteQuery(m_sqlite, "INSERT INTO Folders (dummy) VALUES (0);"); //super root
     m_superRootFolderId = static_cast<int>(sqlite3_last_insert_rowid(m_sqlite));
@@ -259,4 +265,53 @@ void SQLiteFsGateway::readFolderWithId(int folderId, std::vector<FileInfo>* file
     fileInfos->swap(actualFileInfos);
 }
 
+void SQLiteFsGateway::addExtendedAttribute(int itemId, const char* attributeKey, const char* attributeValue, const int attributeValueSize)
+{
+    SqliteStmtReseter reseter(m_insertExtendedAttributeQuery->get());
+    
+    sqlite3_bind_int(m_insertExtendedAttributeQuery->get(), 1, itemId);
+    sqlite3_bind_text(m_insertExtendedAttributeQuery->get(), 2, attributeKey, -1, SQLITE_STATIC);
+    sqlite3_bind_blob(m_insertExtendedAttributeQuery->get(), 3, attributeValue, attributeValueSize, SQLITE_STATIC);
+    
+    int error = sqlite3_step(m_insertExtendedAttributeQuery->get());
+    if (error != SQLITE_DONE)
+    {
+        THROW("can't insert");
+    }
+}
+    
+void SQLiteFsGateway::deleteExtendedAttribute(int itemId, const char* attributeKey)
+{
+    SqliteStmtReseter reseter(m_deleteExtendedAttributeByItemIdAndNameQuery->get());
+    
+    sqlite3_bind_int(m_deleteExtendedAttributeByItemIdAndNameQuery->get(), 1, itemId);
+    sqlite3_bind_text(m_deleteExtendedAttributeByItemIdAndNameQuery->get(), 2, attributeKey, -1, SQLITE_STATIC);
+    
+    int error = sqlite3_step(m_selectExtendedAttributeByItemIdAndNameQuery->get());
+    if (error != SQLITE_DONE)
+    {
+        throw SQLiteFsException(FsError::kAttributeNotFound, "Attribute not found");
+    }
+}
+    
+void SQLiteFsGateway::getExtendedAttribute(int itemId, const char* attributeKey, std::vector<char>* attributeValue)
+{
+    SqliteStmtReseter reseter(m_selectExtendedAttributeByItemIdAndNameQuery->get());
+    
+    sqlite3_bind_int(m_selectExtendedAttributeByItemIdAndNameQuery->get(), 1, itemId);
+    sqlite3_bind_text(m_selectExtendedAttributeByItemIdAndNameQuery->get(), 2, attributeKey, -1, SQLITE_STATIC);
+    
+    int error =  sqlite3_step(m_selectExtendedAttributeByItemIdAndNameQuery->get());
+    if (error == SQLITE_ROW)
+    {
+        const char* attributeValuePtr = reinterpret_cast<const char*>(sqlite3_column_blob(m_selectExtendedAttributeByItemIdAndNameQuery->get(), 3));
+        int attributeValueSize = sqlite3_column_bytes(m_selectExtendedAttributeByItemIdAndNameQuery->get(), 3);
+        attributeValue->assign(attributeValuePtr, attributeValuePtr + attributeValueSize);
+    }
+    else
+    {
+        throw SQLiteFsException(FsError::kAttributeNotFound, "Attribute not found");
+    }
+}
+    
 }

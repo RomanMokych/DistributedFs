@@ -125,17 +125,47 @@ dfs::FsError dfs::SQLiteFs::getModificationTime(const Path& path, std::time_t* t
 
 dfs::FsError dfs::SQLiteFs::setExtendedAttribute(const Path& path, const char* attributeKey, const char* attributeValue, const size_t attributeValueSize)
 {
-    return dfs::FsError::kNotImplemented;
+    try
+    {
+        SQLiteEntities::Item item = m_gateway.getItemByPath(path);
+        m_gateway.addExtendedAttribute(item.id, attributeKey, attributeValue, attributeValueSize);
+    }
+    catch (const SQLiteFsException& e)
+    {
+        return e.getError();
+    }
+    
+    return dfs::FsError::kSuccess;
 }
 
 dfs::FsError dfs::SQLiteFs::getExtendedAttribute(const Path& path, const char* attributeKey, std::vector<char>* attributeValue)
 {
-    return dfs::FsError::kNotImplemented;
+    try
+    {
+        SQLiteEntities::Item item = m_gateway.getItemByPath(path);
+        m_gateway.getExtendedAttribute(item.id, attributeKey, attributeValue);
+    }
+    catch (const SQLiteFsException& e)
+    {
+        return e.getError();
+    }
+    
+    return dfs::FsError::kSuccess;
 }
 
 dfs::FsError dfs::SQLiteFs::deleteExtendedAttribute(const Path& path, const char* attributeKey)
 {
-    return dfs::FsError::kNotImplemented;
+    try
+    {
+        SQLiteEntities::Item item = m_gateway.getItemByPath(path);
+        m_gateway.deleteExtendedAttribute(item.id, attributeKey);
+    }
+    catch (const SQLiteFsException& e)
+    {
+        return e.getError();
+    }
+    
+    return dfs::FsError::kSuccess;
 }
 
 dfs::FsError dfs::SQLiteFs::getAllExtendedAttributes(const Path& path, std::vector<std::string>* attributesNames)
