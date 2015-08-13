@@ -75,7 +75,17 @@ dfs::FsError dfs::SQLiteFs::rename(const Path& oldPath, const Path& newPath)
 
 dfs::FsError dfs::SQLiteFs::remove(const Path& path)
 {
-    return dfs::FsError::kNotImplemented;
+    try
+    {
+//        SQLiteEntities::Link link = m_gateway.getLink(<#int parentId#>, <#const Path &name#>)
+
+    }
+    catch (const SQLiteFsException& e)
+    {
+        return e.getError();
+    }
+    
+    return dfs::FsError::kSuccess;
 }
 
 dfs::FsError dfs::SQLiteFs::getFileInfo(const Path& path, FileInfo* info)

@@ -11,6 +11,7 @@
 #include "IFileSystem.h"
 
 #include "SQLiteFsEnitities.h"
+#include "SqliteStatement.h"
 
 #include <sqlite3.h>
 
@@ -40,14 +41,14 @@ public:
     
 private:
     sqlite3* m_sqlite;
-    sqlite3_stmt* m_selectLinkQueryWithParentIdAndName;
-    sqlite3_stmt* m_selectItemQueryWithId;
-    sqlite3_stmt* m_selectFolderQueryWithId;
-    sqlite3_stmt* m_selectLinksWithParentId;
+    std::unique_ptr<SqliteStatement> m_selectLinkQueryWithParentIdAndName;
+    std::unique_ptr<SqliteStatement> m_selectItemQueryWithId;
+    std::unique_ptr<SqliteStatement> m_selectFolderQueryWithId;
+    std::unique_ptr<SqliteStatement> m_selectLinksWithParentId;
     
-    sqlite3_stmt* m_insertItemQuery;
-    sqlite3_stmt* m_insertFolderQuery;
-    sqlite3_stmt* m_insertLinkQuery;
+    std::unique_ptr<SqliteStatement> m_insertItemQuery;
+    std::unique_ptr<SqliteStatement> m_insertFolderQuery;
+    std::unique_ptr<SqliteStatement> m_insertLinkQuery;
     
     int m_superRootFolderId;
 };
