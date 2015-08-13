@@ -25,15 +25,6 @@ namespace
         }
     }
     
-    void PrepareSqliteStmt(sqlite3* sqlite, sqlite3_stmt** stmt, const char* query)
-    {
-        int error = sqlite3_prepare(sqlite, query, -1, stmt, nullptr);
-        if (error != SQLITE_OK)
-        {
-            THROW("Can't create select request");
-        }
-    }
-    
     class SqliteStmtReseter
     {
     public:
@@ -312,6 +303,30 @@ void SQLiteFsGateway::getExtendedAttribute(int itemId, const char* attributeKey,
     {
         throw SQLiteFsException(FsError::kAttributeNotFound, "Attribute not found");
     }
+}
+    
+void SQLiteFsGateway::getExtendedAttributesNames(int itemId, std::vector<std::string>* attributesNames)
+{
+    SqliteStmtReseter reseter(m_selectExtendedAttributesByItemIdQuery->get());
+    
+    sqlite3_bind_int(m_selectExtendedAttributesByItemIdQuery->get(), 1, itemId);
+    
+    int error = sqlite3_step(m_selectExtendedAttributesByItemIdQuery->get());
+    std::vector<std::string> attributesNamesRes;
+    while (error == SQLITE_ROW)
+    {
+        std::string attributeName = reinterpret_cast<const char*>(sqlite3_column_text(m_selectExtendedAttributesByItemIdQuery->get(), 2));
+        attributesNamesRes.push_back(attributeName);
+        
+        error = sqlite3_step(m_selectExtendedAttributesByItemIdQuery->get());
+    }
+    
+    if (error != SQLITE_DONE)
+    {
+        THROW("Sqlite error occure");
+    }
+    
+    attributesNames->swap(attributesNamesRes);
 }
     
 }

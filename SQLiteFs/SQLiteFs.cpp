@@ -170,5 +170,15 @@ dfs::FsError dfs::SQLiteFs::deleteExtendedAttribute(const Path& path, const char
 
 dfs::FsError dfs::SQLiteFs::getAllExtendedAttributes(const Path& path, std::vector<std::string>* attributesNames)
 {
-    return dfs::FsError::kNotImplemented;
+    try
+    {
+        SQLiteEntities::Item item = m_gateway.getItemByPath(path);
+        m_gateway.getExtendedAttributesNames(item.id, attributesNames);
+    }
+    catch (const SQLiteFsException& e)
+    {
+        return e.getError();
+    }
+    
+    return dfs::FsError::kSuccess;
 }

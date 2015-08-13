@@ -41,6 +41,7 @@ public:
     
     void addExtendedAttribute(int itemId, const char* attributeKey, const char* attributeValue, const int attributeValueSize);
     void getExtendedAttribute(int itemId, const char* attributeKey, std::vector<char>* attributeValue);
+    void getExtendedAttributesNames(int itemId, std::vector<std::string>* attributesNames);
     void deleteExtendedAttribute(int itemId, const char* attributeKey);
     
 private:
