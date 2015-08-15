@@ -50,6 +50,8 @@ SqliteFsGateway::SqliteFsGateway(const Path& dbPath)
     m_insertItemQuery   = m_sqlite.createStatement("INSERT INTO Items (type, concreteItemId, permissions) VALUES (?, ?, ?);");
     m_insertLinkQuery   = m_sqlite.createStatement("INSERT INTO Links (parentId, itemId, name) VALUES (?, ?, ?);");
     
+    m_deleteLinkWithId = m_sqlite.createStatement("DELETE FROM Links WHERE id = ?;");
+    
     m_insertExtendedAttributeQuery                = m_sqlite.createStatement("INSERT INTO ExtendedAttributes (itemId, name, value) VALUES (?, ?, ?);");
     m_deleteExtendedAttributeByItemIdAndNameQuery = m_sqlite.createStatement("DELETE FROM ExtendedAttributes WHERE itemId = ? AND name = ?;");
     m_selectExtendedAttributesByItemIdQuery       = m_sqlite.createStatement("SELECT id, itemId, name, value FROM ExtendedAttributes WHERE itemId = ?;");
@@ -197,6 +199,19 @@ void SqliteFsGateway::createFolder(int parentFolderId, const Path& newFolderName
 void SqliteFsGateway::createHardLink(int parentId, int itemId, const Path& linkName)
 {
     createHardLinkImpl(parentId, itemId, linkName);
+}
+    
+void SqliteFsGateway::removeLink(int linkId)
+{
+    SqliteStmtReseter linkReseter(m_deleteLinkWithId->get());
+    
+    sqlite3_bind_int(m_deleteLinkWithId->get(), 1, linkId);
+    
+    int error = sqlite3_step(m_deleteLinkWithId->get());
+    if (error != SQLITE_DONE)
+    {
+        throw SqliteFsException(FsError::kFileNotFound, "No such link");
+    }
 }
     
 void SqliteFsGateway::readFolderWithId(int folderId, std::vector<FileInfo>* fileInfos)
