@@ -1,0 +1,14 @@
+
+*.xcbkptlist
+
+*.xcuserstate
+
+*.xcscheme
+
+*.xcuserstate
+
+*.xccheckout
+
+DistributedFs.xcodeproj/xcuserdata/Roman.xcuserdatad/xcschemes/xcschememanagement.plist
+
+DistributedFs.xcodeproj/project.xcworkspace/xcuserdata/Roman.xcuserdatad/UserInterfaceState.xcuserstate
