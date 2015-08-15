@@ -10,7 +10,7 @@
 
 #include "IFileSystem.h"
 
-#include "SQLiteFsGateway.h"
+#include "SqliteFsGateway.h"
 
 namespace dfs
 {
@@ -18,13 +18,13 @@ namespace dfs
 class SqliteFsFolder : public IFolder
 {
 public:
-    SqliteFsFolder(int folderId, SQLiteFsGateway* gateway);
+    SqliteFsFolder(int folderId, SqliteFsGateway* gateway);
     
     virtual size_t readNextFileInfos(std::vector<FileInfo>* fileInfos);
     
 private:
     int m_folderId;
-    SQLiteFsGateway* m_gateway;
+    SqliteFsGateway* m_gateway;
 };
     
 }

@@ -11,7 +11,7 @@
 #include <gtest/gtest.h>
 
 #include "InMemoryFs.h"
-#include "SQLiteFs.h"
+#include "SqliteFs.h"
 
 template <class FsTestImpl>
 class FsTest : public ::testing::Test
@@ -78,7 +78,7 @@ private:
     std::unique_ptr<dfs::InMemoryFs> m_fs;
 };
 
-class SQLiteFsTest
+class SqliteFsTest
 {
 public:
     const std::string kSQLiteDbPath = "fs.sqlite";
@@ -87,7 +87,7 @@ public:
     void SetUp()
     {
         std::remove(kSQLiteDbPath.c_str());
-        m_fs.reset(new dfs::SQLiteFs(kSQLiteDbPath));
+        m_fs.reset(new dfs::SqliteFs(kSQLiteDbPath));
     }
     
     void TearDown()
@@ -96,16 +96,16 @@ public:
         std::remove(kSQLiteDbPath.c_str());
     }
     
-    dfs::SQLiteFs& getFs()
+    dfs::SqliteFs& getFs()
     {
         return *m_fs;
     }
     
 private:
-    std::unique_ptr<dfs::SQLiteFs> m_fs;
+    std::unique_ptr<dfs::SqliteFs> m_fs;
 };
 
-typedef ::testing::Types<InMemoryFsTest, SQLiteFsTest> FileSystems;
+typedef ::testing::Types<InMemoryFsTest, SqliteFsTest> FileSystems;
 
 TYPED_TEST_CASE(GeneralFsTest,             FileSystems);
 TYPED_TEST_CASE(FolderTest,                FileSystems);

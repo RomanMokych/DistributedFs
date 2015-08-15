@@ -1,5 +1,5 @@
 //
-//  SQLiteFsGateway.h
+//  SqliteFsGateway.h
 //  DistributedFs
 //
 //  Created by Роман on 8/8/15.
@@ -10,7 +10,7 @@
 
 #include "IFileSystem.h"
 
-#include "SQLiteFsEnitities.h"
+#include "SqliteEntities.h"
 #include "SqliteStatement.h"
 
 #include <sqlite3.h>
@@ -21,19 +21,19 @@
 namespace dfs
 {
     
-class SQLiteFsGateway
+class SqliteFsGateway
 {
 public:
-    SQLiteFsGateway(const Path& dbPath);
-    ~SQLiteFsGateway();
+    SqliteFsGateway(const Path& dbPath);
+    ~SqliteFsGateway();
     
-    SQLiteEntities::Item getItemByPath(const Path& itemPath);
-    SQLiteEntities::Folder getFolderByPath(const Path& folderPath);
+    SqliteEntities::Item getItemByPath(const Path& itemPath);
+    SqliteEntities::Folder getFolderByPath(const Path& folderPath);
     
-    SQLiteEntities::Folder getFolderById(int folderId);
+    SqliteEntities::Folder getFolderById(int folderId);
     
-    SQLiteEntities::Link getLink(int parentId, const Path& name);
-    SQLiteEntities::Item getItemById(int itemId);
+    SqliteEntities::Link getLink(int parentId, const Path& name);
+    SqliteEntities::Item getItemById(int itemId);
     
     void createFolder(int parentFolderId, const Path& newFolderName, Permissions permissions);
     
@@ -63,10 +63,10 @@ private:
     int m_superRootFolderId;
 };
     
-class SQLiteFsException : public std::runtime_error
+class SqliteFsException : public std::runtime_error
 {
 public:
-    SQLiteFsException(FsError error, const std::string& errorStr)
+    SqliteFsException(FsError error, const std::string& errorStr)
     : std::runtime_error(errorStr)
     , m_error(error)
     {}

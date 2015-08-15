@@ -1,12 +1,12 @@
 //
-//  SQLiteFsGateway.cpp
+//  SqliteFsGateway.cpp
 //  DistributedFs
 //
 //  Created by Роман on 8/8/15.
 //  Copyright (c) 2015 Роман. All rights reserved.
 //
 
-#include "SQLiteFsGateway.h"
+#include "SqliteFsGateway.h"
 
 #include "Utils.h"
 
@@ -46,7 +46,7 @@ namespace
 namespace dfs
 {
 
-SQLiteFsGateway::SQLiteFsGateway(const Path& dbPath)
+SqliteFsGateway::SqliteFsGateway(const Path& dbPath)
     : m_sqlite(nullptr)
 {
     int error = sqlite3_open(dbPath.c_str(), &m_sqlite);
@@ -80,25 +80,25 @@ SQLiteFsGateway::SQLiteFsGateway(const Path& dbPath)
     createFolder(m_superRootFolderId, "/", Permissions::kAll);
 }
     
-SQLiteFsGateway::~SQLiteFsGateway()
+SqliteFsGateway::~SqliteFsGateway()
 {
     sqlite3_close(m_sqlite);
 }
 
-SQLiteEntities::Folder SQLiteFsGateway::getFolderByPath(const Path& folderPath)
+SqliteEntities::Folder SqliteFsGateway::getFolderByPath(const Path& folderPath)
 {
-    SQLiteEntities::Item item = getItemByPath(folderPath);
-    if (item.type != SQLiteEntities::ItemType::Folder)
+    SqliteEntities::Item item = getItemByPath(folderPath);
+    if (item.type != dfs::FileType::kFolder)
     {
-        throw SQLiteFsException(FsError::kFileNotFound, "File is not folder");
+        throw SqliteFsException(FsError::kFileNotFound, "File is not folder");
     }
     
     return getFolderById(item.concreteItemId);
 }
     
-SQLiteEntities::Item SQLiteFsGateway::getItemByPath(const Path& itemPath)
+SqliteEntities::Item SqliteFsGateway::getItemByPath(const Path& itemPath)
 {
-    SQLiteEntities::Link link;
+    SqliteEntities::Link link;
     int parentId = m_superRootFolderId;
     
     auto pathIt = itemPath.begin();
@@ -106,10 +106,10 @@ SQLiteEntities::Item SQLiteFsGateway::getItemByPath(const Path& itemPath)
     {
         link = getLink(parentId, pathIt->leaf());
        
-        SQLiteEntities::Item item = getItemById(link.itemId);
-        if (item.type != SQLiteEntities::ItemType::Folder)
+        SqliteEntities::Item item = getItemById(link.itemId);
+        if (item.type != dfs::FileType::kFolder)
         {
-            throw SQLiteFsException(FsError::kFileHasWrongType, "File has wrong type");
+            throw SqliteFsException(FsError::kFileHasWrongType, "File has wrong type");
         }
         
         parentId = item.concreteItemId;
@@ -119,7 +119,7 @@ SQLiteEntities::Item SQLiteFsGateway::getItemByPath(const Path& itemPath)
     return getItemById(link.itemId);
 }
     
-SQLiteEntities::Link SQLiteFsGateway::getLink(int parentId, const Path& name)
+SqliteEntities::Link SqliteFsGateway::getLink(int parentId, const Path& name)
 {
     SqliteStmtReseter reseter(m_selectLinkQueryWithParentIdAndName->get());
     
@@ -138,7 +138,7 @@ SQLiteEntities::Link SQLiteFsGateway::getLink(int parentId, const Path& name)
     error = sqlite3_step(m_selectLinkQueryWithParentIdAndName->get());
     if (error == SQLITE_ROW)
     {
-        SQLiteEntities::Link link;
+        SqliteEntities::Link link;
         link.id = sqlite3_column_int(m_selectLinkQueryWithParentIdAndName->get(), 0);
         link.parentFolderId = sqlite3_column_int(m_selectLinkQueryWithParentIdAndName->get(), 1);
         link.itemId = sqlite3_column_int(m_selectLinkQueryWithParentIdAndName->get(), 2);
@@ -147,10 +147,10 @@ SQLiteEntities::Link SQLiteFsGateway::getLink(int parentId, const Path& name)
         return link;
     }
     
-    throw SQLiteFsException(FsError::kFileNotFound, "Can't find file with such name");
+    throw SqliteFsException(FsError::kFileNotFound, "Can't find file with such name");
 }
     
-SQLiteEntities::Folder SQLiteFsGateway::getFolderById(int folderId)
+SqliteEntities::Folder SqliteFsGateway::getFolderById(int folderId)
 {
     SqliteStmtReseter reseter(m_selectFolderQueryWithId->get());
     
@@ -159,16 +159,16 @@ SQLiteEntities::Folder SQLiteFsGateway::getFolderById(int folderId)
     int error = sqlite3_step(m_selectFolderQueryWithId->get());
     if (error == SQLITE_ROW)
     {
-        SQLiteEntities::Folder folder;
+        SqliteEntities::Folder folder;
         folder.id = sqlite3_column_int(m_selectFolderQueryWithId->get(), 0);
         
         return folder;
     }
     
-    throw SQLiteFsException(FsError::kFileNotFound, "Folder was not found");
+    throw SqliteFsException(FsError::kFileNotFound, "Folder was not found");
 }
     
-SQLiteEntities::Item SQLiteFsGateway::getItemById(int itemId)
+SqliteEntities::Item SqliteFsGateway::getItemById(int itemId)
 {
     SqliteStmtReseter reseter(m_selectItemQueryWithId->get());
     
@@ -177,19 +177,19 @@ SQLiteEntities::Item SQLiteFsGateway::getItemById(int itemId)
     int error = sqlite3_step(m_selectItemQueryWithId->get());
     if (error == SQLITE_ROW)
     {
-        SQLiteEntities::Item item;
+        SqliteEntities::Item item;
         item.id = sqlite3_column_int(m_selectItemQueryWithId->get(), 0);
-        item.type = static_cast<SQLiteEntities::ItemType>(sqlite3_column_int(m_selectItemQueryWithId->get(), 1));
+        item.type = static_cast<dfs::FileType>(sqlite3_column_int(m_selectItemQueryWithId->get(), 1));
         item.concreteItemId = sqlite3_column_int(m_selectItemQueryWithId->get(), 2);
         item.permissions = static_cast<Permissions>(sqlite3_column_int(m_selectItemQueryWithId->get(), 3));
         
         return item;
     }
     
-    throw SQLiteFsException(FsError::kFileNotFound, "item was not found");
+    throw SqliteFsException(FsError::kFileNotFound, "item was not found");
 }
 
-void SQLiteFsGateway::createFolder(int parentFolderId, const Path& newFolderName, Permissions permissions)
+void SqliteFsGateway::createFolder(int parentFolderId, const Path& newFolderName, Permissions permissions)
 {
     SqliteStmtReseter folderReseter(m_insertFolderQuery->get());
     
@@ -203,7 +203,7 @@ void SQLiteFsGateway::createFolder(int parentFolderId, const Path& newFolderName
     
     SqliteStmtReseter itemReseter(m_insertItemQuery->get());
     
-    sqlite3_bind_int(m_insertItemQuery->get(), 1, static_cast<int>(SQLiteEntities::ItemType::Folder));
+    sqlite3_bind_int(m_insertItemQuery->get(), 1, static_cast<int>(dfs::FileType::kFolder));
     sqlite3_bind_int(m_insertItemQuery->get(), 2, newFolderId);
     sqlite3_bind_int(m_insertItemQuery->get(), 3, static_cast<int>(permissions));
     
@@ -224,11 +224,11 @@ void SQLiteFsGateway::createFolder(int parentFolderId, const Path& newFolderName
     error = sqlite3_step(m_insertLinkQuery->get());
     if (error != SQLITE_DONE)
     {
-        throw SQLiteFsException(FsError::kFileExists, "Such file exists");
+        throw SqliteFsException(FsError::kFileExists, "Such file exists");
     }
 }
     
-void SQLiteFsGateway::readFolderWithId(int folderId, std::vector<FileInfo>* fileInfos)
+void SqliteFsGateway::readFolderWithId(int folderId, std::vector<FileInfo>* fileInfos)
 {
     std::vector<FileInfo> actualFileInfos;
     
@@ -250,13 +250,13 @@ void SQLiteFsGateway::readFolderWithId(int folderId, std::vector<FileInfo>* file
 
     if (error != SQLITE_DONE)
     {
-        throw SQLiteFsException(FsError::kReadFolderError, "Such file exists");
+        throw SqliteFsException(FsError::kReadFolderError, "Such file exists");
     }
     
     fileInfos->swap(actualFileInfos);
 }
 
-void SQLiteFsGateway::addExtendedAttribute(int itemId, const char* attributeKey, const char* attributeValue, const int attributeValueSize)
+void SqliteFsGateway::addExtendedAttribute(int itemId, const char* attributeKey, const char* attributeValue, const int attributeValueSize)
 {
     SqliteStmtReseter reseter(m_insertExtendedAttributeQuery->get());
     
@@ -271,7 +271,7 @@ void SQLiteFsGateway::addExtendedAttribute(int itemId, const char* attributeKey,
     }
 }
     
-void SQLiteFsGateway::deleteExtendedAttribute(int itemId, const char* attributeKey)
+void SqliteFsGateway::deleteExtendedAttribute(int itemId, const char* attributeKey)
 {
     SqliteStmtReseter reseter(m_deleteExtendedAttributeByItemIdAndNameQuery->get());
     
@@ -281,11 +281,11 @@ void SQLiteFsGateway::deleteExtendedAttribute(int itemId, const char* attributeK
     int error = sqlite3_step(m_selectExtendedAttributeByItemIdAndNameQuery->get());
     if (error != SQLITE_DONE)
     {
-        throw SQLiteFsException(FsError::kAttributeNotFound, "Attribute not found");
+        throw SqliteFsException(FsError::kAttributeNotFound, "Attribute not found");
     }
 }
     
-void SQLiteFsGateway::getExtendedAttribute(int itemId, const char* attributeKey, std::vector<char>* attributeValue)
+void SqliteFsGateway::getExtendedAttribute(int itemId, const char* attributeKey, std::vector<char>* attributeValue)
 {
     SqliteStmtReseter reseter(m_selectExtendedAttributeByItemIdAndNameQuery->get());
     
@@ -301,11 +301,11 @@ void SQLiteFsGateway::getExtendedAttribute(int itemId, const char* attributeKey,
     }
     else
     {
-        throw SQLiteFsException(FsError::kAttributeNotFound, "Attribute not found");
+        throw SqliteFsException(FsError::kAttributeNotFound, "Attribute not found");
     }
 }
     
-void SQLiteFsGateway::getExtendedAttributesNames(int itemId, std::vector<std::string>* attributesNames)
+void SqliteFsGateway::getExtendedAttributesNames(int itemId, std::vector<std::string>* attributesNames)
 {
     SqliteStmtReseter reseter(m_selectExtendedAttributesByItemIdQuery->get());
     

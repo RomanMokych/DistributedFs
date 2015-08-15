@@ -1,5 +1,5 @@
 //
-//  SQLiteFsEnitities.h
+//  SqliteFsEnitities.h
 //  DistributedFs
 //
 //  Created by Роман on 8/8/15.
@@ -12,7 +12,7 @@
 
 namespace dfs
 {
-namespace SQLiteEntities
+namespace SqliteEntities
 {
     struct Link
     {
@@ -22,17 +22,10 @@ namespace SQLiteEntities
         Path name;
     };
     
-    enum class ItemType
-    {
-        File,
-        Folder,
-        Symlink
-    };
-    
     struct Item
     {
         int id;
-        ItemType type;
+        FileType type;
         int concreteItemId;
         
         Permissions permissions;

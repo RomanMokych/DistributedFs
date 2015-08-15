@@ -1,6 +1,6 @@
 /*
- *  SQLiteFs.h
- *  SQLiteFs
+ *  SqliteFs.h
+ *  SqliteFs
  *
  *  Created by Роман on 7/19/15.
  *  Copyright (c) 2015 Роман. All rights reserved.
@@ -11,17 +11,17 @@
 
 #include "IFileSystem.h"
 
-#include "SQLiteFsGateway.h"
+#include "SqliteFsGateway.h"
 
 namespace dfs
 {
 
-class SQLiteFs : public IFileSystem
+class SqliteFs : public IFileSystem
 {
 public:
-    SQLiteFs(const Path& fsDbPath);
+    SqliteFs(const Path& fsDbPath);
     
-    virtual ~SQLiteFs() {}
+    virtual ~SqliteFs() {}
     
     virtual FsError createFolder(const Path& folderPath, const Permissions permissions);
     virtual FsError openFolder(const Path& folderPath, std::unique_ptr<IFolder>& outFolder);
@@ -57,7 +57,7 @@ public:
     virtual FsError getAllExtendedAttributes(const Path& path, std::vector<std::string>* attributesNames);
     
 private:
-    SQLiteFsGateway m_gateway;
+    SqliteFsGateway m_gateway;
 };
 
 }
