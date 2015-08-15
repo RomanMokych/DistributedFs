@@ -59,6 +59,13 @@ namespace dfs
         };
     };
     
+    enum SeekPosition
+    {
+        kBegin,
+        kEnd,
+        kCurrent
+    };
+    
     typedef boost::filesystem::path Path;
 
     class IFolder;
@@ -104,13 +111,6 @@ namespace dfs
         virtual FsError getExtendedAttribute(const Path& path, const char* attributeKey, std::vector<char>* attributeValue) = 0;
         virtual FsError deleteExtendedAttribute(const Path& path, const char* attributeKey) = 0;
         virtual FsError getAllExtendedAttributes(const Path& path, std::vector<std::string>* attributesNames) = 0;
-    };
-    
-    enum SeekPosition
-    {
-        kBegin,
-        kEnd,
-        kCurrent
     };
     
     class IFile

@@ -8,23 +8,11 @@
 
 #include "SqliteFsGateway.h"
 
+#include "SqliteFsException.h"
 #include "Utils.h"
 
 namespace
 {
-    void ExecuteSqliteQuery(sqlite3* sqlite, const char* query)
-    {
-        char* errorMsg = nullptr;
-        int error = sqlite3_exec(sqlite, query, nullptr, nullptr, &errorMsg);
-        if (error != SQLITE_OK)
-        {
-            if (errorMsg)
-                sqlite3_free(errorMsg);
-            
-            THROW("Can't create Links table");
-        }
-    }
-    
     class SqliteStmtReseter
     {
     public:
@@ -39,7 +27,6 @@ namespace
         
     private:
         sqlite3_stmt* m_stmt;
-        
     };
 }
 
@@ -47,42 +34,31 @@ namespace dfs
 {
 
 SqliteFsGateway::SqliteFsGateway(const Path& dbPath)
-    : m_sqlite(nullptr)
+    : m_sqlite(dbPath.string())
 {
-    int error = sqlite3_open(dbPath.c_str(), &m_sqlite);
-    if (error != SQLITE_OK)
-    {
-        THROW("Can't opend db");
-    }
+    m_sqlite.executeQuery("CREATE TABLE Links (id INTEGER PRIMARY KEY ASC, parentId INT NOT NULL, itemId INT NOT NULL, name TEXT NOT NULL, UNIQUE (parentId, name));");
+    m_sqlite.executeQuery("CREATE TABLE Items (id INTEGER PRIMARY KEY ASC, type INT NOT NULL, concreteItemId INT NOT NULL, permissions INT NOT NULL);");
+    m_sqlite.executeQuery("CREATE TABLE Folders (id INTEGER PRIMARY KEY ASC, dummy INT);");
+    m_sqlite.executeQuery("CREATE TABLE ExtendedAttributes (id INTEGER PRIMARY KEY ASC, itemId INT NOT NULL, name TEXT NOT NULL, value BLOB NOT NULL, UNIQUE (itemId, name));");
     
-    ExecuteSqliteQuery(m_sqlite, "CREATE TABLE Links (id INTEGER PRIMARY KEY ASC, parentId INT NOT NULL, itemId INT NOT NULL, name TEXT NOT NULL, UNIQUE (parentId, name));");
-    ExecuteSqliteQuery(m_sqlite, "CREATE TABLE Items (id INTEGER PRIMARY KEY ASC, type INT NOT NULL, concreteItemId INT NOT NULL, permissions INT NOT NULL);");
-    ExecuteSqliteQuery(m_sqlite, "CREATE TABLE Folders (id INTEGER PRIMARY KEY ASC, dummy INT);");
-    ExecuteSqliteQuery(m_sqlite, "CREATE TABLE ExtendedAttributes (id INTEGER PRIMARY KEY ASC, itemId INT NOT NULL, name TEXT NOT NULL, value BLOB NOT NULL, UNIQUE (itemId, name));");
+    m_selectLinkQueryWithParentIdAndName = m_sqlite.createStatement("SELECT id, parentId, itemId, name FROM Links WHERE parentId = ? AND name = ?;");
+    m_selectItemQueryWithId              = m_sqlite.createStatement("SELECT id, type, concreteItemId, permissions FROM Items WHERE id = ?;");
+    m_selectFolderQueryWithId            = m_sqlite.createStatement("SELECT id, dummy  FROM Folders WHERE id = ?;");
+    m_selectLinksWithParentId            = m_sqlite.createStatement("SELECT Links.name, Items.type, Items.permissions FROM Links JOIN Items ON Links.itemId = Items.id WHERE parentId = ?;");
     
-    m_selectLinkQueryWithParentIdAndName.reset(new SqliteStatement("SELECT id, parentId, itemId, name FROM Links WHERE parentId = ? AND name = ?;", m_sqlite));
-    m_selectItemQueryWithId.reset(new SqliteStatement("SELECT id, type, concreteItemId, permissions FROM Items WHERE id = ?;", m_sqlite));
-    m_selectFolderQueryWithId.reset(new SqliteStatement("SELECT id, dummy  FROM Folders WHERE id = ?;", m_sqlite));
-    m_selectLinksWithParentId.reset(new SqliteStatement("SELECT Links.name, Items.type, Items.permissions FROM Links JOIN Items ON Links.itemId = Items.id WHERE parentId = ?;", m_sqlite));
+    m_insertFolderQuery = m_sqlite.createStatement("INSERT INTO Folders (dummy) VALUES (0);");
+    m_insertItemQuery   = m_sqlite.createStatement("INSERT INTO Items (type, concreteItemId, permissions) VALUES (?, ?, ?);");
+    m_insertLinkQuery   = m_sqlite.createStatement("INSERT INTO Links (parentId, itemId, name) VALUES (?, ?, ?);");
     
-    m_insertFolderQuery.reset(new SqliteStatement("INSERT INTO Folders (dummy) VALUES (0);", m_sqlite));
-    m_insertItemQuery.reset(new SqliteStatement("INSERT INTO Items (type, concreteItemId, permissions) VALUES (?, ?, ?);", m_sqlite));
-    m_insertLinkQuery.reset(new SqliteStatement("INSERT INTO Links (parentId, itemId, name) VALUES (?, ?, ?);", m_sqlite));
+    m_insertExtendedAttributeQuery                = m_sqlite.createStatement("INSERT INTO ExtendedAttributes (itemId, name, value) VALUES (?, ?, ?);");
+    m_deleteExtendedAttributeByItemIdAndNameQuery = m_sqlite.createStatement("DELETE FROM ExtendedAttributes WHERE itemId = ? AND name = ?;");
+    m_selectExtendedAttributesByItemIdQuery       = m_sqlite.createStatement("SELECT id, itemId, name, value FROM ExtendedAttributes WHERE itemId = ?;");
+    m_selectExtendedAttributeByItemIdAndNameQuery = m_sqlite.createStatement("SELECT id, itemId, name, value FROM ExtendedAttributes WHERE itemId = ? AND name = ?;");
     
-    m_insertExtendedAttributeQuery.reset(new SqliteStatement("INSERT INTO ExtendedAttributes (itemId, name, value) VALUES (?, ?, ?);", m_sqlite));
-    m_deleteExtendedAttributeByItemIdAndNameQuery.reset(new SqliteStatement("DELETE FROM ExtendedAttributes WHERE itemId = ? AND name = ?;", m_sqlite));
-    m_selectExtendedAttributesByItemIdQuery.reset(new SqliteStatement("SELECT id, itemId, name, value FROM ExtendedAttributes WHERE itemId = ?;", m_sqlite));
-    m_selectExtendedAttributeByItemIdAndNameQuery.reset(new SqliteStatement("SELECT id, itemId, name, value FROM ExtendedAttributes WHERE itemId = ? AND name = ?;", m_sqlite));
-    
-    ExecuteSqliteQuery(m_sqlite, "INSERT INTO Folders (dummy) VALUES (0);"); //super root
-    m_superRootFolderId = static_cast<int>(sqlite3_last_insert_rowid(m_sqlite));
+    m_sqlite.executeQuery("INSERT INTO Folders (dummy) VALUES (0);"); //super root
+    m_superRootFolderId = m_sqlite.getLastInsertedRowId();
 
     createFolder(m_superRootFolderId, "/", Permissions::kAll);
-}
-    
-SqliteFsGateway::~SqliteFsGateway()
-{
-    sqlite3_close(m_sqlite);
 }
 
 SqliteEntities::Folder SqliteFsGateway::getFolderByPath(const Path& folderPath)
@@ -199,7 +175,7 @@ void SqliteFsGateway::createFolder(int parentFolderId, const Path& newFolderName
         THROW("can't insert");
     }
     
-    int newFolderId = static_cast<int>(sqlite3_last_insert_rowid(m_sqlite));
+    int newFolderId = m_sqlite.getLastInsertedRowId();
     
     SqliteStmtReseter itemReseter(m_insertItemQuery->get());
     
@@ -213,7 +189,7 @@ void SqliteFsGateway::createFolder(int parentFolderId, const Path& newFolderName
         THROW("can't insert");
     }
     
-    int newItemId = static_cast<int>(sqlite3_last_insert_rowid(m_sqlite));
+    int newItemId = m_sqlite.getLastInsertedRowId();
     
     SqliteStmtReseter linkReseter(m_insertLinkQuery->get());
     
@@ -292,7 +268,7 @@ void SqliteFsGateway::getExtendedAttribute(int itemId, const char* attributeKey,
     sqlite3_bind_int(m_selectExtendedAttributeByItemIdAndNameQuery->get(), 1, itemId);
     sqlite3_bind_text(m_selectExtendedAttributeByItemIdAndNameQuery->get(), 2, attributeKey, -1, SQLITE_STATIC);
     
-    int error =  sqlite3_step(m_selectExtendedAttributeByItemIdAndNameQuery->get());
+    int error = sqlite3_step(m_selectExtendedAttributeByItemIdAndNameQuery->get());
     if (error == SQLITE_ROW)
     {
         const char* attributeValuePtr = reinterpret_cast<const char*>(sqlite3_column_blob(m_selectExtendedAttributeByItemIdAndNameQuery->get(), 3));

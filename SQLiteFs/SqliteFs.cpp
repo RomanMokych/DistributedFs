@@ -2,6 +2,7 @@
 #include "SqliteFs.h"
 
 #include "SqliteFsFolder.h"
+#include "SqliteFsException.h"
 
 dfs::SqliteFs::SqliteFs(const dfs::Path& fsDbPath)
 : m_gateway(fsDbPath)
@@ -128,7 +129,7 @@ dfs::FsError dfs::SqliteFs::setExtendedAttribute(const Path& path, const char* a
     try
     {
         SqliteEntities::Item item = m_gateway.getItemByPath(path);
-        m_gateway.addExtendedAttribute(item.id, attributeKey, attributeValue, attributeValueSize);
+        m_gateway.addExtendedAttribute(item.id, attributeKey, attributeValue, static_cast<int>(attributeValueSize));
     }
     catch (const SqliteFsException& e)
     {

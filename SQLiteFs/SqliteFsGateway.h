@@ -10,12 +10,12 @@
 
 #include "IFileSystem.h"
 
-#include "SqliteEntities.h"
+#include "Sqlite.h"
 #include "SqliteStatement.h"
+#include "SqliteEntities.h"
 
 #include <sqlite3.h>
 
-#include <stdexcept>
 #include <memory>
 
 namespace dfs
@@ -25,7 +25,6 @@ class SqliteFsGateway
 {
 public:
     SqliteFsGateway(const Path& dbPath);
-    ~SqliteFsGateway();
     
     SqliteEntities::Item getItemByPath(const Path& itemPath);
     SqliteEntities::Folder getFolderByPath(const Path& folderPath);
@@ -45,7 +44,7 @@ public:
     void deleteExtendedAttribute(int itemId, const char* attributeKey);
     
 private:
-    sqlite3* m_sqlite;
+    Sqlite m_sqlite;
     std::unique_ptr<SqliteStatement> m_selectLinkQueryWithParentIdAndName;
     std::unique_ptr<SqliteStatement> m_selectItemQueryWithId;
     std::unique_ptr<SqliteStatement> m_selectFolderQueryWithId;
@@ -61,28 +60,6 @@ private:
     std::unique_ptr<SqliteStatement> m_selectExtendedAttributeByItemIdAndNameQuery;
     
     int m_superRootFolderId;
-};
-    
-class SqliteFsException : public std::runtime_error
-{
-public:
-    SqliteFsException(FsError error, const std::string& errorStr)
-    : std::runtime_error(errorStr)
-    , m_error(error)
-    {}
-    
-    FsError getError() const
-    {
-        return m_error;
-    }
-    
-    std::string getErrorStr() const
-    {
-        return what();
-    }
-    
-private:
-    FsError m_error;
 };
     
 }
