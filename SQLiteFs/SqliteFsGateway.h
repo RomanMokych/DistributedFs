@@ -45,6 +45,9 @@ public:
     void deleteExtendedAttribute(int itemId, const char* attributeKey);
     
 private:
+    void createHardLinkImpl(int parentId, int itemId, const Path& linkName);
+    
+private:
     Sqlite m_sqlite;
     std::unique_ptr<SqliteStatement> m_selectLinkQueryWithParentIdAndName;
     std::unique_ptr<SqliteStatement> m_selectItemQueryWithId;

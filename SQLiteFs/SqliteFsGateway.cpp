@@ -191,32 +191,12 @@ void SqliteFsGateway::createFolder(int parentFolderId, const Path& newFolderName
     
     int newItemId = m_sqlite.getLastInsertedRowId();
     
-    SqliteStmtReseter linkReseter(m_insertLinkQuery->get());
-    
-    sqlite3_bind_int(m_insertLinkQuery->get(), 1, parentFolderId);
-    sqlite3_bind_int(m_insertLinkQuery->get(), 2, newItemId);
-    sqlite3_bind_text(m_insertLinkQuery->get(), 3, newFolderName.c_str(), -1, SQLITE_STATIC);
-    
-    error = sqlite3_step(m_insertLinkQuery->get());
-    if (error != SQLITE_DONE)
-    {
-        throw SqliteFsException(FsError::kFileExists, "Such file exists");
-    }
+    createHardLinkImpl(parentFolderId, newItemId, newFolderName);
 }
     
 void SqliteFsGateway::createHardLink(int parentId, int itemId, const Path& linkName)
 {
-    SqliteStmtReseter link(m_insertLinkQuery->get());
-    
-    sqlite3_bind_int(m_insertLinkQuery->get(), 1, parentId);
-    sqlite3_bind_int(m_insertLinkQuery->get(), 2, itemId);
-    sqlite3_bind_text(m_insertLinkQuery->get(), 3, linkName.c_str(), -1, SQLITE_STATIC);
-    
-    int error = sqlite3_step(m_insertLinkQuery->get());
-    if (error != SQLITE_DONE)
-    {
-        throw SqliteFsException(FsError::kFileExists, "Such file exists");
-    }
+    createHardLinkImpl(parentId, itemId, linkName);
 }
     
 void SqliteFsGateway::readFolderWithId(int folderId, std::vector<FileInfo>* fileInfos)
@@ -318,6 +298,21 @@ void SqliteFsGateway::getExtendedAttributesNames(int itemId, std::vector<std::st
     }
     
     attributesNames->swap(attributesNamesRes);
+}
+
+void SqliteFsGateway::createHardLinkImpl(int parentId, int itemId, const Path& linkName)
+{
+    SqliteStmtReseter link(m_insertLinkQuery->get());
+    
+    sqlite3_bind_int(m_insertLinkQuery->get(), 1, parentId);
+    sqlite3_bind_int(m_insertLinkQuery->get(), 2, itemId);
+    sqlite3_bind_text(m_insertLinkQuery->get(), 3, linkName.c_str(), -1, SQLITE_STATIC);
+    
+    int error = sqlite3_step(m_insertLinkQuery->get());
+    if (error != SQLITE_DONE)
+    {
+        throw SqliteFsException(FsError::kFileExists, "Such file exists");
+    }
 }
     
 }
