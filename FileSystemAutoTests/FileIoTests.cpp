@@ -8,8 +8,6 @@
 
 #include <gtest/gtest.h>
 
-#include "InMemoryFs.h"
-
 #include "FsTestFixtures.h"
 
 TYPED_TEST(FileIoTest, OpenFileFail)

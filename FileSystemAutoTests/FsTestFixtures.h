@@ -48,6 +48,14 @@ template <class FsTestImpl>
 class FolderTest : public FsTest<FsTestImpl>
 {};
 
+template <class FsTestImpl>
+class ExtendedAttributesTest : public FsTest<FsTestImpl>
+{};
+
+template <class FsTestImpl>
+class HardLinksTest : public FsTest<FsTestImpl>
+{};
+
 class InMemoryFsTest
 {
 public:
@@ -99,6 +107,8 @@ private:
 
 typedef ::testing::Types<InMemoryFsTest, SQLiteFsTest> FileSystems;
 
-TYPED_TEST_CASE(GeneralFsTest, FileSystems);
-TYPED_TEST_CASE(FolderTest,    FileSystems);
-TYPED_TEST_CASE(FileIoTest,    FileSystems);
+TYPED_TEST_CASE(GeneralFsTest,             FileSystems);
+TYPED_TEST_CASE(FolderTest,                FileSystems);
+TYPED_TEST_CASE(FileIoTest,                FileSystems);
+TYPED_TEST_CASE(ExtendedAttributesTest,    FileSystems);
+TYPED_TEST_CASE(HardLinksTest,            FileSystems);
