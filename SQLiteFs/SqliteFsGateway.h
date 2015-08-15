@@ -35,6 +35,7 @@ public:
     SqliteEntities::Item getItemById(int itemId);
     
     void createFolder(int parentFolderId, const Path& newFolderName, Permissions permissions);
+    void createHardLink(int parentId, int itemId, const Path& linkName);
     
     void readFolderWithId(int folderId, std::vector<FileInfo>* fileInfo);
     

@@ -38,7 +38,6 @@ TYPED_TEST(HardLinksTest, CreateHardLinkForRoot)
     EXPECT_EQ("test", filesInfos[0].name);
     EXPECT_EQ(dfs::FileType::kFolder, filesInfos[0].type);
     
-    
     folder.reset();
     
     this->getFs().openFolder("/test", folder);

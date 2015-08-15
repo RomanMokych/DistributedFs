@@ -65,7 +65,21 @@ dfs::FsError dfs::SqliteFs::readSymLink(const Path& linkPath, Path* symLinkValue
 
 dfs::FsError dfs::SqliteFs::createHardLink(const Path& linkPath, const Path& targetPath)
 {
-    return dfs::FsError::kNotImplemented;
+    try
+    {
+        if (linkPath == "/")
+            return FsError::kFileExists;
+        
+        SqliteEntities::Item targetItem = m_gateway.getItemByPath(targetPath);
+        SqliteEntities::Folder parentFolder = m_gateway.getFolderByPath(linkPath.parent_path());
+        m_gateway.createHardLink(parentFolder.id, targetItem.id, linkPath.leaf());
+    }
+    catch (const SqliteFsException& e)
+    {
+        return e.getError();
+    }
+    
+    return dfs::FsError::kSuccess;
 }
 
 //general

@@ -5,9 +5,7 @@
 - implement permissions change
 - implement symlinks
 
-- implement SQLite folders
 - implement SQLite files
 - attributes
 - symlinks
-- hard links
 
