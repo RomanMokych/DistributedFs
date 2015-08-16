@@ -37,5 +37,11 @@ namespace SqliteEntities
     {
         int id;
     };
+    
+    struct SymLink
+    {
+        int id;
+        Path path;
+    };
 }
 }

@@ -40,6 +40,7 @@ SqliteFsGateway::SqliteFsGateway(const Path& dbPath)
     m_sqlite.executeQuery("CREATE TABLE Items (id INTEGER PRIMARY KEY ASC, type INT NOT NULL, concreteItemId INT NOT NULL, permissions INT NOT NULL, creationTime INT NOT NULL, modificationTime INT NOT NULL);");
     m_sqlite.executeQuery("CREATE TABLE Folders (id INTEGER PRIMARY KEY ASC, dummy INT);");
     m_sqlite.executeQuery("CREATE TABLE Files (id INTEGER PRIMARY KEY ASC, data BLOB);");
+    m_sqlite.executeQuery("CREATE TABLE SymLinks (id INTEGER PRIMARY KEY ASC, path TEXT NOT NULL);");
     m_sqlite.executeQuery("CREATE TABLE ExtendedAttributes (id INTEGER PRIMARY KEY ASC, itemId INT NOT NULL, name TEXT NOT NULL, value BLOB NOT NULL, UNIQUE (itemId, name));");
     
     m_selectLinkQueryWithParentIdAndName = m_sqlite.createStatement("SELECT id, parentId, itemId, name FROM Links WHERE parentId = ? AND name = ?;");
@@ -49,15 +50,18 @@ SqliteFsGateway::SqliteFsGateway(const Path& dbPath)
     
     m_updateItemWithIdQuery = m_sqlite.createStatement("UPDATE Items SET permissions = ?2, creationTime = ?3, modificationTime = ?4 WHERE id = ?1;");
     
-    m_insertFolderQuery = m_sqlite.createStatement("INSERT INTO Folders (dummy) VALUES (0);");
-    m_insertFileQuery   = m_sqlite.createStatement("INSERT INTO Files (data) VALUES (NULL)");
-    m_insertItemQuery   = m_sqlite.createStatement("INSERT INTO Items (type, concreteItemId, permissions, creationTime, modificationTime) VALUES (?, ?, ?, ?, ?);");
-    m_insertLinkQuery   = m_sqlite.createStatement("INSERT INTO Links (parentId, itemId, name) VALUES (?, ?, ?);");
+    m_insertFolderQuery   = m_sqlite.createStatement("INSERT INTO Folders (dummy) VALUES (0);");
+    m_insertFileQuery     = m_sqlite.createStatement("INSERT INTO Files (data) VALUES (NULL);");
+    m_insertSymLinkQuery  = m_sqlite.createStatement("INSERT INTO SymLinks (path) VALUES (?);");
+    m_insertItemQuery     = m_sqlite.createStatement("INSERT INTO Items (type, concreteItemId, permissions, creationTime, modificationTime) VALUES (?, ?, ?, ?, ?);");
+    m_insertLinkQuery     = m_sqlite.createStatement("INSERT INTO Links (parentId, itemId, name) VALUES (?, ?, ?);");
     
     m_deleteLinkWithId = m_sqlite.createStatement("DELETE FROM Links WHERE id = ?;");
     
     m_selectFileDataWithIdQuery = m_sqlite.createStatement("SELECT data FROM Files WHERE id = ?;");
     m_updateFileDataWithIdQuery = m_sqlite.createStatement("UPDATE Files SET data = ?2 WHERE id = ?1;");
+    
+    m_selectSymLinkWithIdQuery = m_sqlite.createStatement("SELECT path FROM SymLinks WHERE id = ?;");
     
     m_insertExtendedAttributeQuery                = m_sqlite.createStatement("INSERT INTO ExtendedAttributes (itemId, name, value) VALUES (?, ?, ?);");
     m_deleteExtendedAttributeByItemIdAndNameQuery = m_sqlite.createStatement("DELETE FROM ExtendedAttributes WHERE itemId = ? AND name = ?;");
@@ -81,7 +85,7 @@ SqliteEntities::Folder SqliteFsGateway::getFolderByPath(const Path& folderPath)
     return getFolderById(item.concreteItemId);
 }
     
-SqliteEntities::Item SqliteFsGateway::getItemByPath(const Path& itemPath)
+SqliteEntities::Item SqliteFsGateway::getItemByPath(const Path& itemPath, bool followLastSymlink)
 {
     SqliteEntities::Link link;
     int parentId = m_superRootFolderId;
@@ -94,6 +98,12 @@ SqliteEntities::Item SqliteFsGateway::getItemByPath(const Path& itemPath)
         link = getLink(parentId, pathIt->leaf());
         
         SqliteEntities::Item item = getItemById(link.itemId);
+        while (item.type == dfs::FileType::kSymLink)
+        {
+            SqliteEntities::SymLink symLink = getSymLinkById(item.concreteItemId);
+            item = getItemByPath(symLink.path);
+        }
+        
         if (item.type != dfs::FileType::kFolder)
         {
             throw SqliteFsException(FsError::kFileHasWrongType, "File has wrong type");
@@ -102,9 +112,20 @@ SqliteEntities::Item SqliteFsGateway::getItemByPath(const Path& itemPath)
         parentId = item.concreteItemId;
         pathIt++;
     }
-    
+
     link = getLink(parentId, pathIt->leaf());
-    return getItemById(link.itemId);
+    SqliteEntities::Item item = getItemById(link.itemId);
+    
+    if (followLastSymlink)
+    {
+        while (item.type == dfs::FileType::kSymLink)
+        {
+            SqliteEntities::SymLink symLink = getSymLinkById(item.concreteItemId);
+            item = getItemByPath(symLink.path);
+        }
+    }
+    
+    return item;
 }
     
 SqliteEntities::Link SqliteFsGateway::getLink(int parentId, const Path& name)
@@ -195,6 +216,25 @@ void SqliteFsGateway::updateItem(const SqliteEntities::Item& item)
     }
 }
     
+SqliteEntities::SymLink SqliteFsGateway::getSymLinkById(int symLinkId)
+{
+    SqliteStmtReseter reseter(m_selectSymLinkWithIdQuery->get());
+    
+    sqlite3_bind_int(m_selectSymLinkWithIdQuery->get(), 1, symLinkId);
+
+    int error = sqlite3_step(m_selectSymLinkWithIdQuery->get());
+    if (error != SQLITE_ROW)
+    {
+        throw SqliteFsException(FsError::kUnknownError, "Can't get symlink");
+    }
+        
+    SqliteEntities::SymLink symLink;
+    symLink.id = symLinkId;
+    symLink.path = reinterpret_cast<const char*>(sqlite3_column_text(m_selectSymLinkWithIdQuery->get(), 0));
+    
+    return symLink;
+}
+    
 void SqliteFsGateway::createFolder(int parentFolderId, const Path& newFolderName, Permissions permissions)
 {
     SqliteStmtReseter folderReseter(m_insertFolderQuery->get());
@@ -227,6 +267,25 @@ void SqliteFsGateway::createFile(int parentFolderId, const Path& newFolderName, 
     
     int newItemId = m_sqlite.getLastInsertedRowId();
     createHardLinkImpl(parentFolderId, newItemId, newFolderName);
+}
+    
+void SqliteFsGateway::createSymLink(int parentFolderId, const Path& newLinkName, Permissions permissions, const Path& symLinkValue)
+{
+    SqliteStmtReseter reseter(m_insertSymLinkQuery->get());
+    
+    sqlite3_bind_text(m_insertSymLinkQuery->get(), 1, symLinkValue.c_str(), -1, SQLITE_STATIC);
+    
+    int error = sqlite3_step(m_insertSymLinkQuery->get());
+    if (error != SQLITE_DONE)
+    {
+        THROW("can't insert");
+    }
+    
+    int newSymLinkName = m_sqlite.getLastInsertedRowId();
+    createItemImpl(FileType::kSymLink, newSymLinkName, permissions);
+    
+    int newItemId = m_sqlite.getLastInsertedRowId();
+    createHardLinkImpl(parentFolderId, newItemId, newLinkName);
 }
     
 void SqliteFsGateway::createHardLink(int parentId, int itemId, const Path& linkName)
@@ -311,7 +370,7 @@ void SqliteFsGateway::updateFileData(int fileId, const std::vector<char>& fileDa
        throw SqliteFsException(FsError::kUnknownError, "Can't update file data");
     }
 }
-
+    
 void SqliteFsGateway::addExtendedAttribute(int itemId, const char* attributeKey, const char* attributeValue, const int attributeValueSize)
 {
     SqliteStmtReseter reseter(m_insertExtendedAttributeQuery->get());

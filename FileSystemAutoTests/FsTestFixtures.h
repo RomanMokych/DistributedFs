@@ -56,6 +56,10 @@ template <class FsTestImpl>
 class HardLinksTest : public FsTest<FsTestImpl>
 {};
 
+template <class FsTestImpl>
+class SymLinksTest : public FsTest<FsTestImpl>
+{};
+
 class InMemoryFsTest
 {
 public:
@@ -111,4 +115,5 @@ TYPED_TEST_CASE(GeneralFsTest,             FileSystems);
 TYPED_TEST_CASE(FolderTest,                FileSystems);
 TYPED_TEST_CASE(FileIoTest,                FileSystems);
 TYPED_TEST_CASE(ExtendedAttributesTest,    FileSystems);
-TYPED_TEST_CASE(HardLinksTest,            FileSystems);
+TYPED_TEST_CASE(HardLinksTest,             FileSystems);
+TYPED_TEST_CASE(SymLinksTest,              FileSystems);

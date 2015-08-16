@@ -26,7 +26,7 @@ class SqliteFsGateway
 public:
     SqliteFsGateway(const Path& dbPath);
     
-    SqliteEntities::Item getItemByPath(const Path& itemPath);
+    SqliteEntities::Item getItemByPath(const Path& itemPath, bool followLastSymLink = true);
     SqliteEntities::Folder getFolderByPath(const Path& folderPath);
     
     SqliteEntities::Folder getFolderById(int folderId);
@@ -34,8 +34,11 @@ public:
     SqliteEntities::Link getLink(int parentId, const Path& name);
     SqliteEntities::Item getItemById(int itemId);
     
+    SqliteEntities::SymLink getSymLinkById(int symLinkId);
+    
     void createFolder(int parentFolderId, const Path& newFolderName, Permissions permissions);
     void createFile(int parentFolderId, const Path& newFolderName, Permissions permissions);
+    void createSymLink(int parentFolderId, const Path& newLinkName, Permissions permissions, const Path& symLinkValue);
     void createHardLink(int parentId, int itemId, const Path& linkName);
    
     void updateItem(const SqliteEntities::Item& item);
@@ -69,12 +72,15 @@ private:
     std::unique_ptr<SqliteStatement> m_insertItemQuery;
     std::unique_ptr<SqliteStatement> m_insertFolderQuery;
     std::unique_ptr<SqliteStatement> m_insertFileQuery;
+    std::unique_ptr<SqliteStatement> m_insertSymLinkQuery;
     std::unique_ptr<SqliteStatement> m_insertLinkQuery;
     
     std::unique_ptr<SqliteStatement> m_deleteLinkWithId;
 
     std::unique_ptr<SqliteStatement> m_selectFileDataWithIdQuery;
     std::unique_ptr<SqliteStatement> m_updateFileDataWithIdQuery;
+    
+    std::unique_ptr<SqliteStatement> m_selectSymLinkWithIdQuery;
     
     std::unique_ptr<SqliteStatement> m_insertExtendedAttributeQuery;
     std::unique_ptr<SqliteStatement> m_deleteExtendedAttributeByItemIdAndNameQuery;

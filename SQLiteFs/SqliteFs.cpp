@@ -80,12 +80,41 @@ dfs::FsError dfs::SqliteFs::truncateFile(const Path& filePath, const uint64_t ne
 //links
 dfs::FsError dfs::SqliteFs::createSymLink(const Path& linkPath, const Path& targetPath)
 {
-    return dfs::FsError::kNotImplemented;
+    try
+    {
+        if (linkPath == "/")
+            return FsError::kFileExists;
+        
+        SqliteEntities::Folder parentFolder = m_gateway.getFolderByPath(linkPath.parent_path());
+        m_gateway.createSymLink(parentFolder.id, linkPath.leaf(), Permissions::kAll, targetPath);
+    }
+    catch (const SqliteFsException& e)
+    {
+        return e.getError();
+    }
+    
+    return dfs::FsError::kSuccess;
 }
 
 dfs::FsError dfs::SqliteFs::readSymLink(const Path& linkPath, Path* symLinkValue)
 {
-    return dfs::FsError::kNotImplemented;
+    try
+    {
+        SqliteEntities::Item item = m_gateway.getItemByPath(linkPath, false);
+        if (item.type != FileType::kSymLink)
+        {
+            return dfs::FsError::kFileHasWrongType;
+        }
+        
+        SqliteEntities::SymLink symLink = m_gateway.getSymLinkById(item.concreteItemId);
+        *symLinkValue = symLink.path;
+    }
+    catch (const SqliteFsException& e)
+    {
+        return e.getError();
+    }
+    
+    return dfs::FsError::kSuccess;
 }
 
 dfs::FsError dfs::SqliteFs::createHardLink(const Path& linkPath, const Path& targetPath)
