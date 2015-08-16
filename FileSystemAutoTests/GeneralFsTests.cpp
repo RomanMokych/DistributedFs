@@ -136,3 +136,91 @@ TYPED_TEST(GeneralFsTest, SetCreationTime)
     
     EXPECT_EQ(1, modificationTime);
 }
+
+TYPED_TEST(GeneralFsTest, SetPermissionsFail)
+{
+    dfs::IFileSystem& fs = this->getFs();
+    
+    dfs::FsError error = fs.setPermissions("/test", dfs::Permissions::kRead);
+    EXPECT_EQ(dfs::FsError::kFileNotFound, error);
+}
+
+TYPED_TEST(GeneralFsTest, GetPermissionsFail)
+{
+    dfs::IFileSystem& fs = this->getFs();
+    
+    dfs::Permissions permissions = dfs::Permissions::kAll;
+    dfs::FsError error = fs.getPermissions("/test", &permissions);
+    EXPECT_EQ(dfs::FsError::kFileNotFound, error);
+}
+
+TYPED_TEST(GeneralFsTest, GetPermissionsOfRoot)
+{
+    dfs::IFileSystem& fs = this->getFs();
+    
+    dfs::Permissions permissions = dfs::Permissions::kAll;
+    dfs::FsError error = fs.getPermissions("/", &permissions);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    EXPECT_EQ(dfs::Permissions::kAll, permissions);
+}
+
+TYPED_TEST(GeneralFsTest, GetPermissionsOfJustCreatedFolder)
+{
+    dfs::IFileSystem& fs = this->getFs();
+    
+    dfs::FsError error = fs.createFolder("/test", dfs::Permissions::kRead);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    dfs::Permissions permissions = dfs::Permissions::kAll;
+    error = fs.getPermissions("/test", &permissions);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    EXPECT_EQ(dfs::Permissions::kRead, permissions);
+    
+    error = fs.createFolder("/test1", dfs::Permissions::kWrite);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    permissions = dfs::Permissions::kAll;
+    error = fs.getPermissions("/test1", &permissions);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    EXPECT_EQ(dfs::Permissions::kWrite, permissions);
+}
+
+TYPED_TEST(GeneralFsTest, GetPermissionsOfJustCreatedFile)
+{
+    dfs::IFileSystem& fs = this->getFs();
+    
+    dfs::IFileUPtr file;
+    dfs::FsError error = fs.openFile("/test", dfs::FileOpenMode::kRead | dfs::FileOpenMode::kCreate, file);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    dfs::Permissions permissions = dfs::Permissions::kAll;
+    error = fs.getPermissions("/test", &permissions);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    EXPECT_EQ(dfs::Permissions::kAll, permissions);
+}
+
+TYPED_TEST(GeneralFsTest, SetGetPermissions)
+{
+    dfs::IFileSystem& fs = this->getFs();
+    
+    dfs::IFileUPtr file;
+    dfs::FsError error = fs.openFile("/test", dfs::FileOpenMode::kRead | dfs::FileOpenMode::kCreate, file);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    error = fs.setPermissions("/test", dfs::Permissions::kRead);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    dfs::Permissions permissions = dfs::Permissions::kAll;
+    error = fs.getPermissions("/test", &permissions);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    EXPECT_EQ(dfs::Permissions::kRead, permissions);
+    
+    error = fs.setPermissions("/test", dfs::Permissions::kWrite);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    permissions = dfs::Permissions::kAll;
+    error = fs.getPermissions("/test", &permissions);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    EXPECT_EQ(dfs::Permissions::kWrite, permissions);
+}
+

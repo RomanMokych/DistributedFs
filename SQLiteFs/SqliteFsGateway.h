@@ -38,6 +38,8 @@ public:
     void createFile(int parentFolderId, const Path& newFolderName, Permissions permissions);
     void createHardLink(int parentId, int itemId, const Path& linkName);
    
+    void updateItem(const SqliteEntities::Item& item);
+    
     void removeLink(int linkId);
     
     void readFolderWithId(int folderId, std::vector<FileInfo>* fileInfo);
@@ -56,10 +58,13 @@ private:
     
 private:
     Sqlite m_sqlite;
+    
     std::unique_ptr<SqliteStatement> m_selectLinkQueryWithParentIdAndName;
     std::unique_ptr<SqliteStatement> m_selectItemQueryWithId;
     std::unique_ptr<SqliteStatement> m_selectFolderQueryWithId;
     std::unique_ptr<SqliteStatement> m_selectLinksWithParentId;
+    
+    std::unique_ptr<SqliteStatement> m_updateItemWithIdQuery;
     
     std::unique_ptr<SqliteStatement> m_insertItemQuery;
     std::unique_ptr<SqliteStatement> m_insertFolderQuery;

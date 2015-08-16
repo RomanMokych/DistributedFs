@@ -139,32 +139,95 @@ dfs::FsError dfs::SqliteFs::getFileInfo(const Path& path, FileInfo* info)
 
 dfs::FsError dfs::SqliteFs::setPermissions(const Path& path, const Permissions permissions)
 {
-    return dfs::FsError::kNotImplemented;
+    try
+    {
+        SqliteEntities::Item item = m_gateway.getItemByPath(path);
+        item.permissions = permissions;
+        m_gateway.updateItem(item);
+    }
+    catch (const SqliteFsException& e)
+    {
+        return e.getError();
+    }
+    
+    return dfs::FsError::kSuccess;
 }
 
 dfs::FsError dfs::SqliteFs::getPermissions(const Path& path, Permissions* permissions)
 {
-    return dfs::FsError::kNotImplemented;
+    try
+    {
+        SqliteEntities::Item item = m_gateway.getItemByPath(path);
+        *permissions = item.permissions;
+    }
+    catch (const SqliteFsException& e)
+    {
+        return e.getError();
+    }
+    
+    return dfs::FsError::kSuccess;
 }
 
 dfs::FsError dfs::SqliteFs::setCreationTime(const Path& path, const std::time_t time)
 {
-    return dfs::FsError::kNotImplemented;
+    try
+    {
+        SqliteEntities::Item item = m_gateway.getItemByPath(path);
+        item.creationTime = time;
+        m_gateway.updateItem(item);
+    }
+    catch (const SqliteFsException& e)
+    {
+        return e.getError();
+    }
+    
+    return dfs::FsError::kSuccess;
 }
 
 dfs::FsError dfs::SqliteFs::getCreationTime(const Path& path, std::time_t* time)
 {
-    return dfs::FsError::kNotImplemented;
+    try
+    {
+        SqliteEntities::Item item = m_gateway.getItemByPath(path);
+        *time = item.creationTime;
+    }
+    catch (const SqliteFsException& e)
+    {
+        return e.getError();
+    }
+    
+    return dfs::FsError::kSuccess;
 }
 
 dfs::FsError dfs::SqliteFs::setModificationTime(const Path& path, const std::time_t time)
 {
-    return dfs::FsError::kNotImplemented;
+    try
+    {
+        SqliteEntities::Item item = m_gateway.getItemByPath(path);
+        item.modificationTime = time;
+        m_gateway.updateItem(item);
+    }
+    catch (const SqliteFsException& e)
+    {
+        return e.getError();
+    }
+    
+    return dfs::FsError::kSuccess;
 }
 
 dfs::FsError dfs::SqliteFs::getModificationTime(const Path& path, std::time_t* time)
 {
-    return dfs::FsError::kNotImplemented;
+    try
+    {
+        SqliteEntities::Item item = m_gateway.getItemByPath(path);
+        *time = item.modificationTime;
+    }
+    catch (const SqliteFsException& e)
+    {
+        return e.getError();
+    }
+    
+    return dfs::FsError::kSuccess;
 }
 
 dfs::FsError dfs::SqliteFs::setExtendedAttribute(const Path& path, const char* attributeKey, const char* attributeValue, const size_t attributeValueSize)

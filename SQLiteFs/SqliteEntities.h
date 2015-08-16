@@ -29,6 +29,8 @@ namespace SqliteEntities
         int concreteItemId;
         
         Permissions permissions;
+        std::time_t creationTime;
+        std::time_t modificationTime;
     };
     
     struct Folder

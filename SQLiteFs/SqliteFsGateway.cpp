@@ -37,19 +37,21 @@ SqliteFsGateway::SqliteFsGateway(const Path& dbPath)
     : m_sqlite(dbPath.string())
 {
     m_sqlite.executeQuery("CREATE TABLE Links (id INTEGER PRIMARY KEY ASC, parentId INT NOT NULL, itemId INT NOT NULL, name TEXT NOT NULL, UNIQUE (parentId, name));");
-    m_sqlite.executeQuery("CREATE TABLE Items (id INTEGER PRIMARY KEY ASC, type INT NOT NULL, concreteItemId INT NOT NULL, permissions INT NOT NULL);");
+    m_sqlite.executeQuery("CREATE TABLE Items (id INTEGER PRIMARY KEY ASC, type INT NOT NULL, concreteItemId INT NOT NULL, permissions INT NOT NULL, creationTime INT NOT NULL, modificationTime INT NOT NULL);");
     m_sqlite.executeQuery("CREATE TABLE Folders (id INTEGER PRIMARY KEY ASC, dummy INT);");
     m_sqlite.executeQuery("CREATE TABLE Files (id INTEGER PRIMARY KEY ASC, data BLOB);");
     m_sqlite.executeQuery("CREATE TABLE ExtendedAttributes (id INTEGER PRIMARY KEY ASC, itemId INT NOT NULL, name TEXT NOT NULL, value BLOB NOT NULL, UNIQUE (itemId, name));");
     
     m_selectLinkQueryWithParentIdAndName = m_sqlite.createStatement("SELECT id, parentId, itemId, name FROM Links WHERE parentId = ? AND name = ?;");
-    m_selectItemQueryWithId              = m_sqlite.createStatement("SELECT id, type, concreteItemId, permissions FROM Items WHERE id = ?;");
+    m_selectItemQueryWithId              = m_sqlite.createStatement("SELECT id, type, concreteItemId, permissions, creationTime, modificationTime FROM Items WHERE id = ?;");
     m_selectFolderQueryWithId            = m_sqlite.createStatement("SELECT id, dummy  FROM Folders WHERE id = ?;");
     m_selectLinksWithParentId            = m_sqlite.createStatement("SELECT Links.name, Items.type, Items.permissions FROM Links JOIN Items ON Links.itemId = Items.id WHERE parentId = ?;");
     
+    m_updateItemWithIdQuery = m_sqlite.createStatement("UPDATE Items SET permissions = ?2, creationTime = ?3, modificationTime = ?4 WHERE id = ?1;");
+    
     m_insertFolderQuery = m_sqlite.createStatement("INSERT INTO Folders (dummy) VALUES (0);");
     m_insertFileQuery   = m_sqlite.createStatement("INSERT INTO Files (data) VALUES (NULL)");
-    m_insertItemQuery   = m_sqlite.createStatement("INSERT INTO Items (type, concreteItemId, permissions) VALUES (?, ?, ?);");
+    m_insertItemQuery   = m_sqlite.createStatement("INSERT INTO Items (type, concreteItemId, permissions, creationTime, modificationTime) VALUES (?, ?, ?, ?, ?);");
     m_insertLinkQuery   = m_sqlite.createStatement("INSERT INTO Links (parentId, itemId, name) VALUES (?, ?, ?);");
     
     m_deleteLinkWithId = m_sqlite.createStatement("DELETE FROM Links WHERE id = ?;");
@@ -168,6 +170,8 @@ SqliteEntities::Item SqliteFsGateway::getItemById(int itemId)
         item.type = static_cast<dfs::FileType>(sqlite3_column_int(m_selectItemQueryWithId->get(), 1));
         item.concreteItemId = sqlite3_column_int(m_selectItemQueryWithId->get(), 2);
         item.permissions = static_cast<Permissions>(sqlite3_column_int(m_selectItemQueryWithId->get(), 3));
+        item.creationTime = static_cast<std::time_t>(sqlite3_column_int(m_selectItemQueryWithId->get(), 4));
+        item.modificationTime = static_cast<std::time_t>(sqlite3_column_int(m_selectItemQueryWithId->get(), 5));
         
         return item;
     }
@@ -175,6 +179,22 @@ SqliteEntities::Item SqliteFsGateway::getItemById(int itemId)
     throw SqliteFsException(FsError::kFileNotFound, "item was not found");
 }
 
+void SqliteFsGateway::updateItem(const SqliteEntities::Item& item)
+{
+    SqliteStmtReseter reseter(m_updateItemWithIdQuery->get());
+    
+    sqlite3_bind_int(m_updateItemWithIdQuery->get(), 1, item.id);
+    sqlite3_bind_int(m_updateItemWithIdQuery->get(), 2, static_cast<int>(item.permissions));
+    sqlite3_bind_int(m_updateItemWithIdQuery->get(), 3, static_cast<int>(item.creationTime));
+    sqlite3_bind_int(m_updateItemWithIdQuery->get(), 4, static_cast<int>(item.modificationTime));
+    
+    int error = sqlite3_step(m_updateItemWithIdQuery->get());
+    if (error != SQLITE_DONE)
+    {
+        throw SqliteFsException(FsError::kUnknownError, "Can't update item");
+    }
+}
+    
 void SqliteFsGateway::createFolder(int parentFolderId, const Path& newFolderName, Permissions permissions)
 {
     SqliteStmtReseter folderReseter(m_insertFolderQuery->get());
@@ -369,9 +389,12 @@ void SqliteFsGateway::createItemImpl(FileType fileType, int concreteItemId, Perm
 {
     SqliteStmtReseter itemReseter(m_insertItemQuery->get());
     
+    std::time_t currentTime = std::time(nullptr);
     sqlite3_bind_int(m_insertItemQuery->get(), 1, static_cast<int>(fileType));
     sqlite3_bind_int(m_insertItemQuery->get(), 2, concreteItemId);
     sqlite3_bind_int(m_insertItemQuery->get(), 3, static_cast<int>(permissions));
+    sqlite3_bind_int(m_insertItemQuery->get(), 4, static_cast<int>(currentTime));
+    sqlite3_bind_int(m_insertItemQuery->get(), 5, static_cast<int>(currentTime));
     
     int error = sqlite3_step(m_insertItemQuery->get());
     if (error != SQLITE_DONE)
