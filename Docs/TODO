@@ -11,3 +11,7 @@
 - implement transactions
 - implement renaming
 - implement truncating
+- add loggin
+- move bindings to the SqliteStatement
+- refactroe reseter
+- rename IFileSystem constants
