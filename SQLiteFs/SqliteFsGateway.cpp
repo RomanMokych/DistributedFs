@@ -39,6 +39,7 @@ SqliteFsGateway::SqliteFsGateway(const Path& dbPath)
     m_sqlite.executeQuery("CREATE TABLE Links (id INTEGER PRIMARY KEY ASC, parentId INT NOT NULL, itemId INT NOT NULL, name TEXT NOT NULL, UNIQUE (parentId, name));");
     m_sqlite.executeQuery("CREATE TABLE Items (id INTEGER PRIMARY KEY ASC, type INT NOT NULL, concreteItemId INT NOT NULL, permissions INT NOT NULL);");
     m_sqlite.executeQuery("CREATE TABLE Folders (id INTEGER PRIMARY KEY ASC, dummy INT);");
+    m_sqlite.executeQuery("CREATE TABLE Files (id INTEGER PRIMARY KEY ASC, data BLOB);");
     m_sqlite.executeQuery("CREATE TABLE ExtendedAttributes (id INTEGER PRIMARY KEY ASC, itemId INT NOT NULL, name TEXT NOT NULL, value BLOB NOT NULL, UNIQUE (itemId, name));");
     
     m_selectLinkQueryWithParentIdAndName = m_sqlite.createStatement("SELECT id, parentId, itemId, name FROM Links WHERE parentId = ? AND name = ?;");
@@ -47,6 +48,7 @@ SqliteFsGateway::SqliteFsGateway(const Path& dbPath)
     m_selectLinksWithParentId            = m_sqlite.createStatement("SELECT Links.name, Items.type, Items.permissions FROM Links JOIN Items ON Links.itemId = Items.id WHERE parentId = ?;");
     
     m_insertFolderQuery = m_sqlite.createStatement("INSERT INTO Folders (dummy) VALUES (0);");
+    m_insertFileQuery   = m_sqlite.createStatement("INSERT INTO Files (data) VALUES (NULL)");
     m_insertItemQuery   = m_sqlite.createStatement("INSERT INTO Items (type, concreteItemId, permissions) VALUES (?, ?, ?);");
     m_insertLinkQuery   = m_sqlite.createStatement("INSERT INTO Links (parentId, itemId, name) VALUES (?, ?, ?);");
     
@@ -80,10 +82,12 @@ SqliteEntities::Item SqliteFsGateway::getItemByPath(const Path& itemPath)
     int parentId = m_superRootFolderId;
     
     auto pathIt = itemPath.begin();
-    while (pathIt != itemPath.end())
+    auto pathEndIt = itemPath.end();
+    pathEndIt--;
+    while (pathIt != pathEndIt)
     {
         link = getLink(parentId, pathIt->leaf());
-       
+        
         SqliteEntities::Item item = getItemById(link.itemId);
         if (item.type != dfs::FileType::kFolder)
         {
@@ -94,6 +98,7 @@ SqliteEntities::Item SqliteFsGateway::getItemByPath(const Path& itemPath)
         pathIt++;
     }
     
+    link = getLink(parentId, pathIt->leaf());
     return getItemById(link.itemId);
 }
     
@@ -178,21 +183,26 @@ void SqliteFsGateway::createFolder(int parentFolderId, const Path& newFolderName
     }
     
     int newFolderId = m_sqlite.getLastInsertedRowId();
+    createItemImpl(FileType::kFolder, newFolderId, permissions);
     
-    SqliteStmtReseter itemReseter(m_insertItemQuery->get());
+    int newItemId = m_sqlite.getLastInsertedRowId();
+    createHardLinkImpl(parentFolderId, newItemId, newFolderName);
+}
     
-    sqlite3_bind_int(m_insertItemQuery->get(), 1, static_cast<int>(dfs::FileType::kFolder));
-    sqlite3_bind_int(m_insertItemQuery->get(), 2, newFolderId);
-    sqlite3_bind_int(m_insertItemQuery->get(), 3, static_cast<int>(permissions));
+void SqliteFsGateway::createFile(int parentFolderId, const Path& newFolderName, Permissions permissions)
+{
+    SqliteStmtReseter fileReseter(m_insertFileQuery->get());
     
-    error = sqlite3_step(m_insertItemQuery->get());
+    int error = sqlite3_step(m_insertFileQuery->get());
     if (error != SQLITE_DONE)
     {
         THROW("can't insert");
     }
     
-    int newItemId = m_sqlite.getLastInsertedRowId();
+    int newFileId = m_sqlite.getLastInsertedRowId();
+    createItemImpl(FileType::kFile, newFileId, permissions);
     
+    int newItemId = m_sqlite.getLastInsertedRowId();
     createHardLinkImpl(parentFolderId, newItemId, newFolderName);
 }
     
@@ -315,6 +325,21 @@ void SqliteFsGateway::getExtendedAttributesNames(int itemId, std::vector<std::st
     attributesNames->swap(attributesNamesRes);
 }
 
+void SqliteFsGateway::createItemImpl(FileType fileType, int concreteItemId, Permissions permissions)
+{
+    SqliteStmtReseter itemReseter(m_insertItemQuery->get());
+    
+    sqlite3_bind_int(m_insertItemQuery->get(), 1, static_cast<int>(fileType));
+    sqlite3_bind_int(m_insertItemQuery->get(), 2, concreteItemId);
+    sqlite3_bind_int(m_insertItemQuery->get(), 3, static_cast<int>(permissions));
+    
+    int error = sqlite3_step(m_insertItemQuery->get());
+    if (error != SQLITE_DONE)
+    {
+        THROW("can't insert");
+    }
+}
+    
 void SqliteFsGateway::createHardLinkImpl(int parentId, int itemId, const Path& linkName)
 {
     SqliteStmtReseter link(m_insertLinkQuery->get());

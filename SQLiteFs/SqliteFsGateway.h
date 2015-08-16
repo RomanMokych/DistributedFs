@@ -35,6 +35,7 @@ public:
     SqliteEntities::Item getItemById(int itemId);
     
     void createFolder(int parentFolderId, const Path& newFolderName, Permissions permissions);
+    void createFile(int parentFolderId, const Path& newFolderName, Permissions permissions);
     void createHardLink(int parentId, int itemId, const Path& linkName);
    
     void removeLink(int linkId);
@@ -47,6 +48,7 @@ public:
     void deleteExtendedAttribute(int itemId, const char* attributeKey);
     
 private:
+    void createItemImpl(FileType fileType, int concreteItemId, Permissions permissions);
     void createHardLinkImpl(int parentId, int itemId, const Path& linkName);
     
 private:
@@ -58,6 +60,7 @@ private:
     
     std::unique_ptr<SqliteStatement> m_insertItemQuery;
     std::unique_ptr<SqliteStatement> m_insertFolderQuery;
+    std::unique_ptr<SqliteStatement> m_insertFileQuery;
     std::unique_ptr<SqliteStatement> m_insertLinkQuery;
     
     std::unique_ptr<SqliteStatement> m_deleteLinkWithId;

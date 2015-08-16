@@ -2,6 +2,7 @@
 #include "SqliteFs.h"
 
 #include "SqliteFsFolder.h"
+#include "SqliteFsFile.h"
 #include "SqliteFsException.h"
 
 dfs::SqliteFs::SqliteFs(const dfs::Path& fsDbPath)
@@ -44,7 +45,31 @@ dfs::FsError dfs::SqliteFs::openFolder(const Path& folderPath, std::unique_ptr<I
 //files
 dfs::FsError dfs::SqliteFs::openFile(const Path& filePath, const int fileOpenMode, std::unique_ptr<IFile>& outFile)
 {
-    return dfs::FsError::kNotImplemented;
+    try
+    {
+        if (filePath == "/")
+            return FsError::kFileHasWrongType;
+        
+        if (fileOpenMode & FileOpenMode::kCreate)
+        {
+            SqliteEntities::Folder parentFolder = m_gateway.getFolderByPath(filePath.parent_path());
+            m_gateway.createFile(parentFolder.id, filePath.leaf(), dfs::Permissions::kAll);
+        }
+        
+        SqliteEntities::Item item = m_gateway.getItemByPath(filePath);
+        if (item.type != FileType::kFile)
+        {
+            return FsError::kFileHasWrongType;
+        }
+        
+        outFile.reset(new SqliteFsFile(item.concreteItemId, &m_gateway));
+    }
+    catch (const SqliteFsException& e)
+    {
+        return e.getError();
+    }
+    
+    return dfs::FsError::kSuccess;
 }
 
 dfs::FsError dfs::SqliteFs::truncateFile(const Path& filePath, const uint64_t newSize)

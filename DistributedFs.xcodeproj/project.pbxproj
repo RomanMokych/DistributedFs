@@ -16,6 +16,8 @@
 		3081A8671B7FC56800E66C16 /* HardLinksTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3081A8661B7FC56800E66C16 /* HardLinksTests.cpp */; };
 		3081A86A1B7FC8E000E66C16 /* Sqlite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3081A8681B7FC8E000E66C16 /* Sqlite.cpp */; };
 		3081A86B1B7FC8E000E66C16 /* Sqlite.h in Headers */ = {isa = PBXBuildFile; fileRef = 3081A8691B7FC8E000E66C16 /* Sqlite.h */; };
+		30AD0C671B80870300701BC6 /* SqliteFsFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30AD0C651B80870300701BC6 /* SqliteFsFile.cpp */; };
+		30AD0C681B80870300701BC6 /* SqliteFsFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 30AD0C661B80870300701BC6 /* SqliteFsFile.h */; };
 		30BD1DF31B7D213A00ECAA69 /* SqliteStatement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30BD1DF11B7D213A00ECAA69 /* SqliteStatement.cpp */; };
 		30BD1DF41B7D213A00ECAA69 /* SqliteStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 30BD1DF21B7D213A00ECAA69 /* SqliteStatement.h */; };
 		30BE776E1B1B4EE900960748 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 30BE776D1B1B4EE900960748 /* AppDelegate.m */; };
@@ -100,6 +102,8 @@
 		3081A8681B7FC8E000E66C16 /* Sqlite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sqlite.cpp; sourceTree = "<group>"; };
 		3081A8691B7FC8E000E66C16 /* Sqlite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sqlite.h; sourceTree = "<group>"; };
 		3081A86C1B7FCA1600E66C16 /* SqliteFsException.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SqliteFsException.h; sourceTree = "<group>"; };
+		30AD0C651B80870300701BC6 /* SqliteFsFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SqliteFsFile.cpp; sourceTree = "<group>"; };
+		30AD0C661B80870300701BC6 /* SqliteFsFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SqliteFsFile.h; sourceTree = "<group>"; };
 		30BD1DF11B7D213A00ECAA69 /* SqliteStatement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SqliteStatement.cpp; sourceTree = "<group>"; };
 		30BD1DF21B7D213A00ECAA69 /* SqliteStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SqliteStatement.h; sourceTree = "<group>"; };
 		30BE77591B1B14F100960748 /* DistributedFs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DistributedFs; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -210,6 +214,8 @@
 				30E2D4D81B76048C003C7DFE /* SqliteFsGateway.cpp */,
 				3081A86C1B7FCA1600E66C16 /* SqliteFsException.h */,
 				30E2D4DC1B760ACA003C7DFE /* SqliteEntities.h */,
+				30AD0C661B80870300701BC6 /* SqliteFsFile.h */,
+				30AD0C651B80870300701BC6 /* SqliteFsFile.cpp */,
 				30E2D4E11B765D46003C7DFE /* SqliteFsFolder.h */,
 				30E2D4E01B765D46003C7DFE /* SqliteFsFolder.cpp */,
 				3081A8691B7FC8E000E66C16 /* Sqlite.h */,
@@ -355,6 +361,7 @@
 				30E2D4DB1B76048C003C7DFE /* SqliteFsGateway.h in Headers */,
 				3034B68D1B5C003F002831FC /* SqliteFs.h in Headers */,
 				30BD1DF41B7D213A00ECAA69 /* SqliteStatement.h in Headers */,
+				30AD0C681B80870300701BC6 /* SqliteFsFile.h in Headers */,
 				30E2D4E31B765D46003C7DFE /* SqliteFsFolder.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -588,6 +595,7 @@
 				30E2D4DA1B76048C003C7DFE /* SqliteFsGateway.cpp in Sources */,
 				30E2D4E21B765D46003C7DFE /* SqliteFsFolder.cpp in Sources */,
 				30BD1DF31B7D213A00ECAA69 /* SqliteStatement.cpp in Sources */,
+				30AD0C671B80870300701BC6 /* SqliteFsFile.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
