@@ -54,6 +54,9 @@ SqliteFsGateway::SqliteFsGateway(const Path& dbPath)
     
     m_deleteLinkWithId = m_sqlite.createStatement("DELETE FROM Links WHERE id = ?;");
     
+    m_selectFileDataWithIdQuery = m_sqlite.createStatement("SELECT data FROM Files WHERE id = ?;");
+    m_updateFileDataWithIdQuery = m_sqlite.createStatement("UPDATE Files SET data = ?2 WHERE id = ?1;");
+    
     m_insertExtendedAttributeQuery                = m_sqlite.createStatement("INSERT INTO ExtendedAttributes (itemId, name, value) VALUES (?, ?, ?);");
     m_deleteExtendedAttributeByItemIdAndNameQuery = m_sqlite.createStatement("DELETE FROM ExtendedAttributes WHERE itemId = ? AND name = ?;");
     m_selectExtendedAttributesByItemIdQuery       = m_sqlite.createStatement("SELECT id, itemId, name, value FROM ExtendedAttributes WHERE itemId = ?;");
@@ -250,6 +253,43 @@ void SqliteFsGateway::readFolderWithId(int folderId, std::vector<FileInfo>* file
     }
     
     fileInfos->swap(actualFileInfos);
+}
+    
+void SqliteFsGateway::getFileData(int fileId, std::vector<char>* fileData)
+{
+    SqliteStmtReseter reseter(m_selectFileDataWithIdQuery->get());
+    
+    sqlite3_bind_int(m_selectFileDataWithIdQuery->get(), 1, fileId);
+    
+    int error = sqlite3_step(m_selectFileDataWithIdQuery->get());
+    if (error != SQLITE_ROW)
+    {
+        throw SqliteFsException(FsError::kUnknownError, "Can't get file data");
+    }
+    
+    const char* fileDataPtr = reinterpret_cast<const char*>(sqlite3_column_blob(m_selectFileDataWithIdQuery->get(), 0));
+    if (!fileDataPtr)
+    {
+        fileData->clear();
+        return;
+    }
+    
+    const int fileDataSize = sqlite3_column_bytes(m_selectFileDataWithIdQuery->get(), 0);
+    fileData->assign(fileDataPtr, fileDataPtr + fileDataSize);
+}
+
+void SqliteFsGateway::updateFileData(int fileId, const std::vector<char>& fileData)
+{
+    SqliteStmtReseter reseter(m_updateFileDataWithIdQuery->get());
+    
+    sqlite3_bind_int(m_updateFileDataWithIdQuery->get(), 1, fileId);
+    sqlite3_bind_blob(m_updateFileDataWithIdQuery->get(), 2, fileData.data(), static_cast<int>(fileData.size()), SQLITE_STATIC);
+    
+    int error = sqlite3_step(m_updateFileDataWithIdQuery->get());
+    if (error != SQLITE_DONE)
+    {
+       throw SqliteFsException(FsError::kUnknownError, "Can't update file data");
+    }
 }
 
 void SqliteFsGateway::addExtendedAttribute(int itemId, const char* attributeKey, const char* attributeValue, const int attributeValueSize)

@@ -12,6 +12,8 @@
 
 #include "SqliteFsGateway.h"
 
+#include <vector>
+
 namespace dfs
 {
 
@@ -31,8 +33,11 @@ private:
     void flushImpl();
     
 private:
-    int m_fileId;
+    const int m_fileId;
     SqliteFsGateway* m_gateway;
+    
+    std::vector<char> m_fileData;
+    uint64_t m_offset;
 };
     
 }

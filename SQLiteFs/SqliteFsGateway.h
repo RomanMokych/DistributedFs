@@ -42,6 +42,9 @@ public:
     
     void readFolderWithId(int folderId, std::vector<FileInfo>* fileInfo);
     
+    void getFileData(int fileId, std::vector<char>* fileData);
+    void updateFileData(int fileId, const std::vector<char>& fileData);
+    
     void addExtendedAttribute(int itemId, const char* attributeKey, const char* attributeValue, const int attributeValueSize);
     void getExtendedAttribute(int itemId, const char* attributeKey, std::vector<char>* attributeValue);
     void getExtendedAttributesNames(int itemId, std::vector<std::string>* attributesNames);
@@ -64,6 +67,9 @@ private:
     std::unique_ptr<SqliteStatement> m_insertLinkQuery;
     
     std::unique_ptr<SqliteStatement> m_deleteLinkWithId;
+
+    std::unique_ptr<SqliteStatement> m_selectFileDataWithIdQuery;
+    std::unique_ptr<SqliteStatement> m_updateFileDataWithIdQuery;
     
     std::unique_ptr<SqliteStatement> m_insertExtendedAttributeQuery;
     std::unique_ptr<SqliteStatement> m_deleteExtendedAttributeByItemIdAndNameQuery;
