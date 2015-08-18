@@ -22,6 +22,10 @@ namespace dfs
         
         sqlite3_stmt* get();
         
+        void bindInt(int index, int value);
+        void bindText(int index, const char* text, int textLen = -1);
+        void bindBlob(int index, const char* blob, size_t blobLen);
+        
         void reset();
         
     private:

@@ -38,5 +38,32 @@ void SqliteStatement::reset()
     sqlite3_reset(m_stmt);
 }
 
+void SqliteStatement::bindInt(int index, int value)
+{
+    int error = sqlite3_bind_int(m_stmt, index, value);
+    if (error != SQLITE_OK)
+    {
+        THROW("can't bind param");
+    }
+}
+    
+void SqliteStatement::bindText(int index, const char* text, int textLen /*= -1*/)
+{
+    int error = sqlite3_bind_text(m_stmt, index, text, textLen, SQLITE_STATIC);
+    if (error != SQLITE_OK)
+    {
+        THROW("can't bind param");
+    }
+}
+    
+void SqliteStatement::bindBlob(int index, const char* blob, size_t blobLen)
+{
+    int error = sqlite3_bind_blob(m_stmt, index, blob, static_cast<int>(blobLen), SQLITE_STATIC);
+    if (error != SQLITE_OK)
+    {
+        THROW("can't bind param");
+    }
+}
+    
 }
 
