@@ -14,6 +14,8 @@
 #include "SqliteStatement.h"
 #include "SqliteEntities.h"
 
+#include "ISqliteFsGateway.h"
+
 #include <sqlite3.h>
 
 #include <memory>
@@ -21,7 +23,7 @@
 namespace dfs
 {
     
-class SqliteFsGateway
+class SqliteFsGateway : public ISqliteFsGateway
 {
 public:
     SqliteFsGateway(const Path& dbPath);

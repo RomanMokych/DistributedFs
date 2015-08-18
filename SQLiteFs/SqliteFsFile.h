@@ -20,7 +20,7 @@ namespace dfs
 class SqliteFsFile : public IFile
 {
 public:
-    SqliteFsFile(int fileId, SqliteFsGateway* gateway);
+    SqliteFsFile(int fileId, ISqliteFsGateway* gateway);
     ~SqliteFsFile();
     
     virtual size_t read(char* buffer, const size_t bufferSize);
@@ -34,7 +34,7 @@ private:
     
 private:
     const int m_fileId;
-    SqliteFsGateway* m_gateway;
+    ISqliteFsGateway* m_gateway;
     
     std::vector<char> m_fileData;
     uint64_t m_offset;

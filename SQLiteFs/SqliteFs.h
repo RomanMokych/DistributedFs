@@ -20,6 +20,7 @@ class SqliteFs : public IFileSystem
 {
 public:
     SqliteFs(const Path& fsDbPath);
+    SqliteFs(std::unique_ptr<ISqliteFsGateway>&& gateway);
     
     virtual ~SqliteFs() {}
     
@@ -57,7 +58,7 @@ public:
     virtual FsError getAllExtendedAttributes(const Path& path, std::vector<std::string>* attributesNames);
     
 private:
-    SqliteFsGateway m_gateway;
+    std::unique_ptr<ISqliteFsGateway> m_gateway;
 };
 
 }

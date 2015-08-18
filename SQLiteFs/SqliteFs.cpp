@@ -6,7 +6,11 @@
 #include "SqliteFsException.h"
 
 dfs::SqliteFs::SqliteFs(const dfs::Path& fsDbPath)
-: m_gateway(fsDbPath)
+: m_gateway(new SqliteFsGateway(fsDbPath))
+{}
+
+dfs::SqliteFs::SqliteFs(std::unique_ptr<ISqliteFsGateway>&& gateway)
+: m_gateway(std::move(gateway))
 {}
 
 dfs::FsError dfs::SqliteFs::createFolder(const Path& folderPath, const Permissions permissions)
@@ -16,8 +20,8 @@ dfs::FsError dfs::SqliteFs::createFolder(const Path& folderPath, const Permissio
         if (folderPath == "/")
             return FsError::kFileExists;
         
-        SqliteEntities::Folder folder = m_gateway.getFolderByPath(folderPath.parent_path());
-        m_gateway.createFolder(folder.id, folderPath.leaf(), permissions);
+        SqliteEntities::Folder folder = m_gateway->getFolderByPath(folderPath.parent_path());
+        m_gateway->createFolder(folder.id, folderPath.leaf(), permissions);
     }
     catch (const SqliteFsException& e)
     {
@@ -31,8 +35,8 @@ dfs::FsError dfs::SqliteFs::openFolder(const Path& folderPath, std::unique_ptr<I
 {
     try
     {
-        SqliteEntities::Folder folder = m_gateway.getFolderByPath(folderPath);
-        outFolder.reset(new SqliteFsFolder(folder.id, &m_gateway));
+        SqliteEntities::Folder folder = m_gateway->getFolderByPath(folderPath);
+        outFolder.reset(new SqliteFsFolder(folder.id, m_gateway.get()));
     }
     catch (const SqliteFsException& e)
     {
@@ -52,17 +56,17 @@ dfs::FsError dfs::SqliteFs::openFile(const Path& filePath, const int fileOpenMod
         
         if (fileOpenMode & FileOpenMode::kCreate)
         {
-            SqliteEntities::Folder parentFolder = m_gateway.getFolderByPath(filePath.parent_path());
-            m_gateway.createFile(parentFolder.id, filePath.leaf(), dfs::Permissions::kAll);
+            SqliteEntities::Folder parentFolder = m_gateway->getFolderByPath(filePath.parent_path());
+            m_gateway->createFile(parentFolder.id, filePath.leaf(), dfs::Permissions::kAll);
         }
         
-        SqliteEntities::Item item = m_gateway.getItemByPath(filePath);
+        SqliteEntities::Item item = m_gateway->getItemByPath(filePath);
         if (item.type != FileType::kFile)
         {
             return FsError::kFileHasWrongType;
         }
         
-        outFile.reset(new SqliteFsFile(item.concreteItemId, &m_gateway));
+        outFile.reset(new SqliteFsFile(item.concreteItemId, m_gateway.get()));
     }
     catch (const SqliteFsException& e)
     {
@@ -85,8 +89,8 @@ dfs::FsError dfs::SqliteFs::createSymLink(const Path& linkPath, const Path& targ
         if (linkPath == "/")
             return FsError::kFileExists;
         
-        SqliteEntities::Folder parentFolder = m_gateway.getFolderByPath(linkPath.parent_path());
-        m_gateway.createSymLink(parentFolder.id, linkPath.leaf(), Permissions::kAll, targetPath);
+        SqliteEntities::Folder parentFolder = m_gateway->getFolderByPath(linkPath.parent_path());
+        m_gateway->createSymLink(parentFolder.id, linkPath.leaf(), Permissions::kAll, targetPath);
     }
     catch (const SqliteFsException& e)
     {
@@ -100,13 +104,13 @@ dfs::FsError dfs::SqliteFs::readSymLink(const Path& linkPath, Path* symLinkValue
 {
     try
     {
-        SqliteEntities::Item item = m_gateway.getItemByPath(linkPath, false);
+        SqliteEntities::Item item = m_gateway->getItemByPath(linkPath, false);
         if (item.type != FileType::kSymLink)
         {
             return dfs::FsError::kFileHasWrongType;
         }
         
-        SqliteEntities::SymLink symLink = m_gateway.getSymLinkById(item.concreteItemId);
+        SqliteEntities::SymLink symLink = m_gateway->getSymLinkById(item.concreteItemId);
         *symLinkValue = symLink.path;
     }
     catch (const SqliteFsException& e)
@@ -124,9 +128,9 @@ dfs::FsError dfs::SqliteFs::createHardLink(const Path& linkPath, const Path& tar
         if (linkPath == "/")
             return FsError::kFileExists;
         
-        SqliteEntities::Item targetItem = m_gateway.getItemByPath(targetPath);
-        SqliteEntities::Folder parentFolder = m_gateway.getFolderByPath(linkPath.parent_path());
-        m_gateway.createHardLink(parentFolder.id, targetItem.id, linkPath.leaf());
+        SqliteEntities::Item targetItem = m_gateway->getItemByPath(targetPath);
+        SqliteEntities::Folder parentFolder = m_gateway->getFolderByPath(linkPath.parent_path());
+        m_gateway->createHardLink(parentFolder.id, targetItem.id, linkPath.leaf());
     }
     catch (const SqliteFsException& e)
     {
@@ -149,9 +153,9 @@ dfs::FsError dfs::SqliteFs::remove(const Path& path)
         if (path == "/")
             return FsError::kPermissionDenied;
         
-        SqliteEntities::Folder folder = m_gateway.getFolderByPath(path.parent_path());
-        SqliteEntities::Link link = m_gateway.getLink(folder.id, path.leaf());
-        m_gateway.removeLink(link.id);
+        SqliteEntities::Folder folder = m_gateway->getFolderByPath(path.parent_path());
+        SqliteEntities::Link link = m_gateway->getLink(folder.id, path.leaf());
+        m_gateway->removeLink(link.id);
     }
     catch (const SqliteFsException& e)
     {
@@ -170,9 +174,9 @@ dfs::FsError dfs::SqliteFs::setPermissions(const Path& path, const Permissions p
 {
     try
     {
-        SqliteEntities::Item item = m_gateway.getItemByPath(path);
+        SqliteEntities::Item item = m_gateway->getItemByPath(path);
         item.permissions = permissions;
-        m_gateway.updateItem(item);
+        m_gateway->updateItem(item);
     }
     catch (const SqliteFsException& e)
     {
@@ -186,7 +190,7 @@ dfs::FsError dfs::SqliteFs::getPermissions(const Path& path, Permissions* permis
 {
     try
     {
-        SqliteEntities::Item item = m_gateway.getItemByPath(path);
+        SqliteEntities::Item item = m_gateway->getItemByPath(path);
         *permissions = item.permissions;
     }
     catch (const SqliteFsException& e)
@@ -201,9 +205,9 @@ dfs::FsError dfs::SqliteFs::setCreationTime(const Path& path, const std::time_t 
 {
     try
     {
-        SqliteEntities::Item item = m_gateway.getItemByPath(path);
+        SqliteEntities::Item item = m_gateway->getItemByPath(path);
         item.creationTime = time;
-        m_gateway.updateItem(item);
+        m_gateway->updateItem(item);
     }
     catch (const SqliteFsException& e)
     {
@@ -217,7 +221,7 @@ dfs::FsError dfs::SqliteFs::getCreationTime(const Path& path, std::time_t* time)
 {
     try
     {
-        SqliteEntities::Item item = m_gateway.getItemByPath(path);
+        SqliteEntities::Item item = m_gateway->getItemByPath(path);
         *time = item.creationTime;
     }
     catch (const SqliteFsException& e)
@@ -232,9 +236,9 @@ dfs::FsError dfs::SqliteFs::setModificationTime(const Path& path, const std::tim
 {
     try
     {
-        SqliteEntities::Item item = m_gateway.getItemByPath(path);
+        SqliteEntities::Item item = m_gateway->getItemByPath(path);
         item.modificationTime = time;
-        m_gateway.updateItem(item);
+        m_gateway->updateItem(item);
     }
     catch (const SqliteFsException& e)
     {
@@ -248,7 +252,7 @@ dfs::FsError dfs::SqliteFs::getModificationTime(const Path& path, std::time_t* t
 {
     try
     {
-        SqliteEntities::Item item = m_gateway.getItemByPath(path);
+        SqliteEntities::Item item = m_gateway->getItemByPath(path);
         *time = item.modificationTime;
     }
     catch (const SqliteFsException& e)
@@ -263,8 +267,8 @@ dfs::FsError dfs::SqliteFs::setExtendedAttribute(const Path& path, const char* a
 {
     try
     {
-        SqliteEntities::Item item = m_gateway.getItemByPath(path);
-        m_gateway.addExtendedAttribute(item.id, attributeKey, attributeValue, static_cast<int>(attributeValueSize));
+        SqliteEntities::Item item = m_gateway->getItemByPath(path);
+        m_gateway->addExtendedAttribute(item.id, attributeKey, attributeValue, static_cast<int>(attributeValueSize));
     }
     catch (const SqliteFsException& e)
     {
@@ -278,8 +282,8 @@ dfs::FsError dfs::SqliteFs::getExtendedAttribute(const Path& path, const char* a
 {
     try
     {
-        SqliteEntities::Item item = m_gateway.getItemByPath(path);
-        m_gateway.getExtendedAttribute(item.id, attributeKey, attributeValue);
+        SqliteEntities::Item item = m_gateway->getItemByPath(path);
+        m_gateway->getExtendedAttribute(item.id, attributeKey, attributeValue);
     }
     catch (const SqliteFsException& e)
     {
@@ -293,8 +297,8 @@ dfs::FsError dfs::SqliteFs::deleteExtendedAttribute(const Path& path, const char
 {
     try
     {
-        SqliteEntities::Item item = m_gateway.getItemByPath(path);
-        m_gateway.deleteExtendedAttribute(item.id, attributeKey);
+        SqliteEntities::Item item = m_gateway->getItemByPath(path);
+        m_gateway->deleteExtendedAttribute(item.id, attributeKey);
     }
     catch (const SqliteFsException& e)
     {
@@ -308,8 +312,8 @@ dfs::FsError dfs::SqliteFs::getAllExtendedAttributes(const Path& path, std::vect
 {
     try
     {
-        SqliteEntities::Item item = m_gateway.getItemByPath(path);
-        m_gateway.getExtendedAttributesNames(item.id, attributesNames);
+        SqliteEntities::Item item = m_gateway->getItemByPath(path);
+        m_gateway->getExtendedAttributesNames(item.id, attributesNames);
     }
     catch (const SqliteFsException& e)
     {

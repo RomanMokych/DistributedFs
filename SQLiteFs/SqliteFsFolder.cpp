@@ -11,7 +11,7 @@
 namespace dfs
 {
 
-SqliteFsFolder::SqliteFsFolder(int folderId, SqliteFsGateway* gateway)
+SqliteFsFolder::SqliteFsFolder(int folderId, ISqliteFsGateway* gateway)
     : m_folderId(folderId)
     , m_gateway(gateway)
 {}

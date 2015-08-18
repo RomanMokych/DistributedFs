@@ -13,7 +13,7 @@
 namespace dfs
 {
     
-SqliteFsFile::SqliteFsFile(int fileId, SqliteFsGateway* gateway)
+SqliteFsFile::SqliteFsFile(int fileId, ISqliteFsGateway* gateway)
     : m_fileId(fileId)
     , m_gateway(gateway)
     , m_offset(0)
