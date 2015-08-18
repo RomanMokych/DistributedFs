@@ -9,6 +9,8 @@
 #pragma once
 
 #include <string>
+#include <vector>
+#include <boost/optional.hpp>
 
 #include <sqlite3.h>
 
@@ -25,6 +27,10 @@ namespace dfs
         void bindInt(int index, int value);
         void bindText(int index, const char* text, int textLen = -1);
         void bindBlob(int index, const char* blob, size_t blobLen);
+        
+        int getIntColumn(int column);
+        boost::optional<std::string> getTextColumn(int column);
+        boost::optional<std::vector<char>> getBlobColumn(int column);
         
         void reset();
         

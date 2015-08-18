@@ -65,5 +65,37 @@ void SqliteStatement::bindBlob(int index, const char* blob, size_t blobLen)
     }
 }
     
+int SqliteStatement::getIntColumn(int column)
+{
+    return sqlite3_column_int(m_stmt, column);
+}
+    
+boost::optional<std::string> SqliteStatement::getTextColumn(int column)
+{
+    boost::optional<std::string> result;
+
+    const char* textPtr = reinterpret_cast<const char*>(sqlite3_column_text(m_stmt, column));
+    if (textPtr)
+    {
+        result = textPtr;
+    }
+    
+    return result;
+}
+    
+boost::optional<std::vector<char>> SqliteStatement::getBlobColumn(int column)
+{
+    boost::optional<std::vector<char>> result;
+    
+    const char* blobPtr = reinterpret_cast<const char*>(sqlite3_column_blob(m_stmt, column));
+    if (blobPtr)
+    {
+        int blobSize = sqlite3_column_bytes(m_stmt, column);
+        result = std::vector<char>(blobPtr, blobPtr + blobSize);
+    }
+    
+    return result;
+}
+    
 }
 

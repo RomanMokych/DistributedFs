@@ -139,10 +139,10 @@ SqliteEntities::Link SqliteFsGateway::getLink(int parentId, const Path& name)
     if (error == SQLITE_ROW)
     {
         SqliteEntities::Link link;
-        link.id = sqlite3_column_int(m_selectLinkQueryWithParentIdAndName->get(), 0);
-        link.parentFolderId = sqlite3_column_int(m_selectLinkQueryWithParentIdAndName->get(), 1);
-        link.itemId = sqlite3_column_int(m_selectLinkQueryWithParentIdAndName->get(), 2);
-        link.name = reinterpret_cast<const char*>(sqlite3_column_text(m_selectLinkQueryWithParentIdAndName->get(), 3));
+        link.id = m_selectLinkQueryWithParentIdAndName->getIntColumn(0);
+        link.parentFolderId = m_selectLinkQueryWithParentIdAndName->getIntColumn(1);
+        link.itemId = m_selectLinkQueryWithParentIdAndName->getIntColumn(2);
+        link.name = m_selectLinkQueryWithParentIdAndName->getTextColumn(3).get();
         
         return link;
     }
@@ -160,7 +160,7 @@ SqliteEntities::Folder SqliteFsGateway::getFolderById(int folderId)
     if (error == SQLITE_ROW)
     {
         SqliteEntities::Folder folder;
-        folder.id = sqlite3_column_int(m_selectFolderQueryWithId->get(), 0);
+        folder.id = m_selectFolderQueryWithId->getIntColumn(0);
         
         return folder;
     }
@@ -178,12 +178,12 @@ SqliteEntities::Item SqliteFsGateway::getItemById(int itemId)
     if (error == SQLITE_ROW)
     {
         SqliteEntities::Item item;
-        item.id = sqlite3_column_int(m_selectItemQueryWithId->get(), 0);
-        item.type = static_cast<dfs::FileType>(sqlite3_column_int(m_selectItemQueryWithId->get(), 1));
-        item.concreteItemId = sqlite3_column_int(m_selectItemQueryWithId->get(), 2);
-        item.permissions = static_cast<Permissions>(sqlite3_column_int(m_selectItemQueryWithId->get(), 3));
-        item.creationTime = static_cast<std::time_t>(sqlite3_column_int(m_selectItemQueryWithId->get(), 4));
-        item.modificationTime = static_cast<std::time_t>(sqlite3_column_int(m_selectItemQueryWithId->get(), 5));
+        item.id = m_selectItemQueryWithId->getIntColumn(0);
+        item.type = static_cast<dfs::FileType>(m_selectItemQueryWithId->getIntColumn(1));
+        item.concreteItemId = m_selectItemQueryWithId->getIntColumn(2);
+        item.permissions = static_cast<Permissions>(m_selectItemQueryWithId->getIntColumn(3));
+        item.creationTime = static_cast<std::time_t>(m_selectItemQueryWithId->getIntColumn(4));
+        item.modificationTime = static_cast<std::time_t>(m_selectItemQueryWithId->getIntColumn(5));
         
         return item;
     }
@@ -221,7 +221,7 @@ SqliteEntities::SymLink SqliteFsGateway::getSymLinkById(int symLinkId)
         
     SqliteEntities::SymLink symLink;
     symLink.id = symLinkId;
-    symLink.path = reinterpret_cast<const char*>(sqlite3_column_text(m_selectSymLinkWithIdQuery->get(), 0));
+    symLink.path = m_selectSymLinkWithIdQuery->getTextColumn(0).get();
     
     return symLink;
 }
@@ -308,9 +308,9 @@ void SqliteFsGateway::readFolderWithId(int folderId, std::vector<FileInfo>* file
     while (error == SQLITE_ROW)
     {
         FileInfo info;
-        info.name = reinterpret_cast<const char*>(sqlite3_column_text(m_selectLinksWithParentId->get(), 0));
-        info.type = static_cast<FileType>(sqlite3_column_int(m_selectLinksWithParentId->get(), 1));
-        info.permissions = static_cast<Permissions>(sqlite3_column_int(m_selectLinksWithParentId->get(), 2));
+        info.name = m_selectLinksWithParentId->getTextColumn(0).get();
+        info.type = static_cast<FileType>(m_selectLinksWithParentId->getIntColumn(1));
+        info.permissions = static_cast<Permissions>(m_selectLinksWithParentId->getIntColumn(2));
         
         actualFileInfos.push_back(info);
         
@@ -337,15 +337,14 @@ void SqliteFsGateway::getFileData(int fileId, std::vector<char>* fileData)
         throw SqliteFsException(FsError::kUnknownError, "Can't get file data");
     }
     
-    const char* fileDataPtr = reinterpret_cast<const char*>(sqlite3_column_blob(m_selectFileDataWithIdQuery->get(), 0));
-    if (!fileDataPtr)
+    auto blobRes = m_selectFileDataWithIdQuery->getBlobColumn(0);
+    if (blobRes)
     {
-        fileData->clear();
+        fileData->swap(blobRes.get());
         return;
     }
-    
-    const int fileDataSize = sqlite3_column_bytes(m_selectFileDataWithIdQuery->get(), 0);
-    fileData->assign(fileDataPtr, fileDataPtr + fileDataSize);
+
+    fileData->clear();
 }
 
 void SqliteFsGateway::updateFileData(int fileId, const std::vector<char>& fileData)
@@ -401,9 +400,8 @@ void SqliteFsGateway::getExtendedAttribute(int itemId, const char* attributeKey,
     int error = sqlite3_step(m_selectExtendedAttributeByItemIdAndNameQuery->get());
     if (error == SQLITE_ROW)
     {
-        const char* attributeValuePtr = reinterpret_cast<const char*>(sqlite3_column_blob(m_selectExtendedAttributeByItemIdAndNameQuery->get(), 3));
-        int attributeValueSize = sqlite3_column_bytes(m_selectExtendedAttributeByItemIdAndNameQuery->get(), 3);
-        attributeValue->assign(attributeValuePtr, attributeValuePtr + attributeValueSize);
+        auto actualAttrValue = m_selectExtendedAttributeByItemIdAndNameQuery->getBlobColumn(3);
+        attributeValue->swap(actualAttrValue.get());
     }
     else
     {
@@ -421,9 +419,7 @@ void SqliteFsGateway::getExtendedAttributesNames(int itemId, std::vector<std::st
     std::vector<std::string> attributesNamesRes;
     while (error == SQLITE_ROW)
     {
-        std::string attributeName = reinterpret_cast<const char*>(sqlite3_column_text(m_selectExtendedAttributesByItemIdQuery->get(), 2));
-        attributesNamesRes.push_back(attributeName);
-        
+        attributesNamesRes.push_back(m_selectExtendedAttributesByItemIdQuery->getTextColumn(2).get());
         error = sqlite3_step(m_selectExtendedAttributesByItemIdQuery->get());
     }
     
