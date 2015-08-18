@@ -16,17 +16,17 @@ namespace
     class SqliteStmtReseter
     {
     public:
-        SqliteStmtReseter(sqlite3_stmt* stmt)
+        SqliteStmtReseter(dfs::SqliteStatement& stmt)
         : m_stmt(stmt)
         {}
         
         ~SqliteStmtReseter()
         {
-            sqlite3_reset(m_stmt);
+            m_stmt.reset();
         }
         
     private:
-        sqlite3_stmt* m_stmt;
+        dfs::SqliteStatement& m_stmt;
     };
 }
 
@@ -130,7 +130,7 @@ SqliteEntities::Item SqliteFsGateway::getItemByPath(const Path& itemPath, bool f
     
 SqliteEntities::Link SqliteFsGateway::getLink(int parentId, const Path& name)
 {
-    SqliteStmtReseter reseter(m_selectLinkQueryWithParentIdAndName->get());
+    SqliteStmtReseter reseter(*m_selectLinkQueryWithParentIdAndName);
     
     int error = sqlite3_bind_int(m_selectLinkQueryWithParentIdAndName->get(), 1, parentId);
     if (error != SQLITE_OK)
@@ -161,7 +161,7 @@ SqliteEntities::Link SqliteFsGateway::getLink(int parentId, const Path& name)
     
 SqliteEntities::Folder SqliteFsGateway::getFolderById(int folderId)
 {
-    SqliteStmtReseter reseter(m_selectFolderQueryWithId->get());
+    SqliteStmtReseter reseter(*m_selectFolderQueryWithId);
     
     sqlite3_bind_int(m_selectFolderQueryWithId->get(), 1, folderId);
     
@@ -179,7 +179,7 @@ SqliteEntities::Folder SqliteFsGateway::getFolderById(int folderId)
     
 SqliteEntities::Item SqliteFsGateway::getItemById(int itemId)
 {
-    SqliteStmtReseter reseter(m_selectItemQueryWithId->get());
+    SqliteStmtReseter reseter(*m_selectItemQueryWithId);
     
     sqlite3_bind_int(m_selectItemQueryWithId->get(), 1, itemId);
     
@@ -202,7 +202,7 @@ SqliteEntities::Item SqliteFsGateway::getItemById(int itemId)
 
 void SqliteFsGateway::updateItem(const SqliteEntities::Item& item)
 {
-    SqliteStmtReseter reseter(m_updateItemWithIdQuery->get());
+    SqliteStmtReseter reseter(*m_updateItemWithIdQuery);
     
     sqlite3_bind_int(m_updateItemWithIdQuery->get(), 1, item.id);
     sqlite3_bind_int(m_updateItemWithIdQuery->get(), 2, static_cast<int>(item.permissions));
@@ -218,7 +218,7 @@ void SqliteFsGateway::updateItem(const SqliteEntities::Item& item)
     
 SqliteEntities::SymLink SqliteFsGateway::getSymLinkById(int symLinkId)
 {
-    SqliteStmtReseter reseter(m_selectSymLinkWithIdQuery->get());
+    SqliteStmtReseter reseter(*m_selectSymLinkWithIdQuery);
     
     sqlite3_bind_int(m_selectSymLinkWithIdQuery->get(), 1, symLinkId);
 
@@ -237,7 +237,7 @@ SqliteEntities::SymLink SqliteFsGateway::getSymLinkById(int symLinkId)
     
 void SqliteFsGateway::createFolder(int parentFolderId, const Path& newFolderName, Permissions permissions)
 {
-    SqliteStmtReseter folderReseter(m_insertFolderQuery->get());
+    SqliteStmtReseter folderReseter(*m_insertFolderQuery);
     
     int error = sqlite3_step(m_insertFolderQuery->get());
     if (error != SQLITE_DONE)
@@ -254,7 +254,7 @@ void SqliteFsGateway::createFolder(int parentFolderId, const Path& newFolderName
     
 void SqliteFsGateway::createFile(int parentFolderId, const Path& newFolderName, Permissions permissions)
 {
-    SqliteStmtReseter fileReseter(m_insertFileQuery->get());
+    SqliteStmtReseter fileReseter(*m_insertFileQuery);
     
     int error = sqlite3_step(m_insertFileQuery->get());
     if (error != SQLITE_DONE)
@@ -271,7 +271,7 @@ void SqliteFsGateway::createFile(int parentFolderId, const Path& newFolderName, 
     
 void SqliteFsGateway::createSymLink(int parentFolderId, const Path& newLinkName, Permissions permissions, const Path& symLinkValue)
 {
-    SqliteStmtReseter reseter(m_insertSymLinkQuery->get());
+    SqliteStmtReseter reseter(*m_insertSymLinkQuery);
     
     sqlite3_bind_text(m_insertSymLinkQuery->get(), 1, symLinkValue.c_str(), -1, SQLITE_STATIC);
     
@@ -295,7 +295,7 @@ void SqliteFsGateway::createHardLink(int parentId, int itemId, const Path& linkN
     
 void SqliteFsGateway::removeLink(int linkId)
 {
-    SqliteStmtReseter linkReseter(m_deleteLinkWithId->get());
+    SqliteStmtReseter linkReseter(*m_deleteLinkWithId);
     
     sqlite3_bind_int(m_deleteLinkWithId->get(), 1, linkId);
     
@@ -310,7 +310,7 @@ void SqliteFsGateway::readFolderWithId(int folderId, std::vector<FileInfo>* file
 {
     std::vector<FileInfo> actualFileInfos;
     
-    SqliteStmtReseter reseter(m_selectLinksWithParentId->get());
+    SqliteStmtReseter reseter(*m_selectLinksWithParentId);
     
     sqlite3_bind_int(m_selectLinksWithParentId->get(), 1, folderId);
     int error = sqlite3_step(m_selectLinksWithParentId->get());
@@ -336,7 +336,7 @@ void SqliteFsGateway::readFolderWithId(int folderId, std::vector<FileInfo>* file
     
 void SqliteFsGateway::getFileData(int fileId, std::vector<char>* fileData)
 {
-    SqliteStmtReseter reseter(m_selectFileDataWithIdQuery->get());
+    SqliteStmtReseter reseter(*m_selectFileDataWithIdQuery);
     
     sqlite3_bind_int(m_selectFileDataWithIdQuery->get(), 1, fileId);
     
@@ -359,7 +359,7 @@ void SqliteFsGateway::getFileData(int fileId, std::vector<char>* fileData)
 
 void SqliteFsGateway::updateFileData(int fileId, const std::vector<char>& fileData)
 {
-    SqliteStmtReseter reseter(m_updateFileDataWithIdQuery->get());
+    SqliteStmtReseter reseter(*m_updateFileDataWithIdQuery);
     
     sqlite3_bind_int(m_updateFileDataWithIdQuery->get(), 1, fileId);
     sqlite3_bind_blob(m_updateFileDataWithIdQuery->get(), 2, fileData.data(), static_cast<int>(fileData.size()), SQLITE_STATIC);
@@ -373,7 +373,7 @@ void SqliteFsGateway::updateFileData(int fileId, const std::vector<char>& fileDa
     
 void SqliteFsGateway::addExtendedAttribute(int itemId, const char* attributeKey, const char* attributeValue, const int attributeValueSize)
 {
-    SqliteStmtReseter reseter(m_insertExtendedAttributeQuery->get());
+    SqliteStmtReseter reseter(*m_insertExtendedAttributeQuery);
     
     sqlite3_bind_int(m_insertExtendedAttributeQuery->get(), 1, itemId);
     sqlite3_bind_text(m_insertExtendedAttributeQuery->get(), 2, attributeKey, -1, SQLITE_STATIC);
@@ -388,7 +388,7 @@ void SqliteFsGateway::addExtendedAttribute(int itemId, const char* attributeKey,
     
 void SqliteFsGateway::deleteExtendedAttribute(int itemId, const char* attributeKey)
 {
-    SqliteStmtReseter reseter(m_deleteExtendedAttributeByItemIdAndNameQuery->get());
+    SqliteStmtReseter reseter(*m_deleteExtendedAttributeByItemIdAndNameQuery);
     
     sqlite3_bind_int(m_deleteExtendedAttributeByItemIdAndNameQuery->get(), 1, itemId);
     sqlite3_bind_text(m_deleteExtendedAttributeByItemIdAndNameQuery->get(), 2, attributeKey, -1, SQLITE_STATIC);
@@ -402,7 +402,7 @@ void SqliteFsGateway::deleteExtendedAttribute(int itemId, const char* attributeK
     
 void SqliteFsGateway::getExtendedAttribute(int itemId, const char* attributeKey, std::vector<char>* attributeValue)
 {
-    SqliteStmtReseter reseter(m_selectExtendedAttributeByItemIdAndNameQuery->get());
+    SqliteStmtReseter reseter(*m_selectExtendedAttributeByItemIdAndNameQuery);
     
     sqlite3_bind_int(m_selectExtendedAttributeByItemIdAndNameQuery->get(), 1, itemId);
     sqlite3_bind_text(m_selectExtendedAttributeByItemIdAndNameQuery->get(), 2, attributeKey, -1, SQLITE_STATIC);
@@ -422,7 +422,7 @@ void SqliteFsGateway::getExtendedAttribute(int itemId, const char* attributeKey,
     
 void SqliteFsGateway::getExtendedAttributesNames(int itemId, std::vector<std::string>* attributesNames)
 {
-    SqliteStmtReseter reseter(m_selectExtendedAttributesByItemIdQuery->get());
+    SqliteStmtReseter reseter(*m_selectExtendedAttributesByItemIdQuery);
     
     sqlite3_bind_int(m_selectExtendedAttributesByItemIdQuery->get(), 1, itemId);
     
@@ -446,7 +446,7 @@ void SqliteFsGateway::getExtendedAttributesNames(int itemId, std::vector<std::st
 
 void SqliteFsGateway::createItemImpl(FileType fileType, int concreteItemId, Permissions permissions)
 {
-    SqliteStmtReseter itemReseter(m_insertItemQuery->get());
+    SqliteStmtReseter itemReseter(*m_insertItemQuery);
     
     std::time_t currentTime = std::time(nullptr);
     sqlite3_bind_int(m_insertItemQuery->get(), 1, static_cast<int>(fileType));
@@ -464,7 +464,7 @@ void SqliteFsGateway::createItemImpl(FileType fileType, int concreteItemId, Perm
     
 void SqliteFsGateway::createHardLinkImpl(int parentId, int itemId, const Path& linkName)
 {
-    SqliteStmtReseter link(m_insertLinkQuery->get());
+    SqliteStmtReseter link(*m_insertLinkQuery);
     
     sqlite3_bind_int(m_insertLinkQuery->get(), 1, parentId);
     sqlite3_bind_int(m_insertLinkQuery->get(), 2, itemId);
