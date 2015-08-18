@@ -135,7 +135,7 @@ SqliteEntities::Link SqliteFsGateway::getLink(int parentId, const Path& name)
     m_selectLinkQueryWithParentIdAndName->bindInt(1, parentId);
     m_selectLinkQueryWithParentIdAndName->bindText(2, name.c_str());
     
-    int error = sqlite3_step(m_selectLinkQueryWithParentIdAndName->get());
+    int error = m_selectLinkQueryWithParentIdAndName->step();
     if (error == SQLITE_ROW)
     {
         SqliteEntities::Link link;
@@ -156,7 +156,7 @@ SqliteEntities::Folder SqliteFsGateway::getFolderById(int folderId)
     
     m_selectFolderQueryWithId->bindInt(1, folderId);
     
-    int error = sqlite3_step(m_selectFolderQueryWithId->get());
+    int error = m_selectFolderQueryWithId->step();
     if (error == SQLITE_ROW)
     {
         SqliteEntities::Folder folder;
@@ -174,7 +174,7 @@ SqliteEntities::Item SqliteFsGateway::getItemById(int itemId)
     
     m_selectItemQueryWithId->bindInt(1, itemId);
     
-    int error = sqlite3_step(m_selectItemQueryWithId->get());
+    int error = m_selectItemQueryWithId->step();
     if (error == SQLITE_ROW)
     {
         SqliteEntities::Item item;
@@ -200,7 +200,7 @@ void SqliteFsGateway::updateItem(const SqliteEntities::Item& item)
     m_updateItemWithIdQuery->bindInt(3, static_cast<int>(item.creationTime));
     m_updateItemWithIdQuery->bindInt(4, static_cast<int>(item.modificationTime));
     
-    int error = sqlite3_step(m_updateItemWithIdQuery->get());
+    int error = m_updateItemWithIdQuery->step();
     if (error != SQLITE_DONE)
     {
         throw SqliteFsException(FsError::kUnknownError, "Can't update item");
@@ -213,7 +213,7 @@ SqliteEntities::SymLink SqliteFsGateway::getSymLinkById(int symLinkId)
     
     m_selectSymLinkWithIdQuery->bindInt(1, symLinkId);
 
-    int error = sqlite3_step(m_selectSymLinkWithIdQuery->get());
+    int error = m_selectSymLinkWithIdQuery->step();
     if (error != SQLITE_ROW)
     {
         throw SqliteFsException(FsError::kUnknownError, "Can't get symlink");
@@ -230,7 +230,7 @@ void SqliteFsGateway::createFolder(int parentFolderId, const Path& newFolderName
 {
     SqliteStmtReseter folderReseter(*m_insertFolderQuery);
     
-    int error = sqlite3_step(m_insertFolderQuery->get());
+    int error = m_insertFolderQuery->step();
     if (error != SQLITE_DONE)
     {
         THROW("can't insert");
@@ -247,7 +247,7 @@ void SqliteFsGateway::createFile(int parentFolderId, const Path& newFolderName, 
 {
     SqliteStmtReseter fileReseter(*m_insertFileQuery);
     
-    int error = sqlite3_step(m_insertFileQuery->get());
+    int error = m_insertFileQuery->step();
     if (error != SQLITE_DONE)
     {
         THROW("can't insert");
@@ -266,7 +266,7 @@ void SqliteFsGateway::createSymLink(int parentFolderId, const Path& newLinkName,
     
     m_insertSymLinkQuery->bindText(1, symLinkValue.c_str());
     
-    int error = sqlite3_step(m_insertSymLinkQuery->get());
+    int error = m_insertSymLinkQuery->step();
     if (error != SQLITE_DONE)
     {
         THROW("can't insert");
@@ -290,7 +290,7 @@ void SqliteFsGateway::removeLink(int linkId)
     
     m_deleteLinkWithId->bindInt(1, linkId);
     
-    int error = sqlite3_step(m_deleteLinkWithId->get());
+    int error = m_deleteLinkWithId->step();
     if (error != SQLITE_DONE)
     {
         throw SqliteFsException(FsError::kFileNotFound, "No such link");
@@ -304,7 +304,7 @@ void SqliteFsGateway::readFolderWithId(int folderId, std::vector<FileInfo>* file
     SqliteStmtReseter reseter(*m_selectLinksWithParentId);
     
     m_selectLinksWithParentId->bindInt(1, folderId);
-    int error = sqlite3_step(m_selectLinksWithParentId->get());
+    int error = m_selectLinksWithParentId->step();
     while (error == SQLITE_ROW)
     {
         FileInfo info;
@@ -314,7 +314,7 @@ void SqliteFsGateway::readFolderWithId(int folderId, std::vector<FileInfo>* file
         
         actualFileInfos.push_back(info);
         
-        error = sqlite3_step(m_selectLinksWithParentId->get());
+        error = m_selectLinksWithParentId->step();
     }
 
     if (error != SQLITE_DONE)
@@ -331,7 +331,7 @@ void SqliteFsGateway::getFileData(int fileId, std::vector<char>* fileData)
     
     m_selectFileDataWithIdQuery->bindInt(1, fileId);
     
-    int error = sqlite3_step(m_selectFileDataWithIdQuery->get());
+    int error = m_selectFileDataWithIdQuery->step();
     if (error != SQLITE_ROW)
     {
         throw SqliteFsException(FsError::kUnknownError, "Can't get file data");
@@ -354,7 +354,7 @@ void SqliteFsGateway::updateFileData(int fileId, const std::vector<char>& fileDa
     m_updateFileDataWithIdQuery->bindInt(1, fileId);
     m_updateFileDataWithIdQuery->bindBlob(2, fileData.data(), fileData.size());
     
-    int error = sqlite3_step(m_updateFileDataWithIdQuery->get());
+    int error = m_updateFileDataWithIdQuery->step();
     if (error != SQLITE_DONE)
     {
        throw SqliteFsException(FsError::kUnknownError, "Can't update file data");
@@ -369,7 +369,7 @@ void SqliteFsGateway::addExtendedAttribute(int itemId, const char* attributeKey,
     m_insertExtendedAttributeQuery->bindText(2, attributeKey);
     m_insertExtendedAttributeQuery->bindBlob(3, attributeValue, attributeValueSize);
     
-    int error = sqlite3_step(m_insertExtendedAttributeQuery->get());
+    int error = m_insertExtendedAttributeQuery->step();
     if (error != SQLITE_DONE)
     {
         THROW("can't insert");
@@ -383,7 +383,7 @@ void SqliteFsGateway::deleteExtendedAttribute(int itemId, const char* attributeK
     m_deleteExtendedAttributeByItemIdAndNameQuery->bindInt(1, itemId);
     m_deleteExtendedAttributeByItemIdAndNameQuery->bindText(2, attributeKey);
     
-    int error = sqlite3_step(m_deleteExtendedAttributeByItemIdAndNameQuery->get());
+    int error = m_deleteExtendedAttributeByItemIdAndNameQuery->step();
     if (error != SQLITE_DONE)
     {
         throw SqliteFsException(FsError::kAttributeNotFound, "Attribute not found");
@@ -397,7 +397,7 @@ void SqliteFsGateway::getExtendedAttribute(int itemId, const char* attributeKey,
     m_selectExtendedAttributeByItemIdAndNameQuery->bindInt(1, itemId);
     m_selectExtendedAttributeByItemIdAndNameQuery->bindText(2, attributeKey);
     
-    int error = sqlite3_step(m_selectExtendedAttributeByItemIdAndNameQuery->get());
+    int error = m_selectExtendedAttributeByItemIdAndNameQuery->step();
     if (error == SQLITE_ROW)
     {
         auto actualAttrValue = m_selectExtendedAttributeByItemIdAndNameQuery->getBlobColumn(3);
@@ -415,12 +415,12 @@ void SqliteFsGateway::getExtendedAttributesNames(int itemId, std::vector<std::st
     
     m_selectExtendedAttributesByItemIdQuery->bindInt(1, itemId);
     
-    int error = sqlite3_step(m_selectExtendedAttributesByItemIdQuery->get());
     std::vector<std::string> attributesNamesRes;
+    int error = m_selectExtendedAttributesByItemIdQuery->step();
     while (error == SQLITE_ROW)
     {
         attributesNamesRes.push_back(m_selectExtendedAttributesByItemIdQuery->getTextColumn(2).get());
-        error = sqlite3_step(m_selectExtendedAttributesByItemIdQuery->get());
+        error = m_selectExtendedAttributesByItemIdQuery->step();
     }
     
     if (error != SQLITE_DONE)
@@ -442,7 +442,7 @@ void SqliteFsGateway::createItemImpl(FileType fileType, int concreteItemId, Perm
     m_insertItemQuery->bindInt(4, static_cast<int>(currentTime));
     m_insertItemQuery->bindInt(5, static_cast<int>(currentTime));
     
-    int error = sqlite3_step(m_insertItemQuery->get());
+    int error = m_insertItemQuery->step();
     if (error != SQLITE_DONE)
     {
         THROW("can't insert");
@@ -457,7 +457,7 @@ void SqliteFsGateway::createHardLinkImpl(int parentId, int itemId, const Path& l
     m_insertLinkQuery->bindInt(2, itemId);
     m_insertLinkQuery->bindText(3, linkName.c_str());
     
-    int error = sqlite3_step(m_insertLinkQuery->get());
+    int error = m_insertLinkQuery->step();
     if (error != SQLITE_DONE)
     {
         throw SqliteFsException(FsError::kFileExists, "Such file exists");

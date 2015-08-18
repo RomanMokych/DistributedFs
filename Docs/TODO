@@ -13,6 +13,5 @@ InMemory
 - implement renaming
 - implement truncating
 - add logging
-- move bindings to the SqliteStatement
 - rename IFileSystem constants
 - 

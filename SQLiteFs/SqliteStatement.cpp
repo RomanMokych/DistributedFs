@@ -28,11 +28,6 @@ SqliteStatement::~SqliteStatement()
     sqlite3_finalize(m_stmt);
 }
 
-sqlite3_stmt* SqliteStatement::get()
-{
-    return m_stmt;
-}
-
 void SqliteStatement::reset()
 {
     sqlite3_reset(m_stmt);
@@ -95,6 +90,11 @@ boost::optional<std::vector<char>> SqliteStatement::getBlobColumn(int column)
     }
     
     return result;
+}
+    
+int SqliteStatement::step()
+{
+    return sqlite3_step(m_stmt);
 }
     
 }
