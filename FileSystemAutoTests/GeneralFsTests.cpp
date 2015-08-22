@@ -14,6 +14,110 @@
 #include <vector>
 #include <memory>
 
+TYPED_TEST(GeneralFsTest, RenameFail)
+{
+    dfs::IFileSystem& fs = this->getFs();
+    
+    dfs::FsError error = fs.rename("/test", "/test1");
+    EXPECT_EQ(dfs::FsError::kFileNotFound, error);
+}
+
+TYPED_TEST(GeneralFsTest, RenameToExistedNameFail)
+{
+    dfs::IFileSystem& fs = this->getFs();
+    
+    dfs::FsError error = fs.createFolder("/test", dfs::Permissions::kAll);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+
+    error = fs.createFolder("/test1", dfs::Permissions::kAll);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    error = fs.rename("/test", "/test1");
+    EXPECT_EQ(dfs::FsError::kFileExists, error);
+    
+    dfs::IFolderUPtr folder;
+    error = fs.openFolder("/test", folder);
+    EXPECT_EQ(dfs::FsError::kSuccess, error);
+}
+
+TYPED_TEST(GeneralFsTest, Rename)
+{
+    dfs::IFileSystem& fs = this->getFs();
+    
+    dfs::FsError error = fs.createFolder("/test", dfs::Permissions::kAll);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    error = fs.rename("/test", "/test1");
+    EXPECT_EQ(dfs::FsError::kSuccess, error);
+    
+    dfs::IFolderUPtr folder;
+    error = fs.openFolder("/test", folder);
+    EXPECT_EQ(dfs::FsError::kFileNotFound, error);
+
+    error = fs.openFolder("/test1", folder);
+    EXPECT_EQ(dfs::FsError::kSuccess, error);
+}
+
+TYPED_TEST(GeneralFsTest, MoveFail)
+{
+    dfs::IFileSystem& fs = this->getFs();
+    
+    dfs::FsError error = fs.createFolder("/test", dfs::Permissions::kAll);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+
+    error = fs.rename("/test2", "/test/test");
+    EXPECT_EQ(dfs::FsError::kFileNotFound, error);
+}
+
+TYPED_TEST(GeneralFsTest, MoveToExistedNameFail)
+{
+    dfs::IFileSystem& fs = this->getFs();
+    
+    dfs::FsError error = fs.createFolder("/test", dfs::Permissions::kAll);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    error = fs.createFolder("/test1", dfs::Permissions::kAll);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    error = fs.createFolder("/test/test", dfs::Permissions::kAll);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    error = fs.rename("/test1", "/test/test");
+    EXPECT_EQ(dfs::FsError::kFileExists, error);
+}
+
+TYPED_TEST(GeneralFsTest, MoveToNotExistedFolderFail)
+{
+    dfs::IFileSystem& fs = this->getFs();
+    
+    dfs::FsError error = fs.createFolder("/test", dfs::Permissions::kAll);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    error = fs.rename("/test", "/test1/test");
+    EXPECT_EQ(dfs::FsError::kFileNotFound, error);
+}
+
+TYPED_TEST(GeneralFsTest, Move)
+{
+    dfs::IFileSystem& fs = this->getFs();
+    
+    dfs::FsError error = fs.createFolder("/test", dfs::Permissions::kAll);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    
+    error = fs.createFolder("/test1", dfs::Permissions::kAll);
+    ASSERT_EQ(dfs::FsError::kSuccess, error);
+
+    error = fs.rename("/test", "/test1/test");
+    EXPECT_EQ(dfs::FsError::kSuccess, error);
+    
+    dfs::IFolderUPtr folder;
+    error = fs.openFolder("/test", folder);
+    EXPECT_EQ(dfs::FsError::kFileNotFound, error);
+    
+    error = fs.openFolder("/test1/test", folder);
+    EXPECT_EQ(dfs::FsError::kSuccess, error);
+}
+
 TYPED_TEST(GeneralFsTest, GetModificationTimeFailure)
 {
     std::time_t time;

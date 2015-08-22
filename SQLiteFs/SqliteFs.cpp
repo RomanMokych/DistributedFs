@@ -143,7 +143,22 @@ dfs::FsError dfs::SqliteFs::createHardLink(const Path& linkPath, const Path& tar
 //general
 dfs::FsError dfs::SqliteFs::rename(const Path& oldPath, const Path& newPath)
 {
-    return dfs::FsError::kNotImplemented;
+    try
+    {
+        if (oldPath == "/")
+            return FsError::kFileExists;
+        
+        SqliteEntities::Item oldItem = m_gateway->getItemByPath(oldPath);
+        SqliteEntities::Folder newParentFolder = m_gateway->getFolderByPath(newPath.parent_path());
+        m_gateway->createHardLink(newParentFolder.id, oldItem.id, newPath.leaf());
+        m_gateway->removeLink(oldItem.id);
+    }
+    catch (const SqliteFsException& e)
+    {
+        return e.getError();
+    }
+    
+    return dfs::FsError::kSuccess;
 }
 
 dfs::FsError dfs::SqliteFs::remove(const Path& path)

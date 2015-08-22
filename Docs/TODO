@@ -1,3 +1,5 @@
+General
+- implement util function for check folder contents
 
 InMemory
 - implement file removing
@@ -9,7 +11,6 @@ SqliteFs
 - add sizes for text and blobs
 - implement modification time updating after modiifcation of the item
 - implement transactions
-- implement renaming
 - implement truncating
 - add logging
 - rename IFileSystem constants
