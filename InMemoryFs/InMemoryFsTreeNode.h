@@ -47,7 +47,7 @@ namespace dfs
             
             std::vector<char> fileContent;
             std::vector<InMemoryFsLink> childLinks;
-            std::string symLinkValue;
+            dfs::Path symLinkValue;
             
             std::map< std::string, std::vector<char> > exAttributes;
         };

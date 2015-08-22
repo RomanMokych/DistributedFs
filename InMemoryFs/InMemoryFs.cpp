@@ -79,10 +79,45 @@ dfs::FsError dfs::InMemoryFs::truncateFile(const Path& filePath, const uint64_t 
 
 //links
 dfs::FsError dfs::InMemoryFs::createSymLink(const Path& linkPath, const Path& targetPath)
-{ return FsError::kNotImplemented; }
+{
+    details::InMemoryFsTreeNode* parentNode = nullptr;
+    FsError error = details::getNode(linkPath.parent_path(), m_superRoot.get(), &parentNode);
+    if (error != FsError::kSuccess)
+    {
+        return error;
+    }
+    
+    error = details::addChildNode(parentNode, linkPath.filename(), FileType::kSymLink, Permissions::kAll);
+    if (error != FsError::kSuccess)
+    {
+        return error;
+    }
+
+    details::InMemoryFsTreeNode* targetNode = nullptr;
+    error = details::getNode(linkPath, m_superRoot.get(), &targetNode);
+    if (error != FsError::kSuccess)
+    {
+        return error;
+    }
+    
+    targetNode->symLinkValue = targetPath;
+    
+    return FsError::kSuccess;
+}
 
 dfs::FsError dfs::InMemoryFs::readSymLink(const Path& linkPath, Path* symLinkValue)
-{ return FsError::kNotImplemented; }
+{
+    details::InMemoryFsTreeNode* node = nullptr;
+    FsError error = details::getNode(linkPath, m_superRoot.get(), &node);
+    if (error != FsError::kSuccess)
+    {
+        return error;
+    }
+
+    *symLinkValue = node->symLinkValue;
+    
+    return FsError::kSuccess;
+}
 
 dfs::FsError dfs::InMemoryFs::createHardLink(const Path& linkPath, const Path& targetPath)
 {
@@ -129,10 +164,30 @@ dfs::FsError dfs::InMemoryFs::getFileInfo(const Path& path, FileInfo* info)
 { return FsError::kNotImplemented; }
 
 dfs::FsError dfs::InMemoryFs::setPermissions(const Path& path, const Permissions permissions)
-{ return FsError::kNotImplemented; }
+{
+    details::InMemoryFsTreeNode* node = nullptr;
+    FsError error = details::getNode(path, m_superRoot.get(), &node);
+    if (error != FsError::kSuccess)
+    {
+        return error;
+    }
+    
+    node->permissions = permissions;
+    return FsError::kSuccess;
+}
 
 dfs::FsError dfs::InMemoryFs::getPermissions(const Path& path, Permissions* permissions)
-{ return FsError::kNotImplemented; }
+{
+    details::InMemoryFsTreeNode* node = nullptr;
+    FsError error = details::getNode(path, m_superRoot.get(), &node);
+    if (error != FsError::kSuccess)
+    {
+        return error;
+    }
+    
+    *permissions = node->permissions;
+    return FsError::kSuccess;
+}
 
 dfs::FsError dfs::InMemoryFs::setCreationTime(const Path& path, const std::time_t time)
 {

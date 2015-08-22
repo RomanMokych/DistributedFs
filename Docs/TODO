@@ -2,16 +2,14 @@
 InMemory
 - implement file removing
 - implement file modification time
-- implement permissions change
 - implement symlinks
 
+SqliteFs
 - implement big files
 - add sizes for text and blobs
-- add tests for rubbish left after removing of the items
 - implement modification time updating after modiifcation of the item
 - implement transactions
 - implement renaming
 - implement truncating
 - add logging
 - rename IFileSystem constants
-- 

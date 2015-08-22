@@ -13,6 +13,8 @@
 #include <gtest/gtest.h>
 
 #include <memory>
+#include <vector>
+#include <string>
 
 TEST(SqliteFsLeaksTests, ItemCascadeRemoveTest)
 {
