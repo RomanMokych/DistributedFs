@@ -85,19 +85,17 @@ private:
 class SqliteFsTest
 {
 public:
-    const std::string kSQLiteDbPath = "fs.sqlite";
+    const std::string kSQLiteDbPath = ":memory:";
     
 public:
     void SetUp()
     {
-        std::remove(kSQLiteDbPath.c_str());
         m_fs.reset(new dfs::SqliteFs(kSQLiteDbPath));
     }
     
     void TearDown()
     {
         m_fs.reset();
-        std::remove(kSQLiteDbPath.c_str());
     }
     
     dfs::SqliteFs& getFs()

@@ -41,12 +41,40 @@ SqliteFsGateway::SqliteFsGateway(const Path& dbPath)
     m_sqlite.executeQuery("CREATE TABLE Folders (id INTEGER PRIMARY KEY ASC, dummy INT);");
     m_sqlite.executeQuery("CREATE TABLE Files (id INTEGER PRIMARY KEY ASC, data BLOB);");
     m_sqlite.executeQuery("CREATE TABLE SymLinks (id INTEGER PRIMARY KEY ASC, path TEXT NOT NULL);");
-    m_sqlite.executeQuery("CREATE TABLE ExtendedAttributes (id INTEGER PRIMARY KEY ASC, itemId INT NOT NULL, name TEXT NOT NULL, value BLOB NOT NULL, UNIQUE (itemId, name));");
+    m_sqlite.executeQuery("CREATE TABLE ExtendedAttributes ("
+                                        "id INTEGER PRIMARY KEY ASC,"
+                                        "itemId INTEGER NOT NULL,"
+                                        "name TEXT NOT NULL,"
+                                        "value BLOB NOT NULL,"
+                                        "UNIQUE (itemId, name)"
+                                        ");");
+    
+    m_sqlite.executeQuery("CREATE TRIGGER FolderRemover BEFORE DELETE ON Items WHEN (OLD.type = 1) "
+                          "BEGIN "
+                              "DELETE FROM Folders WHERE Folders.id = OLD.concreteItemId; "
+                          "END;");
+    
+    m_sqlite.executeQuery("CREATE TRIGGER FileRemover BEFORE DELETE ON Items WHEN (OLD.type = 0) "
+                          "BEGIN "
+                              "DELETE FROM Files WHERE Files.id = OLD.concreteItemId; "
+                          "END;");
+    
+    m_sqlite.executeQuery("CREATE TRIGGER SymLinkRemover BEFORE DELETE ON Items WHEN (OLD.type = 2) "
+                          "BEGIN "
+                              "DELETE FROM SymLinks WHERE SymLinks.id = OLD.concreteItemId; "
+                          "END;");
+
+    m_sqlite.executeQuery("CREATE TRIGGER ExtendedAttributesRemover BEFORE DELETE ON Items "
+                          "BEGIN "
+                            "DELETE FROM ExtendedAttributes WHERE ExtendedAttributes.itemId = OLD.id; "
+                          "END;");
     
     m_selectLinkQueryWithParentIdAndName = m_sqlite.createStatement("SELECT id, parentId, itemId, name FROM Links WHERE parentId = ? AND name = ?;");
     m_selectItemQueryWithId              = m_sqlite.createStatement("SELECT id, type, concreteItemId, permissions, creationTime, modificationTime FROM Items WHERE id = ?;");
     m_selectFolderQueryWithId            = m_sqlite.createStatement("SELECT id, dummy  FROM Folders WHERE id = ?;");
     m_selectLinksWithParentId            = m_sqlite.createStatement("SELECT Links.name, Items.type, Items.permissions FROM Links JOIN Items ON Links.itemId = Items.id WHERE parentId = ?;");
+    
+    m_getItemLinksCountWithItemId = m_sqlite.createStatement("SELECT COUNT(*) FROM Links WHERE itemId = ?;");
     
     m_updateItemWithIdQuery = m_sqlite.createStatement("UPDATE Items SET permissions = ?2, creationTime = ?3, modificationTime = ?4 WHERE id = ?1;");
     
@@ -57,6 +85,7 @@ SqliteFsGateway::SqliteFsGateway(const Path& dbPath)
     m_insertLinkQuery     = m_sqlite.createStatement("INSERT INTO Links (parentId, itemId, name) VALUES (?, ?, ?);");
     
     m_deleteLinkWithId = m_sqlite.createStatement("DELETE FROM Links WHERE id = ?;");
+    m_deleteItemWithId = m_sqlite.createStatement("DELETE FROM Items WHERE id = ?;");
     
     m_selectFileDataWithIdQuery = m_sqlite.createStatement("SELECT data FROM Files WHERE id = ?;");
     m_updateFileDataWithIdQuery = m_sqlite.createStatement("UPDATE Files SET data = ?2 WHERE id = ?1;");
@@ -190,6 +219,21 @@ SqliteEntities::Item SqliteFsGateway::getItemById(int itemId)
     
     throw SqliteFsException(FsError::kFileNotFound, "item was not found");
 }
+    
+int  SqliteFsGateway::getItemLinksCount(int itemId)
+{
+    SqliteStmtReseter reseter(*m_getItemLinksCountWithItemId);
+    
+    m_getItemLinksCountWithItemId->bindInt(1, itemId);
+    
+    int error = m_getItemLinksCountWithItemId->step();
+    if (error != SQLITE_ROW)
+    {
+        throw SqliteFsException(FsError::kUnknownError, "Can't update item");
+    }
+    
+    return m_getItemLinksCountWithItemId->getIntColumn(0);
+}
 
 void SqliteFsGateway::updateItem(const SqliteEntities::Item& item)
 {
@@ -294,6 +338,19 @@ void SqliteFsGateway::removeLink(int linkId)
     if (error != SQLITE_DONE)
     {
         throw SqliteFsException(FsError::kFileNotFound, "No such link");
+    }
+}
+    
+void SqliteFsGateway::removeItem(int itemId)
+{
+    SqliteStmtReseter reseter(*m_deleteItemWithId);
+    
+    m_deleteItemWithId->bindInt(1, itemId);
+    
+    int error = m_deleteItemWithId->step();
+    if (error != SQLITE_DONE)
+    {
+        throw SqliteFsException(FsError::kFileNotFound, "No such item");
     }
 }
     

@@ -35,6 +35,7 @@ public:
     
     SqliteEntities::Link getLink(int parentId, const Path& name);
     SqliteEntities::Item getItemById(int itemId);
+    int getItemLinksCount(int itemId);
     
     SqliteEntities::SymLink getSymLinkById(int symLinkId);
     
@@ -46,6 +47,7 @@ public:
     void updateItem(const SqliteEntities::Item& item);
     
     void removeLink(int linkId);
+    void removeItem(int itemId);
     
     void readFolderWithId(int folderId, std::vector<FileInfo>* fileInfo);
     
@@ -69,6 +71,8 @@ private:
     std::unique_ptr<SqliteStatement> m_selectFolderQueryWithId;
     std::unique_ptr<SqliteStatement> m_selectLinksWithParentId;
     
+    std::unique_ptr<SqliteStatement> m_getItemLinksCountWithItemId;
+    
     std::unique_ptr<SqliteStatement> m_updateItemWithIdQuery;
     
     std::unique_ptr<SqliteStatement> m_insertItemQuery;
@@ -78,6 +82,7 @@ private:
     std::unique_ptr<SqliteStatement> m_insertLinkQuery;
     
     std::unique_ptr<SqliteStatement> m_deleteLinkWithId;
+    std::unique_ptr<SqliteStatement> m_deleteItemWithId;
 
     std::unique_ptr<SqliteStatement> m_selectFileDataWithIdQuery;
     std::unique_ptr<SqliteStatement> m_updateFileDataWithIdQuery;

@@ -29,6 +29,7 @@ public:
     
     virtual SqliteEntities::Link getLink(int parentId, const Path& name) = 0;
     virtual SqliteEntities::Item getItemById(int itemId) = 0;
+    virtual int getItemLinksCount(int itemId) = 0;
     
     virtual SqliteEntities::SymLink getSymLinkById(int symLinkId) = 0;
     
@@ -40,6 +41,7 @@ public:
     virtual void updateItem(const SqliteEntities::Item& item) = 0;
     
     virtual void removeLink(int linkId) = 0;
+    virtual void removeItem(int itemId) = 0;
     
     virtual void readFolderWithId(int folderId, std::vector<FileInfo>* fileInfo) = 0;
     

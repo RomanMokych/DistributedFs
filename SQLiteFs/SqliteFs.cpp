@@ -155,7 +155,13 @@ dfs::FsError dfs::SqliteFs::remove(const Path& path)
         
         SqliteEntities::Folder folder = m_gateway->getFolderByPath(path.parent_path());
         SqliteEntities::Link link = m_gateway->getLink(folder.id, path.leaf());
+        
         m_gateway->removeLink(link.id);
+        
+        if (m_gateway->getItemLinksCount(link.itemId) == 0)
+        {
+            m_gateway->removeItem(link.itemId);
+        }
     }
     catch (const SqliteFsException& e)
     {
