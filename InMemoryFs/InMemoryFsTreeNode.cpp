@@ -33,14 +33,14 @@ FsError getNode(const Path& filePath, InMemoryFsTreeNode* root, InMemoryFsTreeNo
         
         if (!foundComponent)
         {
-            return FsError::kFileNotFound;
+            return FsError::fileNotFound;
         }
         
         ++pathIt;
     }
     
     *resultNode = fsIt;
-    return FsError::kSuccess;
+    return FsError::success;
 }
     
 FsError getNodeSPtr(const Path& filePath, std::shared_ptr<InMemoryFsTreeNode> root, std::shared_ptr<InMemoryFsTreeNode>& resultNode)
@@ -63,14 +63,14 @@ FsError getNodeSPtr(const Path& filePath, std::shared_ptr<InMemoryFsTreeNode> ro
         
         if (!foundComponent)
         {
-            return FsError::kFileNotFound;
+            return FsError::fileNotFound;
         }
         
         ++pathIt;
     }
     
     resultNode = fsIt;
-    return FsError::kSuccess;
+    return FsError::success;
 }
 
 FsError addChildNode(InMemoryFsTreeNode* parentNode, const Path& name, FileType type, Permissions permissions)
@@ -78,14 +78,14 @@ FsError addChildNode(InMemoryFsTreeNode* parentNode, const Path& name, FileType 
     InMemoryFsLink newLink{name, std::make_shared<InMemoryFsTreeNode>(type, permissions)};
 
     FsError error = addChildLink(parentNode, newLink);
-    if (error != FsError::kSuccess)
+    if (error != FsError::success)
     {
         return error;
     }
     
     parentNode->modificationTime = std::time(nullptr);
     
-    return FsError::kSuccess;
+    return FsError::success;
 }
     
 FsError addChildLink(InMemoryFsTreeNode* parentNode, const InMemoryFsLink& childLink)
@@ -94,13 +94,13 @@ FsError addChildLink(InMemoryFsTreeNode* parentNode, const InMemoryFsLink& child
     {
         if (parentNode->childLinks[i].name == childLink.name)
         {
-            return FsError::kFileExists;
+            return FsError::fileExists;
         }
     }
     
     parentNode->childLinks.push_back(childLink);
     
-    return FsError::kSuccess;
+    return FsError::success;
 }
     
 FsError removeChildNode(InMemoryFsTreeNode* parentNode, const Path& name)
@@ -110,24 +110,24 @@ FsError removeChildNode(InMemoryFsTreeNode* parentNode, const Path& name)
         if (parentNode->childLinks[i].name == name)
         {
             parentNode->childLinks.erase(parentNode->childLinks.begin() + i);
-            return FsError::kSuccess;
+            return FsError::success;
         }
     }
     
-    return FsError::kFileNotFound;
+    return FsError::fileNotFound;
 }
     
 FsError createFile(const Path& filePath, InMemoryFsTreeNode* root, InMemoryFsTreeNode** resultNode)
 {
     InMemoryFsTreeNode* parentNode = nullptr;
     FsError error = getNode(filePath.parent_path(), root, &parentNode);
-    if (error != FsError::kSuccess)
+    if (error != FsError::success)
     {
         return error;
     }
     
     error = addChildNode(parentNode, filePath.leaf(), dfs::FileType::kFile, dfs::Permissions::kAll);
-    if (error != FsError::kSuccess)
+    if (error != FsError::success)
     {
         return error;
     }

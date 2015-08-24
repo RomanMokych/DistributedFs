@@ -108,7 +108,7 @@ SqliteEntities::Folder SqliteFsGateway::getFolderByPath(const Path& folderPath)
     SqliteEntities::Item item = getItemByPath(folderPath);
     if (item.type != dfs::FileType::kFolder)
     {
-        throw SqliteFsException(FsError::kFileNotFound, "File is not folder");
+        throw SqliteFsException(FsError::fileNotFound, "File is not folder");
     }
     
     return getFolderById(item.concreteItemId);
@@ -135,7 +135,7 @@ SqliteEntities::Item SqliteFsGateway::getItemByPath(const Path& itemPath, bool f
         
         if (item.type != dfs::FileType::kFolder)
         {
-            throw SqliteFsException(FsError::kFileHasWrongType, "File has wrong type");
+            throw SqliteFsException(FsError::fileHasWrongType, "File has wrong type");
         }
         
         parentId = item.concreteItemId;
@@ -176,7 +176,7 @@ SqliteEntities::Link SqliteFsGateway::getLink(int parentId, const Path& name)
         return link;
     }
     
-    throw SqliteFsException(FsError::kFileNotFound, "Can't find file with such name");
+    throw SqliteFsException(FsError::fileNotFound, "Can't find file with such name");
 }
     
 SqliteEntities::Folder SqliteFsGateway::getFolderById(int folderId)
@@ -194,7 +194,7 @@ SqliteEntities::Folder SqliteFsGateway::getFolderById(int folderId)
         return folder;
     }
     
-    throw SqliteFsException(FsError::kFileNotFound, "Folder was not found");
+    throw SqliteFsException(FsError::fileNotFound, "Folder was not found");
 }
     
 SqliteEntities::Item SqliteFsGateway::getItemById(int itemId)
@@ -217,7 +217,7 @@ SqliteEntities::Item SqliteFsGateway::getItemById(int itemId)
         return item;
     }
     
-    throw SqliteFsException(FsError::kFileNotFound, "item was not found");
+    throw SqliteFsException(FsError::fileNotFound, "item was not found");
 }
     
 int  SqliteFsGateway::getItemLinksCount(int itemId)
@@ -229,7 +229,7 @@ int  SqliteFsGateway::getItemLinksCount(int itemId)
     int error = m_getItemLinksCountWithItemId->step();
     if (error != SQLITE_ROW)
     {
-        throw SqliteFsException(FsError::kUnknownError, "Can't update item");
+        throw SqliteFsException(FsError::unknownError, "Can't update item");
     }
     
     return m_getItemLinksCountWithItemId->getIntColumn(0);
@@ -247,7 +247,7 @@ void SqliteFsGateway::updateItem(const SqliteEntities::Item& item)
     int error = m_updateItemWithIdQuery->step();
     if (error != SQLITE_DONE)
     {
-        throw SqliteFsException(FsError::kUnknownError, "Can't update item");
+        throw SqliteFsException(FsError::unknownError, "Can't update item");
     }
 }
     
@@ -260,7 +260,7 @@ SqliteEntities::SymLink SqliteFsGateway::getSymLinkById(int symLinkId)
     int error = m_selectSymLinkWithIdQuery->step();
     if (error != SQLITE_ROW)
     {
-        throw SqliteFsException(FsError::kUnknownError, "Can't get symlink");
+        throw SqliteFsException(FsError::unknownError, "Can't get symlink");
     }
         
     SqliteEntities::SymLink symLink;
@@ -337,7 +337,7 @@ void SqliteFsGateway::removeLink(int linkId)
     int error = m_deleteLinkWithId->step();
     if (error != SQLITE_DONE)
     {
-        throw SqliteFsException(FsError::kFileNotFound, "No such link");
+        throw SqliteFsException(FsError::fileNotFound, "No such link");
     }
 }
     
@@ -350,7 +350,7 @@ void SqliteFsGateway::removeItem(int itemId)
     int error = m_deleteItemWithId->step();
     if (error != SQLITE_DONE)
     {
-        throw SqliteFsException(FsError::kFileNotFound, "No such item");
+        throw SqliteFsException(FsError::fileNotFound, "No such item");
     }
 }
     
@@ -376,7 +376,7 @@ void SqliteFsGateway::readFolderWithId(int folderId, std::vector<FileInfo>* file
 
     if (error != SQLITE_DONE)
     {
-        throw SqliteFsException(FsError::kReadFolderError, "Such file exists");
+        throw SqliteFsException(FsError::readFolderError, "Such file exists");
     }
     
     fileInfos->swap(actualFileInfos);
@@ -391,7 +391,7 @@ void SqliteFsGateway::getFileData(int fileId, std::vector<char>* fileData)
     int error = m_selectFileDataWithIdQuery->step();
     if (error != SQLITE_ROW)
     {
-        throw SqliteFsException(FsError::kUnknownError, "Can't get file data");
+        throw SqliteFsException(FsError::unknownError, "Can't get file data");
     }
     
     auto blobRes = m_selectFileDataWithIdQuery->getBlobColumn(0);
@@ -414,7 +414,7 @@ void SqliteFsGateway::updateFileData(int fileId, const std::vector<char>& fileDa
     int error = m_updateFileDataWithIdQuery->step();
     if (error != SQLITE_DONE)
     {
-       throw SqliteFsException(FsError::kUnknownError, "Can't update file data");
+       throw SqliteFsException(FsError::unknownError, "Can't update file data");
     }
 }
     
@@ -443,7 +443,7 @@ void SqliteFsGateway::deleteExtendedAttribute(int itemId, const char* attributeK
     int error = m_deleteExtendedAttributeByItemIdAndNameQuery->step();
     if (error != SQLITE_DONE)
     {
-        throw SqliteFsException(FsError::kAttributeNotFound, "Attribute not found");
+        throw SqliteFsException(FsError::attributeNotFound, "Attribute not found");
     }
 }
     
@@ -462,7 +462,7 @@ void SqliteFsGateway::getExtendedAttribute(int itemId, const char* attributeKey,
     }
     else
     {
-        throw SqliteFsException(FsError::kAttributeNotFound, "Attribute not found");
+        throw SqliteFsException(FsError::attributeNotFound, "Attribute not found");
     }
 }
     
@@ -517,7 +517,7 @@ void SqliteFsGateway::createHardLinkImpl(int parentId, int itemId, const Path& l
     int error = m_insertLinkQuery->step();
     if (error != SQLITE_DONE)
     {
-        throw SqliteFsException(FsError::kFileExists, "Such file exists");
+        throw SqliteFsException(FsError::fileExists, "Such file exists");
     }
 }
     

@@ -13,23 +13,23 @@
 TYPED_TEST(HardLinksTest, CreateHardLinkFail)
 {
     dfs::FsError error = this->getFs().createHardLink("/test", "/test1");
-    EXPECT_EQ(dfs::FsError::kFileNotFound, error);
+    EXPECT_EQ(dfs::FsError::fileNotFound, error);
     
     error = this->getFs().createHardLink("/test/test", "/");
-    EXPECT_EQ(dfs::FsError::kFileNotFound, error);
+    EXPECT_EQ(dfs::FsError::fileNotFound, error);
     
     error = this->getFs().createHardLink("/", "/");
-    EXPECT_EQ(dfs::FsError::kFileExists, error);
+    EXPECT_EQ(dfs::FsError::fileExists, error);
 }
 
 TYPED_TEST(HardLinksTest, CreateHardLinkForRoot)
 {
     dfs::FsError error = this->getFs().createHardLink("/test", "/");
-    EXPECT_EQ(dfs::FsError::kSuccess, error);
+    EXPECT_EQ(dfs::FsError::success, error);
     
     dfs::IFolderUPtr folder;
     error = this->getFs().openFolder("/", folder);
-    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    ASSERT_EQ(dfs::FsError::success, error);
     
     std::vector<dfs::FileInfo> filesInfos;
     folder->readNextFileInfos(&filesInfos);
@@ -55,18 +55,18 @@ TYPED_TEST(HardLinksTest, CreateHardLinkForFolder)
     this->getFs().createFolder("/test/test/b", dfs::Permissions::kAll);
     
     dfs::FsError error = this->getFs().createHardLink("/test/test_link", "/test/test");
-    EXPECT_EQ(dfs::FsError::kSuccess, error);
+    EXPECT_EQ(dfs::FsError::success, error);
     
     dfs::IFolderUPtr originalFolder;
     error = this->getFs().openFolder("/test/test", originalFolder);
-    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    ASSERT_EQ(dfs::FsError::success, error);
     
     std::vector<dfs::FileInfo> originalFilesInfos;
     originalFolder->readNextFileInfos(&originalFilesInfos);
     
     dfs::IFolderUPtr linkedFolder;
     error = this->getFs().openFolder("/test/test_link", linkedFolder);
-    ASSERT_EQ(dfs::FsError::kSuccess, error);
+    ASSERT_EQ(dfs::FsError::success, error);
     
     std::vector<dfs::FileInfo> linkedFolderFilesInfos;
     linkedFolder->readNextFileInfos(&linkedFolderFilesInfos);

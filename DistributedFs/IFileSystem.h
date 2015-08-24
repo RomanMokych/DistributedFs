@@ -20,15 +20,15 @@ namespace dfs
 {
     enum class FsError
     {
-        kSuccess,
-        kFileNotFound,
-        kPermissionDenied,
-        kNotImplemented,
-        kFileExists,
-        kAttributeNotFound,
-        kFileHasWrongType,
-        kReadFolderError,
-        kUnknownError
+        success,
+        fileNotFound,
+        permissionDenied,
+        notImplemented,
+        fileExists,
+        attributeNotFound,
+        fileHasWrongType,
+        readFolderError,
+        unknownError
     };
  
     enum class FileType

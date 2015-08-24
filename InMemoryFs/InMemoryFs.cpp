@@ -24,7 +24,7 @@ dfs::FsError dfs::InMemoryFs::createFolder(const Path& folderPath, const Permiss
 {
     details::InMemoryFsTreeNode* parentNode;
     FsError error = details::getNode(folderPath.parent_path(), m_superRoot.get(), &parentNode);
-    if (error != FsError::kSuccess)
+    if (error != FsError::success)
     {
         return error;
     }
@@ -36,13 +36,13 @@ dfs::FsError dfs::InMemoryFs::openFolder(const Path& folderPath, std::unique_ptr
 {
     details::InMemoryFsTreeNode* node = nullptr;
     FsError error = details::getNode(folderPath, m_superRoot.get(), &node);
-    if (error != FsError::kSuccess)
+    if (error != FsError::success)
     {
         return error;
     }
     
     outFolder.reset(new InMemoryFolder(*node));
-    return FsError::kSuccess;
+    return FsError::success;
 }
 
 //files
@@ -50,7 +50,7 @@ dfs::FsError dfs::InMemoryFs::openFile(const Path& filePath, const int fileOpenM
 {
     details::InMemoryFsTreeNode* node = nullptr;
     FsError error = details::getNode(filePath, m_superRoot.get(), &node);
-    if (error != FsError::kSuccess && !(fileOpenMode & dfs::FileOpenMode::kCreate))
+    if (error != FsError::success && !(fileOpenMode & dfs::FileOpenMode::kCreate))
     {
         return error;
     }
@@ -58,7 +58,7 @@ dfs::FsError dfs::InMemoryFs::openFile(const Path& filePath, const int fileOpenM
     if (!node)
     {
         error = details::createFile(filePath, m_superRoot.get(), &node);
-        if (error != FsError::kSuccess)
+        if (error != FsError::success)
         {
             return error;
         }
@@ -66,71 +66,71 @@ dfs::FsError dfs::InMemoryFs::openFile(const Path& filePath, const int fileOpenM
     
     if (node->type != dfs::FileType::kFile)
     {
-        return FsError::kFileHasWrongType;
+        return FsError::fileHasWrongType;
     }
     
     outFile.reset(new InMemoryFile(node));
     
-    return FsError::kSuccess;
+    return FsError::success;
 }
 
 dfs::FsError dfs::InMemoryFs::truncateFile(const Path& filePath, const uint64_t newSize)
-{ return FsError::kNotImplemented; }
+{ return FsError::notImplemented; }
 
 //links
 dfs::FsError dfs::InMemoryFs::createSymLink(const Path& linkPath, const Path& targetPath)
 {
     details::InMemoryFsTreeNode* parentNode = nullptr;
     FsError error = details::getNode(linkPath.parent_path(), m_superRoot.get(), &parentNode);
-    if (error != FsError::kSuccess)
+    if (error != FsError::success)
     {
         return error;
     }
     
     error = details::addChildNode(parentNode, linkPath.filename(), FileType::kSymLink, Permissions::kAll);
-    if (error != FsError::kSuccess)
+    if (error != FsError::success)
     {
         return error;
     }
 
     details::InMemoryFsTreeNode* targetNode = nullptr;
     error = details::getNode(linkPath, m_superRoot.get(), &targetNode);
-    if (error != FsError::kSuccess)
+    if (error != FsError::success)
     {
         return error;
     }
     
     targetNode->symLinkValue = targetPath;
     
-    return FsError::kSuccess;
+    return FsError::success;
 }
 
 dfs::FsError dfs::InMemoryFs::readSymLink(const Path& linkPath, Path* symLinkValue)
 {
     details::InMemoryFsTreeNode* node = nullptr;
     FsError error = details::getNode(linkPath, m_superRoot.get(), &node);
-    if (error != FsError::kSuccess)
+    if (error != FsError::success)
     {
         return error;
     }
 
     *symLinkValue = node->symLinkValue;
     
-    return FsError::kSuccess;
+    return FsError::success;
 }
 
 dfs::FsError dfs::InMemoryFs::createHardLink(const Path& linkPath, const Path& targetPath)
 {
     std::shared_ptr<details::InMemoryFsTreeNode> targetNode;
     FsError error = details::getNodeSPtr(targetPath, m_superRoot, targetNode);
-    if (error != FsError::kSuccess)
+    if (error != FsError::success)
     {
         return error;
     }
     
     std::shared_ptr<details::InMemoryFsTreeNode> parentNode;
     error = details::getNodeSPtr(linkPath.parent_path(), m_superRoot, parentNode);
-    if (error != FsError::kSuccess)
+    if (error != FsError::success)
     {
         return error;
     }
@@ -141,18 +141,18 @@ dfs::FsError dfs::InMemoryFs::createHardLink(const Path& linkPath, const Path& t
 
 //general
 dfs::FsError dfs::InMemoryFs::rename(const Path& oldPath, const Path& newPath)
-{ return FsError::kNotImplemented; }
+{ return FsError::notImplemented; }
 
 dfs::FsError dfs::InMemoryFs::remove(const Path& path)
 {
     if (path == "/")
     {
-        return FsError::kPermissionDenied;
+        return FsError::permissionDenied;
     }
     
     details::InMemoryFsTreeNode* parentNode;
     FsError error = details::getNode(path.parent_path(), m_superRoot.get(), &parentNode);
-    if (error != FsError::kSuccess)
+    if (error != FsError::success)
     {
         return error;
     }
@@ -161,105 +161,105 @@ dfs::FsError dfs::InMemoryFs::remove(const Path& path)
 }
 
 dfs::FsError dfs::InMemoryFs::getFileInfo(const Path& path, FileInfo* info)
-{ return FsError::kNotImplemented; }
+{ return FsError::notImplemented; }
 
 dfs::FsError dfs::InMemoryFs::setPermissions(const Path& path, const Permissions permissions)
 {
     details::InMemoryFsTreeNode* node = nullptr;
     FsError error = details::getNode(path, m_superRoot.get(), &node);
-    if (error != FsError::kSuccess)
+    if (error != FsError::success)
     {
         return error;
     }
     
     node->permissions = permissions;
-    return FsError::kSuccess;
+    return FsError::success;
 }
 
 dfs::FsError dfs::InMemoryFs::getPermissions(const Path& path, Permissions* permissions)
 {
     details::InMemoryFsTreeNode* node = nullptr;
     FsError error = details::getNode(path, m_superRoot.get(), &node);
-    if (error != FsError::kSuccess)
+    if (error != FsError::success)
     {
         return error;
     }
     
     *permissions = node->permissions;
-    return FsError::kSuccess;
+    return FsError::success;
 }
 
 dfs::FsError dfs::InMemoryFs::setCreationTime(const Path& path, const std::time_t time)
 {
     details::InMemoryFsTreeNode* node = nullptr;
     FsError error = details::getNode(path, m_superRoot.get(), &node);
-    if (error != FsError::kSuccess)
+    if (error != FsError::success)
     {
         return error;
     }
     
     node->creationTime = time;
-    return FsError::kSuccess;
+    return FsError::success;
 }
 
 dfs::FsError dfs::InMemoryFs::getCreationTime(const Path& path, std::time_t* time)
 {
     details::InMemoryFsTreeNode* node = nullptr;
     FsError error = details::getNode(path, m_superRoot.get(), &node);
-    if (error != FsError::kSuccess)
+    if (error != FsError::success)
     {
         return error;
     }
     
     *time = node->creationTime;
-    return FsError::kSuccess;
+    return FsError::success;
 }
 
 dfs::FsError dfs::InMemoryFs::setModificationTime(const Path& path, const std::time_t time)
 {
     details::InMemoryFsTreeNode* node = nullptr;
     FsError error = details::getNode(path, m_superRoot.get(), &node);
-    if (error != FsError::kSuccess)
+    if (error != FsError::success)
     {
         return error;
     }
     
     node->modificationTime = time;
-    return FsError::kSuccess;
+    return FsError::success;
 }
 
 dfs::FsError dfs::InMemoryFs::getModificationTime(const Path& path, std::time_t* time)
 {
     details::InMemoryFsTreeNode* node = nullptr;
     FsError error = details::getNode(path, m_superRoot.get(), &node);
-    if (error != FsError::kSuccess)
+    if (error != FsError::success)
     {
         return error;
     }
     
     *time = node->modificationTime;
-    return FsError::kSuccess;
+    return FsError::success;
 }
 
 dfs::FsError dfs::InMemoryFs::setExtendedAttribute(const Path& path, const char* attributeKey, const char* attributeValue, const size_t attributeValueSize)
 {
     details::InMemoryFsTreeNode* node = nullptr;
     FsError error = details::getNode(path, m_superRoot.get(), &node);
-    if (error != FsError::kSuccess)
+    if (error != FsError::success)
     {
         return error;
     }
     
     node->exAttributes[attributeKey] = std::vector<char>(attributeValue, attributeValue + attributeValueSize);
     
-    return FsError::kSuccess;
+    return FsError::success;
 }
 
 dfs::FsError dfs::InMemoryFs::getExtendedAttribute(const Path& path, const char* attributeKey, std::vector<char>* attributeValue)
 {
     details::InMemoryFsTreeNode* node = nullptr;
     FsError error = details::getNode(path, m_superRoot.get(), &node);
-    if (error != FsError::kSuccess)
+    if (error != FsError::success)
     {
         return error;
     }
@@ -267,33 +267,33 @@ dfs::FsError dfs::InMemoryFs::getExtendedAttribute(const Path& path, const char*
     auto attributeIt = node->exAttributes.find(attributeKey);
     if (attributeIt == node->exAttributes.end())
     {
-        return FsError::kAttributeNotFound;
+        return FsError::attributeNotFound;
     }
     
     *attributeValue = attributeIt->second;
     
-    return FsError::kSuccess;
+    return FsError::success;
 }
 
 dfs::FsError dfs::InMemoryFs::deleteExtendedAttribute(const Path& path, const char* attributeKey)
 {
     details::InMemoryFsTreeNode* node = nullptr;
     FsError error = details::getNode(path, m_superRoot.get(), &node);
-    if (error != FsError::kSuccess)
+    if (error != FsError::success)
     {
         return error;
     }
     
     node->exAttributes.erase(attributeKey);
     
-    return FsError::kSuccess;
+    return FsError::success;
 }
 
 dfs::FsError dfs::InMemoryFs::getAllExtendedAttributes(const Path& path, std::vector<std::string>* attributesNames)
 {
     details::InMemoryFsTreeNode* node = nullptr;
     FsError error = details::getNode(path, m_superRoot.get(), &node);
-    if (error != FsError::kSuccess)
+    if (error != FsError::success)
     {
         return error;
     }
@@ -305,5 +305,5 @@ dfs::FsError dfs::InMemoryFs::getAllExtendedAttributes(const Path& path, std::ve
         attributesNames->push_back(pair.first);
     }
     
-    return FsError::kSuccess;
+    return FsError::success;
 }
